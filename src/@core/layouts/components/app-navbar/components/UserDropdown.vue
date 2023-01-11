@@ -245,6 +245,7 @@
         </div>
       </b-button>
       <b-modal
+        id="modal-notification"
         ref="modal-notification"
         modal-class="myclass"
         hide-footer
@@ -259,7 +260,11 @@
             </h4>
           </div>
           <div>
-            <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg" />
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
+              class="cursor-pointer"
+              @click="$bvModal.hide('modal-notification')"
+            />
           </div>
         </b-row>
 
@@ -402,6 +407,7 @@ export default {
       this.$http_komship.get('/v1/notification/list')
         .then(response => {
           const { data } = response.data
+          console.log(data)
           this.notificationTotal = data.total_notification
           this.listNotification = data.data
         })
@@ -424,8 +430,13 @@ export default {
       const currentDate = moment(new Date())
       const asHours = moment.duration(currentDate.diff(pastDate))
       const hour = Math.round(asHours.asHours())
+      const minutes = Math.round(asHours.asMinutes())
+      // console.log(moment(value).utc().fromNow())
       let format = ''
-      if (hour <= 3) {
+      if (hour === 0) {
+        format = `${minutes} menit yang lalu`
+      }
+      if (hour === 1 || hour > 1) {
         format = `${hour} jam yang lalu`
       }
       if (hour > 3 && hour < 24) {
