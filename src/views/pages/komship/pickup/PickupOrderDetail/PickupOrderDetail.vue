@@ -389,6 +389,54 @@
         </b-row>
       </template>
     </b-modal>
+
+    <b-modal
+      ref="popup-warning-downloading"
+      hide-footer
+      hide-header
+      static
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img :src="warningIcon">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <h4 class="text-black px-4">
+          <strong>
+            Batalin Download Label?
+          </strong>
+        </h4>
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black">
+          Proses penyiapan file label pengiriman belum selesai.
+        </span>
+        <br>
+        <span class="text-black">
+          Yakin mau Batalin?
+        </span>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-col cols="5">
+          <b-button
+            class="btn-icon"
+            variant="primary"
+            block
+          >
+            Lanjutin
+          </b-button>
+        </b-col>
+        <b-col cols="5">
+          <b-button
+            class="btn-icon"
+            variant="outline-primary"
+            block
+          >
+            Batalin Download
+          </b-button>
+        </b-col>
+      </b-row>
+    </b-modal>
   </b-card>
 </template>
 <script>
@@ -567,7 +615,14 @@ export default {
         this.listOrderPrint = []
       }
     },
-    popupPrintLabel() {
+    async popupPrintLabel() {
+      window.addEventListener('beforeunload', event => {
+        if (this.isDownloadActive) {
+          // eslint-disable-next-line no-param-reassign
+          event.returnValue = ''
+        }
+      })
+      this.$forceUpdate()
       this.$bvModal.show('printLabel')
       let orderIdPrint = ''
       for (let index = 0; index < this.listOrderPrint.length; index += 1) {
