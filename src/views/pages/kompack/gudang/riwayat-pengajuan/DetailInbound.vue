@@ -181,7 +181,7 @@
           <template #cell(nama_produk)="data">
             <div class="my-2 d-flex gap-2 items-center text-black">
               <b-img
-                :src="data.item.image_path"
+                :src="data.item.image_path ? data.item.image_path : 'https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg'"
                 fluid
                 class="image-product"
               />
