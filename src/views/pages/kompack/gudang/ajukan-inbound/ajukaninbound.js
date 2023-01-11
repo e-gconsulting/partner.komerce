@@ -50,13 +50,11 @@ export default {
       },
       selectAllOrder: false,
       selectedOrder: [],
-      selectedDummyOrder: [],
       noResi: '',
       // submitDisabled: true,
       disabledAddProduct: true,
       search: '',
       warehouse_Id: '',
-      StatusSelectOrder: false,
     }
   },
   mounted() {
@@ -106,14 +104,6 @@ export default {
         this.shippingType = 1
       } if (this.KirimEkspedisi) {
         this.shippingType = 2
-      }
-    },
-    back() {
-      this.TambahProduct = !this.TambahProduct
-      if (this.selectedOrder.length > 0 && this.StatusSelectOrder === true) {
-        this.TableProduct = !this.TambahProduct
-      } else {
-        this.TableProduct = false
       }
     },
     addProduct() {
@@ -220,14 +210,10 @@ export default {
     },
     addStockNow() {
       this.TambahProduct = !this.TambahProduct
-      this.selectedOrder = this.selectedDummyOrder
-      if (this.selectedOrder.length > 0) {
-        this.TableProduct = !this.TambahProduct
-        this.StatusSelectOrder = true
-      }
+      this.TableProduct = !this.TambahProduct
     },
     setData(data) {
-      this.selectedDummyOrder = data.filter(item => item.isActive === true)
+      this.selectedOrder = data.filter(item => item.isActive === true)
     },
   },
 }

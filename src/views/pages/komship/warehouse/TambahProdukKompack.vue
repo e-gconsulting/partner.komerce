@@ -163,20 +163,11 @@
             </div>
           </template>
           <template #cell(bahan_packing)="data">
-            <b-dropdown
-              :text="handlePackingText(data.item.pm)"
-              class="m-md-2 w-100"
+            <BFormSelect
+              v-model="data.item.pm"
               :disabled="disabledPackingOptions(data.item.id)"
-              variant="outline-dark"
-            >
-              <b-form-checkbox-group
-                v-model="data.item.pm"
-                :options="packingOptions"
-                multiple
-                stacked
-                class="p-1 space-y-3 w-100"
-              />
-            </b-dropdown>
+              :options="packingOptions"
+            />
           </template>
         </BTable>
       </BOverlay>
@@ -265,8 +256,10 @@
 <script>
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { BFormSelect } from 'bootstrap-vue'
 
 export default {
+  components: { BFormSelect },
   data() {
     return {
       loading: false,
@@ -275,7 +268,9 @@ export default {
       selected: [],
       partnerId: JSON.parse(localStorage.getItem('userData')),
       searchProduct: '',
-      packingOptions: [],
+      packingOptions: [
+        { value: null, text: 'Pilih bahan packing' },
+      ],
       fields: [
         {
           key: 'checkbox',
@@ -323,7 +318,7 @@ export default {
             fontSize: '13px',
             color: 'black',
           },
-          tdClass: 'text-black',
+          tdClass: 'text-black align-top',
         },
         {
           key: 'bahan_packing',
@@ -410,7 +405,7 @@ export default {
           const { data } = response.data
           const updated = data.map(item => {
             const newItem = { ...item }
-            newItem.pm = []
+            newItem.pm = null
             return newItem
           })
           if (updated.length < this.limits) {
@@ -523,7 +518,7 @@ export default {
     },
     handleDisableTambah() {
       for (let i = 0; i < this.selected.length; i += 1) {
-        if (this.selected[i].pm.length === 0) return true
+        if (this.selected[i].pm === null) return true
       }
       if (this.selected.length === 0) return true
       if (this.products.length === 0) return true

@@ -147,11 +147,17 @@
           </div>
         </template>
       </b-table>
-      <b-img
-        src="@/assets/images/icons/add-circle.svg"
-        class="cursor-pointer button-add-inbound"
-        @click="handleAddInbound()"
-      />
+      <div class="hidden">
+        <b-button
+          variant="primary"
+          class="rounded-pill p-1"
+        >
+          <feather-icon
+            icon="PlusIcon"
+            size="35"
+          />
+        </b-button>
+      </div>
     </div>
   </div>
 </template>
@@ -355,11 +361,6 @@ export default {
     formatDateFilter(value) {
       return moment(value).format('YYYY-MM-DD')
     },
-    handleAddInbound() {
-      this.$router.push({
-        path: '/ajukan-inbound',
-      })
-    },
   },
 }
 </script>
@@ -368,12 +369,5 @@ export default {
 .padding-arrow {
   padding-top: 5px;
   padding-bottom: 5px;
-}
-
-.button-add-inbound {
-  position: fixed;
-  right: 85px;
-  bottom: 60px;
-  z-index: 99;
 }
 </style>

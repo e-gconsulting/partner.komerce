@@ -57,8 +57,8 @@
             >
             <p class="h-text-xs mb-0">Tarik Saldo</p>
           </a>
-          <b-button
-            to="/keuangan/saldo/detail"
+          <a
+            href="/keuangan/saldo/detail"
             class="
               d-flex
               text-reset
@@ -66,14 +66,13 @@
               justify-content-center
               align-items-center
             "
-            variant="flat-light"
           >
             <img
               src="@/assets/images/icons/document-text.svg"
               alt="Detail"
             >
             <p class="h-text-xs mb-0">Detail</p>
-          </b-button>
+          </a>
         </div>
       </div>
     </div>
@@ -365,13 +364,12 @@
                     {{ riwayat.sisaSaldo == null ? '-' : formatRupiah(riwayat.sisaSaldo) }}
                   </td> -->
                   <td>
-                    <b-button
-                      variant="flat-info"
-                      :to="'/keuangan/saldo/rincian/' + riwayat.id"
+                    <a
+                      :href="'/keuangan/saldo/rincian/' + riwayat.id"
                       class="text-info"
                     >
                       Lihat Detail
-                  </b-button>
+                    </a>
                   </td>
                 </tr>
               </tbody>
