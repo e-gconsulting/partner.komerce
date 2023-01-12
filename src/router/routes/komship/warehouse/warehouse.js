@@ -29,9 +29,18 @@ export default [
     },
   },
   {
-    path: '/detail-gudang-kompack/:id/pengeluaran-barang',
-    name: 'pengeluaran-barang',
-    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/Penarikan.vue'),
+    path: '/penarikan-barang/:id',
+    name: 'penarikan-barang',
+    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/PenarikanBarang.vue'),
+    meta: {
+      resource: 'Gudang Komship',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/penarikan-barang/detail/:id',
+    name: 'detail-penarikan-barang',
+    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/Detail.vue'),
     meta: {
       resource: 'Gudang Komship',
       action: 'manage',

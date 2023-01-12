@@ -127,7 +127,7 @@
             id="penarikanBarang"
             style="padding: 7px;"
             variant="outline-primary"
-            @click="$router.push({ name: 'pengeluaran-barang' })"
+            @click="$router.push({ name: 'penarikan-barang' })"
           >
             <img
               class="w-6"

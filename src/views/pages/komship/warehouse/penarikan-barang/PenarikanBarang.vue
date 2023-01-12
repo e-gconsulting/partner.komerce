@@ -1,5 +1,16 @@
 <template>
   <BCard body>
+    <b-button
+      variant="primary"
+      size="sm"
+      class="mr-1 rounded-lg p-0"
+      @click="$router.go(-1)"
+    >
+      <feather-icon
+        size="2x"
+        icon="ChevronLeftIcon"
+      />
+    </b-button>
     <h4 class="font-bold text-black d-inline-flex mb-0">
       Penarikan Barang
     </h4>
