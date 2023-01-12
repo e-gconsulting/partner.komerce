@@ -419,10 +419,12 @@ export default {
         })
       if (data.notification_type === 'withdrawal') {
         this.$refs['modal-notification'].hide()
-        this.$router.push({ path: `/keuangan/saldo/rincian/${data.reference_id}` })
+        this.$router.replace({ path: `/keuangan/saldo/rincian/${data.reference_id}` }).catch(() => {})
+        window.location.reload()
       } else {
         this.$refs['modal-notification'].hide()
-        this.$router.push({ path: `/ticketing/detail/${data.reference_id}` })
+        this.$router.replace({ path: `/ticketing/detail/${data.reference_id}` }).catch(() => {})
+        window.location.reload()
       }
     },
     getFormatDate(value) {
