@@ -136,15 +136,15 @@ export default {
     },
     setQuantity(status, product, index, item) {
       if (status === 'plus') {
-        this.listProdukEdit[product].variant[index].stock += 1
-        if (this.listProdukEdit[product].variant[index].stock > 0) {
+        this.listProdukEdit[product].variant[index].stockEdit += 1
+        if (this.listProdukEdit[product].variant[index].stockEdit > 0) {
           // eslint-disable-next-line no-param-reassign
           item.isActive = true
         }
       } else if (status === 'minus') {
-        this.listProdukEdit[product].variant[index].stock -= 1
-        if (this.listProdukEdit[product].variant[index].stock <= 0) {
-          this.listProdukEdit[product].variant[index].stock = 0
+        this.listProdukEdit[product].variant[index].stockEdit -= 1
+        if (this.listProdukEdit[product].variant[index].stockEdit <= 0) {
+          this.listProdukEdit[product].variant[index].stockEdit = 0
           // eslint-disable-next-line no-param-reassign
           item.isActive = false
         }
@@ -152,15 +152,15 @@ export default {
     },
     setQuantityNoVariant(status, product, item) {
       if (status === 'plus') {
-        this.listProdukEdit[product].stock += 1
-        if (this.listProdukEdit[product].stock > 0) {
+        this.listProdukEdit[product].stockEdit += 1
+        if (this.listProdukEdit[product].stockEdit > 0) {
           // eslint-disable-next-line no-param-reassign
           item.isActive = true
         }
       } else if (status === 'minus') {
-        this.listProdukEdit[product].stock -= 1
-        if (this.listProdukEdit[product].stock <= 0) {
-          this.listProdukEdit[product].stock = 0
+        this.listProdukEdit[product].stockEdit -= 1
+        if (this.listProdukEdit[product].stockEdit <= 0) {
+          this.listProdukEdit[product].stockEdit = 0
           // eslint-disable-next-line no-param-reassign
           item.isActive = false
         }
