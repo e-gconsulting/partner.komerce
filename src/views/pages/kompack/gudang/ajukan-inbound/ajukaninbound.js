@@ -82,6 +82,11 @@ export default {
           this.listProdukDB = response.data.data.map(item => ({
             ...item,
             isActive: false,
+            stockEdit: 0,
+            variant: item.variant.map(variant => ({
+              ...variant,
+              stockEdit: 0,
+            })),
           }))
           this.listProdukEdit = this.listProdukDB
         })
@@ -166,10 +171,10 @@ export default {
       const product = await this.selectedOrder.map(object => ({
         product_id: object.id,
         is_variant: object.is_variant,
-        total_inbound: object.stock,
+        total_inbound: object.stockEdit,
         variant: object.variant.map(variant => ({
           option_id: variant.option_id,
-          total_inbound: variant.stock,
+          total_inbound: variant.stockEdit,
         })),
       }))
 

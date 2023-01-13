@@ -11,7 +11,7 @@
           <b-button
             :disabled="submitDisabled()"
             :variant="submitDisabled() ? 'secondary' : 'primary'"
-            @click="submitInbound"
+            @click.once="submitInbound"
           >
             Ajukan Inbound
           </b-button>
@@ -203,7 +203,7 @@
             Variasi
           </b-col>
           <b-col cols="3">
-            Stok Produk
+            Jumlah Inbound
           </b-col>
         </b-row>
         <div
@@ -212,10 +212,16 @@
         >
           <b-row class="my-2">
             <b-col cols="3">
-              <b-row class="text-start ml-3">
+              <b-row class="text-start ml-3 d-flex">
                 <b-img
-                  class="w-14"
+                  v-if="item.image_path !== null"
+                  class="w-12"
                   :src="item.image_path"
+                />
+                <b-img
+                  v-else
+                  class="w-12"
+                  src="https://storage.googleapis.com/komerce/assets/gallery-add.svg"
                 />
                 <span class="ml-1">{{ item.product_name }}</span>
               </b-row>
@@ -374,10 +380,16 @@
               />
             </b-col>
             <b-col cols="3">
-              <b-row class="text-start">
+              <b-row class="text-start d-flex">
                 <b-img
-                  class="w-14"
+                  v-if="item.image_path !== null"
+                  class="w-12"
                   :src="item.image_path"
+                />
+                <b-img
+                  v-else
+                  class="w-12"
+                  src="https://storage.googleapis.com/komerce/assets/gallery-add.svg"
                 />
                 <span class="ml-1">{{ item.product_name }}</span>
               </b-row>
@@ -434,9 +446,9 @@
                     md="6"
                   >
                     <b-input
-                      v-model="variant.stock"
+                      v-model="variant.stockEdit"
                       class="align-self-center text-center input-stock"
-                      @input="inputStock(variant.stock, item)"
+                      @input="inputStock(variant.stockEdit, item)"
                     />
                   </b-col>
                   <b-col
@@ -478,10 +490,10 @@
                       md="6"
                     >
                       <b-input
-                        v-model="itemvariant.stock"
+                        v-model="itemvariant.stockEdit"
                         class="align-self-center text-center input-stock"
 
-                        @input="inputStock(itemvariant.stock, item)"
+                        @input="inputStock(itemvariant.stockEdit, item)"
                       />
                     </b-col>
                     <b-col
@@ -490,7 +502,7 @@
                       md="3"
                     >
                       <b-button
-                        class="plus-button  "
+                        class="plus-button"
                         variant="outline-primary"
                         @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
                       >
@@ -521,9 +533,9 @@
                     md="6"
                   >
                     <b-input
-                      v-model="item.stock"
+                      v-model="item.stockEdit"
                       class="align-self-center text-center input-stock"
-                      @input="inputStock(item.stock, item)"
+                      @input="inputStock(item.stockEdit, item)"
                     />
                   </b-col>
                   <b-col
