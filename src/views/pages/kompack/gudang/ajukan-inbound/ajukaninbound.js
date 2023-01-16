@@ -125,13 +125,24 @@ export default {
       this.TambahProduct = !this.TambahProduct
       this.TableProduct = !this.TambahProduct
     },
-    inputStock(stock, item) {
-      if (stock > 0) {
-        // eslint-disable-next-line no-param-reassign
-        item.isActive = true
-      } else {
+    inputStock(stock, product, index, item) {
+      if (stock < 0) {
+        this.listProdukEdit[product].variant[index].stockEdit = 0
         // eslint-disable-next-line no-param-reassign
         item.isActive = false
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = true
+      }
+    },
+    inputStockNoVariant(stock, product, item) {
+      if (stock < 0) {
+        this.listProdukEdit[product].stockEdit = 0
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = false
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = true
       }
     },
     setQuantity(status, product, index, item) {
