@@ -258,6 +258,10 @@ export default
           name: 'SICEPAT',
           onCheck: false,
         },
+        {
+          name: 'SAP',
+          onCheck: false,
+        },
       ],
       filterEkspedisi: [],
       loadingCreateTicket: false,
