@@ -448,8 +448,9 @@
                     >
                       <b-input
                         v-model="variant.stockEdit"
+                        type="number"
                         class="align-self-center text-center input-stock"
-                        @input="inputStock(variant.stockEdit, item)"
+                        @keyup="inputStock(variant.stockEdit, item)"
                       />
                     </b-col>
                     <b-col
@@ -492,9 +493,9 @@
                       >
                         <b-input
                           v-model="itemvariant.stockEdit"
+                          type="number"
                           class="align-self-center text-center input-stock"
-
-                          @input="inputStock(itemvariant.stockEdit, item)"
+                          @keyup="inputStock(itemvariant.stockEdit, item)"
                         />
                       </b-col>
                       <b-col
@@ -535,8 +536,9 @@
                     >
                       <b-input
                         v-model="item.stockEdit"
+                        type="number"
                         class="align-self-center text-center input-stock"
-                        @input="inputStock(item.stockEdit, item)"
+                        @keyup="inputStock(item.stockEdit, item)"
                       />
                     </b-col>
                     <b-col

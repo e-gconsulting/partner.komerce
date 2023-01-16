@@ -136,7 +136,8 @@ export default {
     },
     setQuantity(status, product, index, item) {
       if (status === 'plus') {
-        this.listProdukEdit[product].variant[index].stockEdit += 1
+        // eslint-disable-next-line no-plusplus
+        this.listProdukEdit[product].variant[index].stockEdit++
         if (this.listProdukEdit[product].variant[index].stockEdit > 0) {
           // eslint-disable-next-line no-param-reassign
           item.isActive = true
@@ -152,7 +153,8 @@ export default {
     },
     setQuantityNoVariant(status, product, item) {
       if (status === 'plus') {
-        this.listProdukEdit[product].stockEdit += 1
+        // eslint-disable-next-line no-plusplus
+        this.listProdukEdit[product].stockEdit++
         if (this.listProdukEdit[product].stockEdit > 0) {
           // eslint-disable-next-line no-param-reassign
           item.isActive = true
