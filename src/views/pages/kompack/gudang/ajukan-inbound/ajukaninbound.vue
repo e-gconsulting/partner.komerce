@@ -260,7 +260,7 @@
                   class="justify-content-center h-12"
                 >
                   <div class="align-self-center">
-                    {{ variant.stock }}
+                    {{ variant.stockEdit }}
                   </div>
                 </b-row>
                 <b-collapse :id="`variant-${String(index)}`">
@@ -270,7 +270,7 @@
                     class="justify-content-center h-10"
                   >
                     <div class="align-self-center">
-                      {{ itemvariant.stock }}
+                      {{ itemvariant.stockEdit }}
                     </div>
                   </b-row>
                 </b-collapse>
@@ -278,7 +278,7 @@
               <div v-else>
                 <b-row class="justify-content-center mb-1">
                   <div class="align-self-center h-10">
-                    {{ item.stock }}
+                    {{ item.stockEdit }}
                   </div>
                 </b-row>
               </div>
@@ -450,7 +450,7 @@
                         v-model="variant.stockEdit"
                         type="number"
                         class="align-self-center text-center input-stock"
-                        @keyup="inputStock(variant.stockEdit, item)"
+                        @keyup="inputStock(variant.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
                       />
                     </b-col>
                     <b-col
@@ -495,7 +495,7 @@
                           v-model="itemvariant.stockEdit"
                           type="number"
                           class="align-self-center text-center input-stock"
-                          @keyup="inputStock(itemvariant.stockEdit, item)"
+                          @keyup="inputStock(itemvariant.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
                         />
                       </b-col>
                       <b-col
@@ -538,7 +538,7 @@
                         v-model="item.stockEdit"
                         type="number"
                         class="align-self-center text-center input-stock"
-                        @keyup="inputStock(item.stockEdit, item)"
+                        @keyup="inputStockNoVariant(item.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item)"
                       />
                     </b-col>
                     <b-col
