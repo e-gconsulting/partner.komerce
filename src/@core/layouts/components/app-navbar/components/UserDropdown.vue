@@ -12,9 +12,38 @@
             class="d-flex justify-content-end pr-3"
           >
             <div class="d-sm-flex d-none user-nav">
-              <h4 class="user-name font-weight-bolder mb-0 text-black">
-                {{ greetingsTime }} {{ $store.state.auth.userData.full_name || $store.state.auth.userData.username }}
-              </h4>
+              <div class="d-flex">
+                <div
+                  v-if="juragan === 'Juragan'"
+                  class="mr-1"
+                >
+                  <b-img
+                    id="popover-juragan"
+                    :src="iconJuragan"
+                  />
+                  <b-popover
+                    target="popover-juragan"
+                    triggers="hover"
+                    placement="bottomleft"
+                  >
+                    <div class="text-black font-medium">
+                      Kamu masuk kategori top user Komerce.
+                    </div>
+                    <div class="text-black font-medium">
+                      Akun kamu akan mendapatkan pelayanan istimewa dari kami &#128521;
+                    </div>
+                  </b-popover>
+                </div>
+                <h4
+                  v-else
+                  class="user-name d-flex font-weight-bolder mb-0 text-black"
+                >
+                  {{ greetingsTime }}
+                </h4>
+                <h4 class="user-name d-flex font-weight-bolder mb-0 text-black">
+                  {{ $store.state.auth.userData.full_name || $store.state.auth.userData.username }}
+                </h4>
+              </div>
               <h4 class="user-status text-black">
                 {{ $store.state.auth.userData.role }}
               </h4>
@@ -158,7 +187,6 @@
                 </svg>
 
                 <span
-                  id="popover-kompoints"
                   class="text-black ml-50"
                 >
                   <strong>
@@ -177,7 +205,6 @@
                 </small>
               </b-row>
             </b-popover>
-
           </b-col>
         </b-row>
         <b-avatar
@@ -240,7 +267,10 @@
         @click="showNotification"
       >
         <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/notification-1.svg" />
-        <div class="wrapper-notification-count">
+        <div
+          v-if="notificationTotal > 0"
+          class="wrapper-notification-count"
+        >
           <span class="text-white font-semibold">{{ notificationTotal }}</span>
         </div>
       </b-button>
@@ -336,6 +366,8 @@ export default {
 
       listNotification: [],
       moment,
+      juragan: '',
+      iconJuragan: 'https://storage.googleapis.com/komerce/assets/icons/badge_juragan.svg',
     }
   },
   setup() {
@@ -384,6 +416,7 @@ export default {
   },
   mounted() {
     this.getListNotification()
+    this.badgeJuragan()
   },
   methods: {
     logout() {
@@ -450,6 +483,12 @@ export default {
         format = `${moment(new Date(value)).format('DD MMMM YYYY HH.mm')}`
       }
       return format
+    },
+    badgeJuragan() {
+      this.$http_komship.get('v1/partner/badge')
+        .then(response => {
+          this.juragan = response.data.data.level
+        })
     },
   },
 }
