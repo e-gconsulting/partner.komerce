@@ -282,7 +282,7 @@
                 class="p-0"
                 style="border-radius:50%;width:25px;height:25px"
                 size="sm"
-                @click="data.item.total_inbound +=1"
+                @click="data.item.total_inbound++"
               >
                 <span class="font-bold text-lg">+</span>
               </b-button>
@@ -465,7 +465,7 @@ export default {
     },
     setQuantity(status, product, index) {
       if (status === 'plus') {
-        this.detailInbound.products[product].variant[index].total_inbound += 1
+        this.detailInbound.products[product].variant[index].total_inbound++
       } else if (status === 'minus') {
         this.detailInbound.products[product].variant[index].total_inbound -= 1
       }

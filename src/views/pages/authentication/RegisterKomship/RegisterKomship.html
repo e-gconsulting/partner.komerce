@@ -280,7 +280,7 @@
                         type="submit"
                         variant="primary"
                         block
-                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8 || couponCodeLengthError || couponNotFound || isAffiliate"
+                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8 || couponCodeLengthError || couponNotFound || isAffiliate || loading"
                       >
                         <b-spinner
                           v-if="loading"
@@ -398,7 +398,7 @@
                         type="submit"
                         variant="primary"
                         block
-                        :disabled="invalid || agree === false"
+                        :disabled="invalid || agree === false || loading"
                       >
                         <b-spinner
                           v-if="loading"
@@ -722,7 +722,7 @@
                         type="submit"
                         variant="primary"
                         block
-                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8"
+                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8 || loading"
                       >
                         <b-spinner
                           v-if="loading"
@@ -839,7 +839,7 @@
                         type="submit"
                         variant="primary"
                         block
-                        :disabled="invalid || agree === false"
+                        :disabled="invalid || agree === false || loading"
                       >
                         <b-spinner
                           v-if="loading"
