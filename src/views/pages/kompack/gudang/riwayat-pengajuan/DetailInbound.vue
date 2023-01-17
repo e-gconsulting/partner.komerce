@@ -465,6 +465,7 @@ export default {
     },
     setQuantity(status, product, index) {
       if (status === 'plus') {
+        // eslint-disable-next-line no-plusplus
         this.detailInbound.products[product].variant[index].total_inbound++
       } else if (status === 'minus') {
         this.detailInbound.products[product].variant[index].total_inbound -= 1
