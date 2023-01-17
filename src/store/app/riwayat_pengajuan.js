@@ -89,11 +89,13 @@ export default {
       }
     },
 
-    async getListBerlangganan({ commit, rootState }) {
+    async getListBerlangganan({ commit, rootState }, query) {
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
-          '/v1/komship/submission/history/subscribe',
+          '/v1/komship/submission/history/subscribe', {
+            params: query,
+          },
         )
         commit('LIST_BERLANGGANAN', response.data.data)
       } catch (e) {

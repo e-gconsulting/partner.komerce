@@ -85,6 +85,7 @@
         class="top-36"
       />
       <b-table
+        id="table"
         small
         class="text-center"
         :fields="fields"
@@ -201,12 +202,9 @@ export default {
 
       loading: false,
 
-      // options: [
-      //   {
-      //     value: '',
-      //     text: 'Semua Gudang',
-      //   },
-      // ],
+      limit: 50,
+      offset: 0,
+      lastData: false,
 
       warehouse: [
         {
@@ -275,6 +273,14 @@ export default {
     localStorage.removeItem('warehouse_id')
   },
 
+  mounted() {
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('table').offsetHeight && !this.loading) {
+        this.fetchNextRiwayatInbound()
+      }
+    }
+  },
+
   methods: {
     fetchRiwayatInbound() {
       this.loading = true
@@ -283,10 +289,21 @@ export default {
           start_date: this.formatDateFilter(this.dateRange.startDate),
           end_date: this.formatDateFilter(this.dateRange.endDate),
           warehouse_id: this.partnerList,
+          limit: this.limit,
+          offset: this.offset,
         })
         .then(() => {
           this.items = this.inbound
           this.loading = false
+          if (this.partnerList) this.offset = 0
+          if (this.dateRange.startDate) this.offset = 0
+          if (this.dateRange.endDate) this.offset = 0
+          else this.offset = this.inbound.length
+          if (this.inbound.length < this.limit) {
+            this.lastData = true
+          } else {
+            this.lastData = false
+          }
         })
         .catch(() => {
           this.loading = false
@@ -303,6 +320,42 @@ export default {
             2000,
           )
         })
+    },
+    fetchNextRiwayatInbound() {
+      if (!this.lastData) {
+        this.loading = true
+        this.$store
+          .dispatch('riwayatPengajuan/getListInbound', {
+            start_date: this.formatDateFilter(this.dateRange.startDate),
+            end_date: this.formatDateFilter(this.dateRange.endDate),
+            warehouse_id: this.partnerList,
+            limit: this.limit,
+            offset: this.offset,
+          })
+          .then(() => {
+            this.items.push(...this.inbound)
+            this.offset += this.inbound.length
+            if (this.inbound.length < this.limit) {
+              this.lastData = true
+            }
+            this.loading = false
+          })
+          .catch(() => {
+            this.loading = false
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal load data, silahkan coba lagi',
+                  variant: 'danger',
+                },
+              },
+              2000,
+            )
+          })
+      }
     },
 
     fetchListWarehouses() {

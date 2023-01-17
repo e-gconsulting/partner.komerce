@@ -52,7 +52,7 @@ export default {
       selectedOrder: [],
       selectedDummyOrder: [],
       noResi: '',
-      // submitDisabled: true,
+      DisabledSubmit: true,
       disabledAddProduct: true,
       search: '',
       warehouse_Id: '',
@@ -162,6 +162,7 @@ export default {
       }
     },
     async submitInbound() {
+      this.DisabledSubmit = true
       const product = await this.selectedOrder.map(object => ({
         product_id: object.id,
         is_variant: object.is_variant,
@@ -205,7 +206,7 @@ export default {
     },
     submitDisabled() {
       let result = true
-      if (this.addressSender !== '' && this.warehouse !== '' && this.selectedOrder.length > 0 && ((this.ekspedisi !== '' && this.noResi !== '') || (this.pickupDate !== '' && this.estimateDate !== ''))) {
+      if (this.DisabledSubmit === false && (this.addressSender !== '' && this.warehouse !== '' && ((this.ekspedisi !== '' && this.noResi !== '') || (this.pickupDate !== '' && this.estimateDate !== '')))) {
         result = false
       } else {
         result = true
@@ -224,6 +225,9 @@ export default {
       if (this.selectedOrder.length > 0) {
         this.TableProduct = !this.TambahProduct
         this.StatusSelectOrder = true
+        this.DisabledSubmit = false
+      } else {
+        this.DisabledSubmit = true
       }
     },
     setData(data) {
