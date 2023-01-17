@@ -39,7 +39,7 @@
         <b-button
           variant="outline-primary"
           class="px-3"
-          @click.once="handleSave()"
+          @click="handleSave()"
         >Simpan</b-button>
       </div>
       <div
@@ -181,7 +181,7 @@
           <template #cell(nama_produk)="data">
             <div class="my-2 d-flex gap-2 items-center text-black">
               <b-img
-                :src="data.item.image_path"
+                :src="data.item.image_path ? data.item.image_path : 'https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg'"
                 fluid
                 class="image-product"
               />
@@ -592,7 +592,6 @@ export default {
             })
           }
         }
-        this.body = []
         this.body.push({
           product_id: this.detailInbound.products[i].id,
           is_variant: this.detailInbound.products[i].is_variant,
