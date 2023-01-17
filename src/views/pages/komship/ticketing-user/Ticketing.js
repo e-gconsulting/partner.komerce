@@ -258,6 +258,10 @@ export default
           name: 'SICEPAT',
           onCheck: false,
         },
+        {
+          name: 'SAP',
+          onCheck: false,
+        },
       ],
       filterEkspedisi: [],
       loadingCreateTicket: false,
@@ -606,8 +610,42 @@ export default
       }
       return resultVariant
     },
-    searchTicket: _.debounce(function () {
-      this.fetchTicket()
+    searchTicket: _.debounce(async function () {
+      this.ticketStatus = []
+      this.filterTicketType = []
+      this.filterEkspedisi = []
+      this.loadingDataTable = true
+      const params = {}
+      if (this.search) Object.assign(params, { search: this.search })
+      if (this.searchType) Object.assign(params, { search_type: this.searchType.value })
+      await this.$http_komship.get('/v1/ticket-partner/list', {
+        params,
+      })
+        .then(async response => {
+          await this.fetchTicketUnread()
+          if (response.data.code !== 400) {
+            const { data } = response.data.data
+            this.itemsTicket = data
+            this.totalRows = response.data.data.total
+            this.loadingDataTable = false
+          } else {
+            this.itemsTicket = []
+            this.loadingDataTable = false
+          }
+        })
+        .catch(err => {
+          this.itemsTicket = []
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.data.message,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
     }, 1000),
     async clearFilter() {
       this.unreadMode = false
