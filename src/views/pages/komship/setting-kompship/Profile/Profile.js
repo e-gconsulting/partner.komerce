@@ -24,6 +24,7 @@ import useJwt from '@/auth/jwt/useJwt'
 import PincodeInput from 'vue-pincode-input'
 import { NoSpace } from '@/libs/helpers'
 import { mapState } from 'vuex'
+import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 
 export default {
   components: {
@@ -44,6 +45,7 @@ export default {
     BSpinner,
     BOverlay,
     PincodeInput,
+    LottieAnimation,
   },
   directives: {
     Ripple,
@@ -146,6 +148,29 @@ export default {
 
       usernameExist: false,
       NoSpace,
+
+      boxIsClicked: '',
+      loadingSendVerificationEmail: false,
+      loadingSendVerificationNo: false,
+      titleVerification: '',
+      verificationMode: '',
+      verificationDescriptionMode: '',
+      otpItem: '',
+      autofocusInputOtp: false,
+      otpSubmit: 0,
+      errorNumber: false,
+      newNumberItem: '',
+      sameOldNumber: false,
+
+      loadingNew: false,
+      otpIsWrong: false,
+      activityOtp: '',
+
+      activityEdit: '',
+      titlePopup: '',
+      confirmChangeTitlePopup: '',
+      newEmailItem: '',
+      errorEmail: '',
     }
   },
   computed: {
@@ -385,9 +410,6 @@ export default {
     },
     async openModalEdit(data) {
       this.editMode = data
-      if (data === 'number') {
-        this.nameLabelEdit = 'No HP'
-      }
       if (data === 'username') {
         this.modalTitle = await 'Edit Username'
         this.modalSubtitle = await 'Kamu hanya dapat mengganti username satu kali'
@@ -771,6 +793,303 @@ export default {
       this.messageErrorPassword = false
       this.messageErrorUsernameIsSame = false
       this.usernameExist = false
+    },
+    popupEdit(data) {
+      this.activityEdit = data
+      if (this.activityEdit === 'email') {
+        this.titlePopup = 'Edit Email'
+      }
+      if (this.activityEdit === 'nomer') {
+        this.titlePopup = 'Edit Nomer HP'
+      }
+      this.$refs['popup-edit-nomer'].show()
+    },
+    editNomerHp(data) {
+      this.loadingNew = true
+      this.boxIsClicked = data
+      if (data === 'email') {
+        this.titleVerification = 'Verifikasi Email'
+        this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui e-mail ke ${this.censorEmail(this.profile.user_email)}`
+        this.loadingSendVerificationEmail = true
+        this.activityOtp = 'UPDATE_EMAIL'
+        this.$http_komship.post('/v1/user/send/otp/email', {
+          activity: this.activityOtp,
+          email: this.profile.user_email,
+        }).then(response => {
+          this.otpSubmit = response.data.data.check_request_otp
+          this.countOtp = response.data.data.expired_at
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
+          if (this.countOtp > 0) this.countDownTimer()
+          this.autofocusInputOtp = true
+          this.$refs['popup-edit-nomer'].hide()
+          this.$refs['popup-new-verification'].show()
+          this.loadingNew = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingNew = false
+          this.boxIsClicked = ''
+        })
+      }
+      if (data === 'no') {
+        this.titleVerification = 'Verifikasi OTP'
+        this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui SMS ke ${this.censorPhone(this.profile.user_phone)}`
+        this.loadingSendVerificationNo = true
+        this.activityOtp = 'UPDATE_PHONE_NUMBER'
+        this.$http_komship.post('/v1/user/check-activity', {
+          email: this.emailUser,
+          activity: this.activityOtp,
+        })
+        this.$http_komship.post('/v2/partner/sms/otp', {
+          phone_number: this.noHP,
+          session: 'otp number',
+        }).then(response => {
+          this.otpSubmit = response.data.data.check_request_otp
+          this.countOtp = response.data.data.expired_at
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
+          if (this.countOtp > 0) this.countDownTimer()
+          this.autofocusInputOtp = true
+          this.$refs['popup-edit-nomer'].hide()
+          this.$refs['popup-new-verification'].show()
+          this.loadingNew = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingNew = false
+          this.boxIsClicked = ''
+        })
+      }
+    },
+    handleClosePopupEditNomer() {
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.$refs['popup-edit-nomer'].hide()
+    },
+    handleCloseNewVerification() {
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.$refs['popup-new-phone'].hide()
+    },
+    newCheckOtp: _.debounce(function () {
+      this.otpIsWrong = false
+      if (this.otpItem.length === 6) {
+        this.autofocusInputOtp = false
+        if (this.activityOtp === 'UPDATE_EMAIL') {
+          this.$http_komship.post('/v1/user/send/otp/email/check', {
+            otp: Number(this.otpItem),
+            activity: this.activityOtp,
+          }).then(response => {
+            this.$refs['popup-new-verification'].hide()
+            this.$refs['popup-new-phone'].show()
+            this.countOtp = 0
+          }).catch(err => {
+            this.otpIsWrong = true
+          })
+        }
+        if (this.activityOtp !== 'UPDATE_EMAIL') {
+          this.$http_komship.post('/v2/partner/sms/otp/verification', {
+            otp: Number(this.otpItem),
+            session: 'otp number',
+          }).then(response => {
+            this.$refs['popup-new-verification'].hide()
+            this.$refs['popup-new-phone'].show()
+            this.countOtp = 0
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+            this.otpIsWrong = true
+          })
+        }
+      }
+    }, 1000),
+    sendOtpAgain() {
+      this.editNomerHp()
+    },
+    checkFormatNumberOnBlur() {
+      if (this.newNumberItem.length < 8) {
+        this.errorNumber = true
+      } else {
+        this.errorNumber = false
+      }
+      if (this.profile.user_phone === this.newNumberItem) {
+        this.sameOldNumber = true
+      } else {
+        this.sameOldNumber = false
+      }
+    },
+    checkFormatEmailOnBlur() {
+      if (String(this.newEmailItem)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        )) {
+        this.errorEmail = false
+      } else {
+        this.errorEmail = true
+      }
+    },
+    checkFormatNumber() {
+      if (this.errorNumber) {
+        if (this.newNumberItem.length < 8) {
+          this.errorNumber = true
+        } else {
+          this.errorNumber = false
+        }
+      }
+      if (this.sameOldNumber) {
+        if (this.profile.user_phone === this.newNumberItem) {
+          this.sameOldNumber = true
+        } else {
+          this.sameOldNumber = false
+        }
+      }
+    },
+    checkFormatEmail() {
+      if (String(this.newEmailItem)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        )) {
+        this.errorEmail = false
+      } else {
+        this.errorEmail = true
+      }
+    },
+    nextStepVerificationChangeNo() {
+      this.loadingNew = true
+      const params = {}
+      let url
+      if (this.activityEdit === 'email') {
+        url = '/v1/user/send/otp/email'
+        Object.assign(params, { email: this.newEmailItem })
+        Object.assign(params, { session: 'update email' })
+        Object.assign(params, { activity: 'UPDATE_EMAIL' })
+      }
+      if (this.activityEdit === 'nomer') {
+        url = '/v2/partner/sms/otp'
+        Object.assign(params, { phone_number: this.newNumberItem })
+        Object.assign(params, { session: 'update nomer' })
+      }
+      this.$http_komship.post(url, params).then(response => {
+        this.otpSubmit = response.data.data.check_request_otp
+        this.countOtp = response.data.data.expired_at
+        if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
+        if (this.countOtp > 0) this.countDownTimer()
+        this.autofocusInputOtp = true
+        this.$refs['popup-new-phone'].hide()
+        this.$refs['popup-new-otp-verification'].show()
+        this.loadingNew = false
+        this.otpItem = ''
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+        this.loadingNew = false
+      })
+    },
+    newCheckConfirmOtp: _.debounce(function () {
+      this.otpIsWrong = false
+      if (this.otpItem.length === 6) {
+        this.autofocusInputOtp = false
+        const paramData = {
+          otp: this.otpItem,
+        }
+        let urls
+        if (this.activityEdit === 'email') {
+          Object.assign(paramData, { session: 'update email' })
+          Object.assign(paramData, { activity: 'UPDATE_EMAIL' })
+          urls = '/v1/user/send/otp/email/check'
+        }
+        if (this.activityEdit === 'nomer') {
+          Object.assign(paramData, { session: 'update nomer' })
+          urls = '/v2/partner/sms/otp/verification'
+        }
+        this.$http_komship.post(urls, paramData).then(response => {
+          const params = {}
+          let url
+          if (this.activityEdit === 'email') {
+            url = '/v1/user/update/email'
+            Object.assign(params, { email: this.newEmailItem })
+          }
+          if (this.activityEdit === 'nomer') {
+            url = '/v1/user/update/phonenumber'
+            Object.assign(params, { phone_number: this.newNumberItem })
+          }
+          this.$http_komship.post(url, params).then(async res => {
+            this.$refs['popup-new-otp-verification'].hide()
+            this.$refs['popup-success-nomor'].show()
+            if (this.activityEdit !== 'email') {
+              await this.$store.dispatch('dashboard/getProfile')
+            } else {
+              localStorage.clear()
+            }
+          })
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.otpIsWrong = true
+        })
+      }
+    }, 1000),
+    sendOtpConfirmationAgain() {
+      this.nextStepVerificationChangeNo()
+    },
+    handleCloseNewOtpVerification() {
+      this.$refs['popup-new-otp-verification'].hide()
+    },
+    closeSuccessPopup() {
+      if (this.activityEdit === 'nomer') {
+        this.$refs['popup-success-nomor'].hide()
+      }
+      if (this.activityEdit === 'email') {
+        window.location.reload()
+      }
+    },
+    censorWord(str) {
+      return str[0] + '*'.repeat(str.length - 2) + str.slice(-1)
+    },
+    censorEmail(emails) {
+      const arr = emails.split('@')
+      return `${this.censorWord(arr[0])}@${this.censorWord(arr[1])}`
+    },
+    censorPhone(phone) {
+      return '*'.repeat(phone.length) + phone.slice(-3)
     },
   },
 
