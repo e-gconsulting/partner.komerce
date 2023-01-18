@@ -63,8 +63,8 @@ export default {
   components: { DetailBarangRusak },
   props: {
     gudang: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
     dateRange: {
       type: Object,

@@ -60,8 +60,8 @@ export default {
   components: { DetailBarangRusak },
   props: {
     gudang: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
     status: {
       type: String,
