@@ -307,12 +307,12 @@ export default
     this.receiveMessage()
   },
   async mounted() {
+    this.getJenisTicket()
     this.fetchTicketAll()
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
     this.fetchDataFirebase()
     this.getProfile()
-    this.getJenisTicket()
     this.fetchUnreadTicketAll()
     Notification.requestPermission().then(permission => {
       if (!('permission' in Notification)) {
