@@ -283,6 +283,7 @@ export default {
 
   methods: {
     fetchRiwayatInbound() {
+      this.offset = 0
       this.loading = true
       this.$store
         .dispatch('riwayatPengajuan/getListInbound', {
@@ -295,10 +296,7 @@ export default {
         .then(() => {
           this.items = this.inbound
           this.loading = false
-          if (this.partnerList) this.offset = 0
-          if (this.dateRange.startDate) this.offset = 0
-          if (this.dateRange.endDate) this.offset = 0
-          else this.offset = this.inbound.length
+          this.offset = this.inbound.length
           if (this.inbound.length < this.limit) {
             this.lastData = true
           } else {

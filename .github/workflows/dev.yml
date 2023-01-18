@@ -1,7 +1,7 @@
 name: cd
 on:
   push:
-    branches: [ development ]
+    branches: [development-kompack]
   workflow_dispatch:
 
 jobs:
@@ -11,10 +11,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install dependencies
-        run: yarn
+      - uses: actions/cache@v1 # this allows for re-using node_modules caching, making builds a bit faster.
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm cache clean --force
+      - run: npm install
       - name: Build dependencies
-        run: yarn build
+        run: npm run build
       - name: Archive development artifact
         uses: actions/upload-artifact@v3
         with:
@@ -24,20 +30,20 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Download artifact
         uses: actions/download-artifact@v3
-        with: 
+        with:
           name: dist-folder
           path: ./dist/
       - name: Deploy to devkompack.partner.komerce.my.id
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
-        with: 
+        with:
           server: ${{ secrets.ftp_server_testing }}
           username: ${{ secrets.ftp_username_testing }}
           password: ${{ secrets.ftp_password_testing }}
           port: ${{ secrets.port_21 }}
           local-dir: ./dist/
-          server-dir: ${{ secrets.dev_path }}
+          server-dir: /devkompack.partner.komerce.my.id/
