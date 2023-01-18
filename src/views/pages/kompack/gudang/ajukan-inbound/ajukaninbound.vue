@@ -2,28 +2,16 @@
   <b-card body>
     <div v-if="!TambahProduct">
       <b-row class="justify-content-between mt-2 mb-4">
-        <b-col
-          md="6"
-          xs="12"
-          class="align-self-center"
+        <h4 class="text-black font-bold mb-1">
+          Ajukan Inbound
+        </h4>
+        <b-button
+          :disabled="submitDisabled()"
+          :variant="submitDisabled() ? 'secondary' : 'primary'"
+          @click.once="submitInbound"
         >
-          <h4 class="text-black font-bold">
-            Ajukan Inbound
-          </h4>
-        </b-col>
-        <b-col
-          md="4"
-          xs="12"
-          class="text-end"
-        >
-          <b-button
-            :disabled="submitDisabled()"
-            :variant="submitDisabled() ? 'secondary' : 'primary'"
-            @click.once="submitInbound"
-          >
-            Ajukan Inbound
-          </b-button>
-        </b-col>
+          Ajukan Inbound
+        </b-button>
       </b-row>
       <div class="border-2 rounded-2xl">
         <div class="px-2 pt-2">
@@ -77,30 +65,25 @@
             <b-col
               xs="12"
               md="6"
-              class="d-flex"
+              class="d-sm-flex"
             >
-              <b-row>
-                <b-col xs="12">
-                  <b-button
-                    :variant="KirimEkspedisi ? 'outline-primary' : 'outline-dark'"
-                    class="d-flex align-items-center"
-                    @click="Ekspedisi"
-                  >
-                    <b-img src="https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg" />
-                    <span class="ml-1">Dikirim Ekspedisi</span>
-                  </b-button>
-                </b-col>
-                <b-col xs="12">
-                  <b-button
-                    :variant="KirimSendiri ? 'outline-primary' : 'outline-dark'"
-                    class="d-flex align-items-center"
-                    @click="Sendiri"
-                  >
-                    <b-img src="https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg" />
-                    <span class="ml-1">Dikirim Sendiri</span>
-                  </b-button>
-                </b-col>
-              </b-row>
+              <b-button
+                :variant="KirimEkspedisi ? 'outline-primary' : 'outline-dark'"
+                class="d-flex align-items-center mr-1"
+                @click="Ekspedisi"
+              >
+                <b-img src="https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg" />
+                <span class="ml-1">Dikirim Ekspedisi</span>
+              </b-button>
+              <br>
+              <b-button
+                :variant="KirimSendiri ? 'outline-primary' : 'outline-dark'"
+                class="d-flex align-items-center"
+                @click="Sendiri"
+              >
+                <b-img src="https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg" />
+                <span class="ml-1">Dikirim Sendiri</span>
+              </b-button>
             </b-col>
           </b-row>
           <div v-if="KirimEkspedisi">
