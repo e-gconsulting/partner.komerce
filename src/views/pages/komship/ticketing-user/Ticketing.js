@@ -803,8 +803,10 @@ export default
       this.$refs['modal-alert-notification'].hide()
     },
     showModalCreateTicket() {
+      this.getJenisTicket()
       this.$refs['modal-create-ticket'].show()
       this.changeAttr()
+      this.$forceUpdate()
     },
     getDateCreate(data) {
       const date = moment(data).format('DD MMMM YYYY')
