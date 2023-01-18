@@ -198,7 +198,7 @@ border-radius: 8px;"
           responsive
           show-empty
           empty-text="Tidak ada data untuk ditampilkan."
-          :items="list_item_rincian_penarikan"
+          :items="listWithdrawalItem"
           :fields="fields"
         >
           <template #head(shipping_cost)="data">
@@ -236,181 +236,19 @@ border-radius: 8px;"
           <template #cell(date_transaction)="data">
             <div class="d-flex flex-column">
               <span class="text-black">
-                {{ moment(new Date(data.item.date_transaction)).format('DD MMMM YYYY') }}
+                {{ moment(new Date(data.item.created_at)).format('DD MMMM YYYY') }}
               </span>
               <small class="text-black">
-                {{ moment(new Date(data.item.date_transaction)).format('HH:MM') }} WIB
+                {{ moment(new Date(data.item.created_at)).format('HH:mm') }} WIB
               </small>
             </div>
           </template>
           <template #cell(transaction_type)="data">
-            <div
-              v-if="data.item.transaction_type === 'topup'"
-              class="font-medium text-black"
-            >
-              Top UP Saldo
-            </div>
-            <div v-else-if="data.item.transaction_type === 'withdrawal'">
-              Penarikan Saldo
-            </div>
-            <div v-else-if="data.item.transaction_type === 'shopping'">
-              <div class="text-black text-md font-medium">
-                Belanja
-              </div>
-              <div class="text-xs text-secondary font-medium">
-                Keperluan talent
-              </div>
-            </div>
-            <div v-else-if="data.item. transaction_type === 'orderku_done'">
-              <div class="text-black text-md font-medium">
-                Orderan COD
-              </div>
-              <div class="text-xs text-secondary font-medium">
-                Diterima
-              </div>
-              <b-row>
+            <div v-if="data.item.description">
+              <span class="text-black">{{ labelTransactionType(data.item) }}</span>
+              <b-row v-if="data.item.shipping_logo">
                 <img
-                  :src="data.item.shipment_image_path"
-                  width="70"
-                >
-                <img
-                  :id="`${data.index}-infoSaldo`"
-                  src="@/assets/images/icons/info-circle.svg"
-                >
-              </b-row>
-              <b-popover
-                triggers="hover"
-                :target="`${data.index}-infoSaldo`"
-                placement="bottomleft"
-              >
-                <b-row class="px-2 align-items-center">
-                  <span class="text-black">
-                    <strong>
-                      Nomor Resi
-                    </strong>
-                    :
-                  </span>
-                  <span class="text-black mr-1">{{ data.item.cnote }}</span>
-                  <b-button
-                    class="btn-icon"
-                    size="sm"
-                    variant="flat-dark"
-                    @click="copyResi(data.item.cnote)"
-                  >
-                    <img
-                      id="infoSaldo"
-                      src="@/assets/images/icons/icons-copy.svg"
-                    >
-                  </b-button>
-                </b-row>
-              </b-popover>
-            </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_ongkir'">
-              <div class="text-black text-md font-medium">
-                Orderan Non COD
-              </div>
-              <div class="text-xs text-secondary font-medium">
-                Ongkir
-              </div>
-              <b-row>
-                <img
-                  :src="data.item.shipment_image_path"
-                  width="70"
-                >
-                <img
-                  :id="`${data.index}-infoSaldo`"
-                  src="@/assets/images/icons/info-circle.svg"
-                >
-              </b-row>
-              <b-popover
-                triggers="hover"
-                :target="`${data.index}-infoSaldo`"
-                placement="bottomleft"
-              >
-                <b-row class="px-2 align-items-center">
-                  <span class="text-black">
-                    <strong>
-                      Nomor Resi
-                    </strong>
-                    :
-                  </span>
-                  <span class="text-black mr-1">{{ data.item.cnote }}</span>
-                  <b-button
-                    class="btn-icon"
-                    size="sm"
-                    variant="flat-dark"
-                    @click="copyResi(data.item.cnote)"
-                  >
-                    <img
-                      id="infoSaldo"
-                      src="@/assets/images/icons/icons-copy.svg"
-                    >
-                  </b-button>
-                </b-row>
-              </b-popover>
-            </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_cancel'">
-              <div class="text-black text-md font-medium">
-                Orderan Non COD
-              </div>
-              <div class="text-xs text-secondary font-medium">
-                Dibatalkan
-              </div>
-              <b-row>
-                <img
-                  :src="data.item.shipment_image_path"
-                  width="70"
-                >
-                <img
-                  :id="`${data.index}-infoSaldo`"
-                  src="@/assets/images/icons/info-circle.svg"
-                >
-              </b-row>
-              <b-popover
-                triggers="hover"
-                :target="`${data.index}-infoSaldo`"
-                placement="bottomleft"
-              >
-                <b-row class="px-2 align-items-center">
-                  <span class="text-black">
-                    <strong>
-                      Nomor Resi
-                    </strong>
-                    :
-                  </span>
-                  <span class="text-black mr-1">{{ data.item.cnote }}</span>
-                  <b-button
-                    class="btn-icon"
-                    size="sm"
-                    variant="flat-dark"
-                    @click="copyResi(data.item.cnote)"
-                  >
-                    <img
-                      id="infoSaldo"
-                      src="@/assets/images/icons/icons-copy.svg"
-                    >
-                  </b-button>
-                </b-row>
-              </b-popover>
-            </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method COD)'">
-              <div class="text-black text-md font-medium">
-                Orderan COD
-              </div>
-              <div class="text-xs text-secondary font-medium">
-                Retur
-              </div>
-            </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method Bank Transfer)'">
-              <div class="text-black text-md font-medium">
-                Orderan Non COD
-              </div>
-              <div class="text-xs text-secondary font-medium text-black">
-                Retur
-              </div>
-              <b-row>
-                <img
-                  :src="data.item.shipment_image_path"
+                  :src="data.item.shipping_logo"
                   width="70"
                 >
                 <img
@@ -451,17 +289,9 @@ border-radius: 8px;"
           </template>
           <template #cell(amount)="data">
             <span
-              v-if="parseInt(data.item.amount) < 0"
-              class="
-                    text-primary font-semibold"
+              :class="classNominal(data.item.type)"
             >
-              -Rp {{ formatNumber(data.item.amount) }}
-            </span>
-            <span
-              v-else
-              class="text-success font-semibold"
-            >
-              +Rp {{ formatNumber(data.item.amount) }}
+              {{ labelNominal(data.item) }}
             </span>
           </template>
           <template #cell(saldo)="data">
@@ -472,14 +302,14 @@ border-radius: 8px;"
           <template #cell(action)="data">
             <p
               v-if="
-                data.item.transaction_type === 'topup' || data.item.transaction_type === 'withdrawal' || data.item.transaction_type === 'shopping' || typeof data.item.order_id=== undefined
+                data.item.description === 'topup' || data.item.description === 'withdrawal' || data.item.description === 'shopping' || typeof data.item.order_id === undefined
               "
             >
               -
             </p>
             <a
               v-else
-              :href="'/detail-order/' + data.item.order_id"
+              :href="'/data-order/detail-order/' + data.item.order_id"
               class="text-info"
             >
               Lihat Detail
@@ -525,11 +355,11 @@ border-radius: 8px;"
             </b-row>
           </b-col>
           <b-pagination
-            v-model="table.currentPage"
+            v-model="currentPage"
             size="md"
             class="float-right mr-2"
-            :total-rows="table.totalRows"
-            :per-page="table.perPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
             first-number
             last-number
           />
@@ -588,6 +418,7 @@ export default {
       currentPage: 1,
       perPage: 20,
       totalItems: 0,
+      totalRows: 0,
       list: [],
       id: this.$route.params.id,
 
@@ -604,6 +435,7 @@ export default {
       withdrawalDate: '',
       timeWithdrawal: '',
       moment,
+      listWithdrawalItem: [],
     }
   },
   computed: {
@@ -626,9 +458,21 @@ export default {
     ...mapGetters('saldoPenarikan', ['sisaSaldo']),
   },
   watch: {
-    'table.currentPage': {
+    currentPage: {
       handler() {
-        this.$store.dispatch('saldo_penarikan/getRincianSaldo')
+        const params = {
+          withdrawal_id: Number(this.id),
+          total_per_page: this.perPage,
+          page: this.currentPage,
+        }
+        this.$http_komship.get(`/v2/partner/withdrawal/detail/list/${this.$store.state.auth.userData.id}`, {
+          params,
+        })
+          .then(response => {
+            const { data } = response.data.data
+            this.totalRows = response.data.data.total
+            this.listWithdrawalItem = data
+          })
       },
     },
   },
@@ -693,7 +537,19 @@ export default {
     },
     setPage(totalPage) {
       this.perPage = totalPage
-      this.$store.dispatch('saldoPenarikan/getRincianSaldo', totalPage)
+      const params = {
+        withdrawal_id: Number(this.id),
+        total_per_page: this.perPage,
+        page: this.currentPage,
+      }
+      this.$http_komship.get(`/v2/partner/withdrawal/detail/list/${this.$store.state.auth.userData.id}`, {
+        params,
+      })
+        .then(response => {
+          const { data } = response.data.data
+          this.listWithdrawalItem = data
+          this.totalRows = response.data.data.total
+        })
     },
     goBack() {
       window.history.back()
@@ -712,8 +568,21 @@ export default {
           this.lastWithDrawal = moment(new Date(data.last_withdrawal_date)).format('DD MMMM')
           this.withdrawalDate = data.withdrawal_date
           const date = moment(new Date(data.withdrawal_date)).format('DD MMMM YYYY')
-          const hours = moment(new Date(data.withdrawal_date)).format('HH:MM')
+          const hours = moment(new Date(data.withdrawal_date)).format('HH:mm')
           this.withdrawalDate = `${date} (${hours} WIB)`
+        })
+      const params = {
+        withdrawal_id: Number(this.id),
+        total_per_page: this.perPage,
+        page: this.currentPage,
+      }
+      this.$http_komship.get(`/v2/partner/withdrawal/detail/list/${this.$store.state.auth.userData.id}`, {
+        params,
+      })
+        .then(response => {
+          const { data } = response.data.data
+          this.listWithdrawalItem = data
+          this.totalRows = response.data.data.total
         })
     },
     copyResi(data) {
@@ -729,6 +598,36 @@ export default {
           variant: 'warning',
         },
       }, 1000)
+    },
+    labelNominal(item) {
+      const { type, nominal } = item
+      if (type === 'credit') return `+Rp ${this.formatNumber(nominal)}`
+      if (type === 'debit') return `-Rp ${this.formatNumber(nominal)}`
+      return ''
+    },
+    classNominal(type) {
+      if (type === 'credit') return 'text-success font-semibold'
+      if (type === 'debit') return 'text-primary font-semibold'
+      return ''
+    },
+    labelTransactionType(value) {
+      const { description, order_payment_method } = value
+      if (description === 'orderku_ongkir') return 'Orderan Non-COD (Ongkir)'
+      if (description === 'orderku_cancel') return 'Orderan Non-COD (Cancel)'
+      if (description === 'withdrawal') return 'Penarikan Saldo'
+      if (description === 'shopping') return 'Belanja Keperluan Talent'
+      if (description === 'shopping') return 'Belanja Keperluan Talent'
+      if (description === 'topup') return 'Top Up Saldo'
+      // eslint-disable-next-line camelcase
+      if (description === 'orderku_retur' && order_payment_method === 'COD') return 'Orderan COD (Retur)'
+      // eslint-disable-next-line camelcase
+      if (description === 'orderku_done' && order_payment_method === 'COD') return 'Orderan COD (Selesai)'
+      // eslint-disable-next-line camelcase
+      if (description === 'orderku_retur' && order_payment_method === 'BANK TRANSFER') return 'Orderan Non-COD (Retur)'
+      // eslint-disable-next-line camelcase
+      if (description === 'orderku_done' && order_payment_method === 'BANK TRANSFER') return 'Orderan Non-COD (Selesai)'
+      if (description === 'orderku_done') return 'Orderan Non-COD (Selesai)'
+      return ''
     },
   },
 }

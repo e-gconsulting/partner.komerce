@@ -245,6 +245,7 @@
         </div>
       </b-button>
       <b-modal
+        id="modal-notification"
         ref="modal-notification"
         modal-class="myclass"
         hide-footer
@@ -259,10 +260,11 @@
             </h4>
           </div>
           <div>
-            <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg" />
+            <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
+              @click="$bvModal.hide('modal-notification')"
+            />
           </div>
         </b-row>
-
         <div class="wrapper-content-notification">
           <b-row
             v-for="(item, index) in listNotification"
@@ -413,10 +415,11 @@ export default {
         })
       if (data.notification_type === 'withdrawal') {
         this.$refs['modal-notification'].hide()
-        this.$router.push({ path: `/keuangan/saldo/rincian/${data.reference_id}` })
+        // this.$router.push({ path: `/keuangan/saldo/rincian/${data.reference_id}` }).catch(() => {})
+        window.location.assign(`/keuangan/saldo/rincian/${data.reference_id}`)
       } else {
         this.$refs['modal-notification'].hide()
-        this.$router.push({ path: `/ticketing/detail/${data.reference_id}` })
+        window.location.assign(`/ticketing/detail/${data.reference_id}`)
       }
     },
     getFormatDate(value) {
@@ -424,14 +427,19 @@ export default {
       const currentDate = moment(new Date())
       const asHours = moment.duration(currentDate.diff(pastDate))
       const hour = Math.round(asHours.asHours())
+      const minutes = Math.round(asHours.asMinutes())
+      // console.log(moment(value).utc().fromNow())
       let format = ''
-      if (hour <= 3) {
+      if (hour === 0) {
+        format = `${minutes} menit yang lalu`
+      }
+      if (hour === 1 || hour > 1) {
         format = `${hour} jam yang lalu`
       }
       if (hour > 3 && hour < 24) {
         format = moment(new Date(value)).format('HH.mm')
       }
-      if (hour >= 24 && hour <= 48) {
+      if (hour >= 20 && hour <= 48) {
         format = `Kemarin ${moment(new Date(value)).format('HH.mm')}`
       }
       if (hour > 48) {
