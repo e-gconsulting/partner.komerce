@@ -281,6 +281,7 @@ export default {
   methods: {
 
     fetchRiwayatAddProduct() {
+      this.offset = 0
       this.loading = true
       this.$store
         .dispatch('riwayatPengajuan/getListAddProduct', {
@@ -293,10 +294,7 @@ export default {
         .then(() => {
           this.items = this.addProduct
           this.loading = false
-          if (this.partnerList) this.offset = 0
-          if (this.dateRange.startDate) this.offset = 0
-          if (this.dateRange.endDate) this.offset = 0
-          else this.offset = this.addProduct.length
+          this.offset = this.addProduct.length
           if (this.addProduct.length < this.limit) {
             this.lastData = true
           } else {

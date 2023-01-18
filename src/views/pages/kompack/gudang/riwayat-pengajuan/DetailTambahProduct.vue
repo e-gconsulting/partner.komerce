@@ -157,14 +157,8 @@
               <div class="d-flex gap-3">
                 <div class="">
                   <b-img
-                    v-if="(item.images_path === null)"
-                    src="https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg"
-                    alt=""
-                  />
-                  <b-img
-                    v-else
                     class="image-product"
-                    :src="item.images_path"
+                    :src="item.images_path ? item.images_path : 'https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg'"
                     alt=""
                   />
                 </div>
