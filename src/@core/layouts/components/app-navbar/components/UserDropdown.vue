@@ -260,7 +260,8 @@
             </h4>
           </div>
           <div>
-            <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
               @click="$bvModal.hide('modal-notification')"
             />
           </div>
