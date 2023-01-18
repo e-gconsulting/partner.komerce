@@ -2,12 +2,20 @@
   <b-card body>
     <div v-if="!TambahProduct">
       <b-row class="justify-content-between mt-2 mb-4">
-        <b-col cols="2">
+        <b-col
+          md="6"
+          xs="12"
+          class="align-self-center"
+        >
           <h4 class="text-black font-bold">
             Ajukan Inbound
           </h4>
         </b-col>
-        <b-col cols="2">
+        <b-col
+          md="4"
+          xs="12"
+          class="text-end"
+        >
           <b-button
             :disabled="submitDisabled()"
             :variant="submitDisabled() ? 'secondary' : 'primary'"
@@ -23,12 +31,18 @@
             Data Inbound
           </h5>
           <b-row class="my-2">
-            <b-col cols="3">
+            <b-col
+              md="3"
+              xs="12"
+            >
               <div class="text-black font-bold">
                 Dikirim dari
               </div>
             </b-col>
-            <b-col cols="6">
+            <b-col
+              xs="12"
+              md="6"
+            >
               <b-form-input
                 v-model="addressSender"
                 placeholder="Masukan alamat pengirim"
@@ -37,12 +51,18 @@
             </b-col>
           </b-row>
           <b-row>
-            <b-col cols="3">
+            <b-col
+              xs="12"
+              md="3"
+            >
               <div class="text-black font-bold">
                 Kirim ke
               </div>
             </b-col>
-            <b-col cols="6">
+            <b-col
+              xs="12"
+              md="6"
+            >
               <v-select
                 key="warehouse_id"
                 v-model="warehouse"
@@ -55,35 +75,48 @@
           </b-row>
           <b-row class="my-2 justify-content-center">
             <b-col
-              cols="6"
+              xs="12"
+              md="6"
               class="d-flex"
             >
-              <b-button
-                :variant="KirimEkspedisi ? 'outline-primary' : 'outline-dark'"
-                class="d-flex mr-1 align-items-center"
-                @click="Ekspedisi"
-              >
-                <b-img src="https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg" />
-                <span class="ml-1">Dikirim Ekspedisi</span>
-              </b-button>
-              <b-button
-                :variant="KirimSendiri ? 'outline-primary' : 'outline-dark'"
-                class="d-flex align-items-center"
-                @click="Sendiri"
-              >
-                <b-img src="https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg" />
-                <span class="ml-1">Dikirim Sendiri</span>
-              </b-button>
+              <b-row>
+                <b-col xs="12">
+                  <b-button
+                    :variant="KirimEkspedisi ? 'outline-primary' : 'outline-dark'"
+                    class="d-flex align-items-center"
+                    @click="Ekspedisi"
+                  >
+                    <b-img src="https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg" />
+                    <span class="ml-1">Dikirim Ekspedisi</span>
+                  </b-button>
+                </b-col>
+                <b-col xs="12">
+                  <b-button
+                    :variant="KirimSendiri ? 'outline-primary' : 'outline-dark'"
+                    class="d-flex align-items-center"
+                    @click="Sendiri"
+                  >
+                    <b-img src="https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg" />
+                    <span class="ml-1">Dikirim Sendiri</span>
+                  </b-button>
+                </b-col>
+              </b-row>
             </b-col>
           </b-row>
           <div v-if="KirimEkspedisi">
             <b-row class="my-2">
-              <b-col cols="3">
+              <b-col
+                xs="12"
+                md="3"
+              >
                 <div class="text-black font-bold">
                   Ekspedisi
                 </div>
               </b-col>
-              <b-col cols="6">
+              <b-col
+                xs="12"
+                md="6"
+              >
                 <v-select
                   key="id"
                   v-model="ekspedisi"
@@ -94,12 +127,18 @@
               </b-col>
             </b-row>
             <b-row class="my-2">
-              <b-col cols="3">
+              <b-col
+                xs="12"
+                md="3"
+              >
                 <div class="text-black font-bold">
                   Nomor Resi
                 </div>
               </b-col>
-              <b-col cols="6">
+              <b-col
+                xs="12"
+                md="6"
+              >
                 <b-form-input
                   v-model="noResi"
                   placeholder="Masukan No Resi"
@@ -110,7 +149,10 @@
           </div>
           <div v-if="KirimSendiri">
             <b-row class="my-2">
-              <b-col cols="3">
+              <b-col
+                xs="12"
+                md="3"
+              >
                 <div class="text-black font-bold">
                   Tanggal Pengiriman
                 </div>
@@ -121,6 +163,7 @@
                     ref="pickupDate"
                     v-model="pickupDate"
                     :config="configDate"
+                    class="form-control"
                   />
                   <b-input-group-append
                     role="button"
@@ -135,16 +178,23 @@
               </b-col>
             </b-row>
             <b-row class="my-2">
-              <b-col cols="3">
+              <b-col
+                xs="12"
+                md="3"
+              >
                 <div class="text-black font-bold">
                   Estimasi Sampai Gudang
                 </div>
               </b-col>
-              <b-col cols="6">
+              <b-col
+                xs="12"
+                md="6"
+              >
                 <b-input-group class="">
                   <flat-pickr
                     ref="EstimateDate"
                     v-model="EstimateDate"
+                    class="form-control"
                     :config="configDate"
                   />
                   <b-input-group-append
@@ -161,12 +211,19 @@
             </b-row>
           </div>
           <b-row class="justify-content-between border-t py-2 mt-4">
-            <b-col cols="2">
+            <b-col
+              xs="2"
+              md="4"
+            >
               <h5 class="text-black font-bold">
                 Stock Produk
               </h5>
             </b-col>
-            <b-col cols="2">
+            <b-col
+              xs="2"
+              md="4"
+              class="text-end"
+            >
               <b-button
                 :disabled="disabledAddProduct"
                 :variant="disabledAddProduct ? 'outline-dark': 'outline-primary'"
@@ -192,127 +249,131 @@
         opacity=".5"
         rounded="sm"
       >
-        <b-row class="border-b text-black font-bold border-t py-1">
-          <b-col cols="3">
-            Nama Produk
-          </b-col>
-          <b-col cols="3">
-            SKU Produk
-          </b-col>
-          <b-col cols="3">
-            Variasi
-          </b-col>
-          <b-col cols="3">
-            Jumlah Inbound
-          </b-col>
-        </b-row>
-        <div
-          v-for="(item, index) in selectedOrder"
-          :key="(index+1)"
-        >
-          <b-row class="my-2">
-            <b-col cols="3">
-              <b-row class="text-start ml-3 d-flex">
-                <b-img
-                  v-if="item.image_path !== null"
-                  class="w-12"
-                  :src="item.image_path"
-                />
-                <b-img
-                  v-else
-                  class="w-12"
-                  src="https://storage.googleapis.com/komerce/assets/gallery-add.svg"
-                />
-                <span class="ml-1">{{ item.product_name }}</span>
-              </b-row>
-            </b-col>
-            <b-col cols="3">
-              SKU: {{ item.sku }}
-            </b-col>
-            <b-col cols="3">
-              <div v-if="(item.is_variant === 1)">
-                <div
-                  v-for="variant in item.variant.slice(0, 1)"
-                  :key="variant.option_id"
-                  class="h-10"
-                >
-                  {{ variant.variant_name }}
-                </div>
-                <b-collapse :id="`variant-${String(index)}`">
-                  <div
-                    v-for="itemvariant in item.variant.slice(1, item.variant.length)"
-                    :key="itemvariant.option_id"
-                    class="h-10"
-                  >
-                    {{ itemvariant.variant_name }}
-                  </div>
-                </b-collapse>
-              </div>
-              <div v-else>
-                <div>tidak ada varian</div>
-              </div>
-            </b-col>
-            <b-col cols="3">
-              <div v-if="(item.is_variant === 1)">
-                <b-row
-                  v-for="variant in item.variant.slice(0, 1)"
-                  :key="variant.option_id"
-                  class="justify-content-center h-12"
-                >
-                  <div class="align-self-center">
-                    {{ variant.stockEdit }}
-                  </div>
-                </b-row>
-                <b-collapse :id="`variant-${String(index)}`">
-                  <b-row
-                    v-for="itemvariant in item.variant.slice(1, item.variant.length)"
-                    :key="itemvariant.option_id"
-                    class="justify-content-center h-10"
-                  >
-                    <div class="align-self-center">
-                      {{ itemvariant.stockEdit }}
-                    </div>
+        <div class="table-container">
+          <div class="table">
+            <b-row class="border-b text-black font-bold border-t py-1">
+              <b-col cols="3">
+                Nama Produk
+              </b-col>
+              <b-col cols="3">
+                SKU Produk
+              </b-col>
+              <b-col cols="3">
+                Variasi
+              </b-col>
+              <b-col cols="3">
+                Jumlah Inbound
+              </b-col>
+            </b-row>
+            <div
+              v-for="(item, index) in selectedOrder"
+              :key="(index+1)"
+            >
+              <b-row class="my-2">
+                <b-col cols="3">
+                  <b-row class="text-start ml-3 d-flex">
+                    <b-img
+                      v-if="item.image_path !== null"
+                      :src="item.image_path"
+                      style="width: 50px"
+                    />
+                    <b-img
+                      v-else
+                      src="https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg"
+                      style="width: 50px"
+                    />
+                    <span class="ml-1">{{ item.product_name }}</span>
                   </b-row>
-                </b-collapse>
-              </div>
-              <div v-else>
-                <b-row class="justify-content-center mb-1">
-                  <div class="align-self-center h-10">
-                    {{ item.stockEdit }}
+                </b-col>
+                <b-col cols="3">
+                  SKU: {{ item.sku }}
+                </b-col>
+                <b-col cols="3">
+                  <div v-if="(item.is_variant === 1)">
+                    <div
+                      v-for="variant in item.variant.slice(0, 1)"
+                      :key="variant.option_id"
+                      class="h-10"
+                    >
+                      {{ variant.variant_name }}
+                    </div>
+                    <b-collapse :id="`variant-${String(index)}`">
+                      <div
+                        v-for="itemvariant in item.variant.slice(1, item.variant.length)"
+                        :key="itemvariant.option_id"
+                        class="h-10"
+                      >
+                        {{ itemvariant.variant_name }}
+                      </div>
+                    </b-collapse>
                   </div>
-                </b-row>
-              </div>
-            </b-col>
-          </b-row>
-          <b-row class="justify-content-end border-b pb-1 mr-3 my-1">
-            <div v-if="(item.variant.length > 0)">
-              <b-button
-                v-b-toggle="`variant-${String(index)}`"
-                class="btn-collapse"
-                size="sm"
-              >
-                <span class="when-opened">
-                  Tutup
-                </span>
-                <span class="when-closed">
-                  Tampilkan variasi lainnya
-                </span>
-                <feather-icon
-                  icon="ChevronDownIcon"
-                  class="when-closed"
-                />
-                <feather-icon
-                  icon="ChevronUpIcon"
-                  class="when-opened"
-                />
-              </b-button>
+                  <div v-else>
+                    <div>tidak ada varian</div>
+                  </div>
+                </b-col>
+                <b-col cols="3">
+                  <div v-if="(item.is_variant === 1)">
+                    <b-row
+                      v-for="variant in item.variant.slice(0, 1)"
+                      :key="variant.option_id"
+                      class="justify-content-center h-12"
+                    >
+                      <div class="align-self-center">
+                        {{ variant.stockEdit }}
+                      </div>
+                    </b-row>
+                    <b-collapse :id="`variant-${String(index)}`">
+                      <b-row
+                        v-for="itemvariant in item.variant.slice(1, item.variant.length)"
+                        :key="itemvariant.option_id"
+                        class="justify-content-center h-10"
+                      >
+                        <div class="align-self-center">
+                          {{ itemvariant.stockEdit }}
+                        </div>
+                      </b-row>
+                    </b-collapse>
+                  </div>
+                  <div v-else>
+                    <b-row class="justify-content-center mb-1">
+                      <div class="align-self-center h-10">
+                        {{ item.stockEdit }}
+                      </div>
+                    </b-row>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row class="justify-content-end border-b pb-1 mr-3 my-1">
+                <div v-if="(item.variant.length > 0)">
+                  <b-button
+                    v-b-toggle="`variant-${String(index)}`"
+                    class="btn-collapse"
+                    size="sm"
+                  >
+                    <span class="when-opened">
+                      Tutup
+                    </span>
+                    <span class="when-closed">
+                      Tampilkan variasi lainnya
+                    </span>
+                    <feather-icon
+                      icon="ChevronDownIcon"
+                      class="when-closed"
+                    />
+                    <feather-icon
+                      icon="ChevronUpIcon"
+                      class="when-opened"
+                    />
+                  </b-button>
+                </div>
+              </b-row>
             </div>
-          </b-row>
+          </div>
         </div>
       </b-overlay>
     </div>
     <div v-if="TambahProduct">
-      <div class="d-flex my-2 align-items-center">
+      <div class="d-flex align-items-center my-2">
         <b-button
           variant="primary"
           size="sm"
@@ -329,14 +390,17 @@
         </h4>
       </div>
       <b-row class="justify-content-end my-2 mr-2">
-        <b-col cols="3">
+        <b-col
+          col="12"
+          sm="6"
+        >
           <b-input-group class="input-group-merge">
             <b-input-group-prepend is-text>
               <feather-icon icon="SearchIcon" />
             </b-input-group-prepend>
             <b-form-input
               v-model="search"
-              placeholder="Seach..."
+              placeholder="cari nama produk..."
               @input="searchProduct(listProdukDB, search)"
             />
           </b-input-group>
@@ -350,246 +414,259 @@
         opacity=".5"
         rounded="sm"
       >
-        <b-row class="border-b border-t py-1">
-          <b-col cols="1" />
-          <b-col
-            cols="3"
-            class="text-start"
-          >
-            Nama Produk
-          </b-col>
-          <b-col cols="2">
-            SKU Produk
-          </b-col>
-          <b-col cols="3">
-            Variasi
-          </b-col>
-          <b-col cols="3">
-            Stok Produk
-          </b-col>
-        </b-row>
-        <div v-if="listProdukEdit.length > 0">
-          <div
-            v-for="(item, index) in listProdukEdit"
-            :key="(index+1)"
-          >
-            <b-row class="my-2 my-2">
-              <b-col cols="1">
-                <b-form-checkbox
-                  v-model="item.isActive"
-                  @input="setData(listProdukEdit)"
-                />
-              </b-col>
-              <b-col cols="3">
-                <b-row class="text-start d-flex">
-                  <b-img
-                    v-if="item.image_path !== null"
-                    class="w-12"
-                    :src="item.image_path"
-                  />
-                  <b-img
-                    v-else
-                    class="w-12"
-                    src="https://storage.googleapis.com/komerce/assets/gallery-add.svg"
-                  />
-                  <span class="ml-1">{{ item.product_name }}</span>
-                </b-row>
+        <div class="table-container">
+          <div class="table">
+            <b-row class="border-b border-t py-1">
+              <b-col cols="1" />
+              <b-col
+                cols="3"
+                class="text-start"
+              >
+                Nama Produk
               </b-col>
               <b-col cols="2">
-                SKU: {{ item.sku }}
+                SKU Produk
               </b-col>
               <b-col cols="3">
-                <div v-if="(item.is_variant === 1)">
-                  <div
-                    v-for="variant in item.variant.slice(0, 1)"
-                    :key="variant.option_id"
-                    class="h-14"
-                  >
-                    {{ variant.variant_name }}
-                  </div>
-                  <b-collapse :id="`variant-${String(index)}`">
-                    <div
-                      v-for="itemvariant in item.variant.slice(1, item.variant.length)"
-                      :key="itemvariant.option_id"
-                      class="h-14"
-                    >
-                      {{ itemvariant.variant_name }}
-                    </div>
-                  </b-collapse>
-                </div>
-                <div v-else>
-                  <div>tidak ada varian</div>
-                </div>
+                Variasi
               </b-col>
               <b-col cols="3">
-                <div v-if="(item.is_variant === 1)">
-                  <b-row
-                    v-for="(variant, indexx) in item.variant.slice(0, 1)"
-                    :key="(indexx+1, variant.id)"
-                    class="justify-content-center h-14"
-                  >
-                    <b-col
-                      xl="2"
-                      lg="3"
-                      md="3"
-                    >
-                      <b-button
-                        class="minus-button"
-                        variant="outline-primary"
-                        @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
-                      >
-                        -
-                      </b-button>
-                    </b-col>
-                    <b-col
-                      xl="4"
-                      lg="6"
-                      md="6"
-                    >
-                      <b-input
-                        v-model="variant.stockEdit"
-                        type="number"
-                        class="align-self-center text-center input-stock"
-                        @keyup="inputStock(variant.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                Stok Produk
+              </b-col>
+            </b-row>
+            <div v-if="listProdukEdit.length > 0">
+              <div
+                v-for="(item, index) in listProdukEdit"
+                :key="(index+1)"
+              >
+                <b-row class="my-2 my-2">
+                  <b-col cols="1">
+                    <b-form-checkbox
+                      v-model="item.isActive"
+                      @input="setData(listProdukEdit)"
+                    />
+                  </b-col>
+                  <b-col cols="3">
+                    <b-row class="text-start d-flex">
+                      <b-img
+                        v-if="item.image_path !== null"
+                        :src="item.image_path"
+                        style="width: 50px"
                       />
-                    </b-col>
-                    <b-col
-                      xl="2"
-                      lg="3"
-                      md="3"
-                    >
-                      <b-button
-                        class="plus-button  "
-                        variant="outline-primary"
-                        @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
-                      >
-                        +
-                      </b-button>
-                    </b-col>
-                  </b-row>
-                  <b-collapse :id="`variant-${String(index)}`">
-                    <b-row
-                      v-for="itemvariant in item.variant.slice(1, item.variant.length)"
-                      :key="itemvariant.option_id"
-                      class="justify-content-center h-14"
-                    >
-                      <b-col
-                        xl="2"
-                        lg="3"
-                        md="3"
-                      >
-                        <b-button
-                          class="minus-button"
-                          variant="outline-primary"
-                          @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
-                        >
-                          -
-                        </b-button>
-                      </b-col>
-                      <b-col
-                        xl="4"
-                        lg="6"
-                        md="6"
-                      >
-                        <b-input
-                          v-model="itemvariant.stockEdit"
-                          type="number"
-                          class="align-self-center text-center input-stock"
-                          @keyup="inputStock(itemvariant.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
-                        />
-                      </b-col>
-                      <b-col
-                        xl="2"
-                        lg="3"
-                        md="3"
-                      >
-                        <b-button
-                          class="plus-button"
-                          variant="outline-primary"
-                          @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
-                        >
-                          +
-                        </b-button>
-                      </b-col>
+                      <b-img
+                        v-else
+                        src="https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg"
+                        style="width: 50px"
+                      />
+                      <span class="ml-1">{{ item.product_name }}</span>
                     </b-row>
-                  </b-collapse>
-                </div>
-                <div v-else>
-                  <b-row class="justify-content-center">
-                    <b-col
-                      xl="2"
-                      lg="3"
-                      md="3"
-                    >
-                      <b-button
-                        class="minus-button"
-                        variant="outline-primary"
-                        @click="setQuantityNoVariant('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                  </b-col>
+                  <b-col cols="2">
+                    SKU: {{ item.sku }}
+                  </b-col>
+                  <b-col cols="3">
+                    <div v-if="(item.is_variant === 1)">
+                      <div
+                        v-for="variant in item.variant.slice(0, 1)"
+                        :key="variant.option_id"
+                        class="h-14"
                       >
-                        -
-                      </b-button>
-                    </b-col>
-                    <b-col
-                      xl="4"
-                      lg="6"
-                      md="6"
+                        {{ variant.variant_name }}
+                      </div>
+                      <b-collapse :id="`variant-${String(index)}`">
+                        <div
+                          v-for="itemvariant in item.variant.slice(1, item.variant.length)"
+                          :key="itemvariant.option_id"
+                          class="h-14"
+                        >
+                          {{ itemvariant.variant_name }}
+                        </div>
+                      </b-collapse>
+                    </div>
+                    <div v-else>
+                      <div>tidak ada varian</div>
+                    </div>
+                  </b-col>
+                  <b-col cols="3">
+                    <div v-if="(item.is_variant === 1)">
+                      <b-row
+                        v-for="(variant, indexx) in item.variant.slice(0, 1)"
+                        :key="(indexx+1, variant.id)"
+                        class="justify-content-center h-14"
+                      >
+                        <b-col
+                          xl="2"
+                          lg="3"
+                          md="3"
+                          col="3"
+                        >
+                          <b-button
+                            class="minus-button"
+                            variant="outline-primary"
+                            @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                          >
+                            -
+                          </b-button>
+                        </b-col>
+                        <b-col
+                          xl="4"
+                          lg="6"
+                          md="6"
+                          col="6"
+                        >
+                          <b-input
+                            v-model="variant.stockEdit"
+                            type="number"
+                            class="align-self-center text-center input-stock"
+                            @keyup="inputStock(variant.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                          />
+                        </b-col>
+                        <b-col
+                          xl="2"
+                          lg="3"
+                          md="3"
+                          col="3"
+                        >
+                          <b-button
+                            class="plus-button  "
+                            variant="outline-primary"
+                            @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                          >
+                            +
+                          </b-button>
+                        </b-col>
+                      </b-row>
+                      <b-collapse :id="`variant-${String(index)}`">
+                        <b-row
+                          v-for="itemvariant in item.variant.slice(1, item.variant.length)"
+                          :key="itemvariant.option_id"
+                          class="justify-content-center h-14"
+                        >
+                          <b-col
+                            xl="2"
+                            lg="3"
+                            md="3"
+                            col="3"
+                          >
+                            <b-button
+                              class="minus-button"
+                              variant="outline-primary"
+                              @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
+                            >
+                              -
+                            </b-button>
+                          </b-col>
+                          <b-col
+                            xl="4"
+                            lg="6"
+                            md="6"
+                            col="6"
+                          >
+                            <b-input
+                              v-model="itemvariant.stockEdit"
+                              type="number"
+                              class="align-self-center text-center input-stock"
+                              @keyup="inputStock(itemvariant.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
+                            />
+                          </b-col>
+                          <b-col
+                            xl="2"
+                            lg="3"
+                            md="3"
+                            col="3"
+                          >
+                            <b-button
+                              class="plus-button"
+                              variant="outline-primary"
+                              @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
+                            >
+                              +
+                            </b-button>
+                          </b-col>
+                        </b-row>
+                      </b-collapse>
+                    </div>
+                    <div v-else>
+                      <b-row class="justify-content-center">
+                        <b-col
+                          xl="2"
+                          lg="3"
+                          md="3"
+                          col="3"
+                        >
+                          <b-button
+                            class="minus-button"
+                            variant="outline-primary"
+                            @click="setQuantityNoVariant('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                          >
+                            -
+                          </b-button>
+                        </b-col>
+                        <b-col
+                          xl="4"
+                          lg="6"
+                          md="6"
+                          col="6"
+                        >
+                          <b-input
+                            v-model="item.stockEdit"
+                            type="number"
+                            class="align-self-center text-center input-stock"
+                            @keyup="inputStockNoVariant(item.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                          />
+                        </b-col>
+                        <b-col
+                          xl="2"
+                          lg="3"
+                          md="3"
+                          col="3"
+                        >
+                          <b-button
+                            class="plus-button  "
+                            variant="outline-primary"
+                            @click="setQuantityNoVariant('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                          >
+                            +
+                          </b-button>
+                        </b-col>
+                      </b-row>
+                    </div>
+                  </b-col>
+                </b-row>
+                <b-row class="justify-content-end border-b pb-1 mr-3 my-1">
+                  <div v-if="(item.variant.length > 0)">
+                    <b-button
+                      v-b-toggle="`variant-${String(index)}`"
+                      class="btn-collapse"
+                      size="sm"
                     >
-                      <b-input
-                        v-model="item.stockEdit"
-                        type="number"
-                        class="align-self-center text-center input-stock"
-                        @keyup="inputStockNoVariant(item.stockEdit, listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                      <span class="when-opened">
+                        Tutup
+                      </span>
+                      <span class="when-closed">
+                        Tampilkan variasi lainnya
+                      </span>
+                      <feather-icon
+                        icon="ChevronDownIcon"
+                        class="when-closed"
                       />
-                    </b-col>
-                    <b-col
-                      xl="2"
-                      lg="3"
-                      md="3"
-                    >
-                      <b-button
-                        class="plus-button  "
-                        variant="outline-primary"
-                        @click="setQuantityNoVariant('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
-                      >
-                        +
-                      </b-button>
-                    </b-col>
-                  </b-row>
-                </div>
-              </b-col>
-            </b-row>
-            <b-row class="justify-content-end border-b pb-1 mr-3 my-1">
-              <div v-if="(item.variant.length > 0)">
-                <b-button
-                  v-b-toggle="`variant-${String(index)}`"
-                  class="btn-collapse"
-                  size="sm"
-                >
-                  <span class="when-opened">
-                    Tutup
-                  </span>
-                  <span class="when-closed">
-                    Tampilkan variasi lainnya
-                  </span>
-                  <feather-icon
-                    icon="ChevronDownIcon"
-                    class="when-closed"
-                  />
-                  <feather-icon
-                    icon="ChevronUpIcon"
-                    class="when-opened"
-                  />
-                </b-button>
+                      <feather-icon
+                        icon="ChevronUpIcon"
+                        class="when-opened"
+                      />
+                    </b-button>
+                  </div>
+                </b-row>
               </div>
-            </b-row>
+            </div>
+            <div v-else>
+              <b-row>
+                <b-col>
+                  Tidak Ada Data Ditampilkan
+                </b-col>
+              </b-row>
+            </div>
           </div>
-        </div>
-        <div v-else>
-          <b-row>
-            <b-col>
-              Tidak Ada Data Ditampilkan
-            </b-col>
-          </b-row>
         </div>
       </b-overlay>
       <b-row class="justify-content-end mr-4 mt-2">
@@ -638,6 +715,7 @@
   @import '@core/scss/vue/libs/vue-select.scss';
 </style>
 <style lang="scss" scoped>
+
 .minus-button, .plus-button {
     justify-content: center;
     font-size: 20px;
@@ -670,6 +748,16 @@
   [dir] .when-opened {
     display: inline-block;
   }
+
+  @media screen and (max-width: 767px) {
+  .table-container {
+  overflow-x: scroll;
+  }
+  .table {
+    width: 700px;
+    table-layout: fixed;
+  }
+}
   .collapsed > .when-opened,
       :not(.collapsed) > .when-closed {
           display: none;
