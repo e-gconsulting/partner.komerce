@@ -38,6 +38,15 @@ export default [
     },
   },
   {
+    path: '/ajukan-penarikan-barang/:id',
+    name: 'ajukan-penarikan-barang',
+    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/AjukanPenarikan.vue'),
+    meta: {
+      resource: 'Gudang Komship',
+      action: 'manage',
+    },
+  },
+  {
     path: '/penarikan-barang/detail/:id',
     name: 'detail-penarikan-barang',
     component: () => import('@/views/pages/komship/warehouse/penarikan-barang/Detail.vue'),

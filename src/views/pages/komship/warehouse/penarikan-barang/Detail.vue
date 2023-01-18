@@ -1,24 +1,26 @@
 <template>
   <b-card body>
-    <b-button
-      variant="primary"
-      size="sm"
-      class="mr-1 rounded-lg p-0"
-      @click="$router.go(-1)"
-    >
-      <feather-icon
-        size="2x"
-        icon="ChevronLeftIcon"
-      />
-    </b-button>
-    <h4 class="font-bold text-black d-inline-flex mb-0">
-      Penarikan Barang
-    </h4>
-    <div
-      class="d-inline flex ml-1"
-      :class="handleStatus('class', detail.status)"
-    >
-      {{ handleStatus('text', detail.status) }}
+    <div class="d-flex items-center">
+      <b-button
+        variant="primary"
+        size="sm"
+        class="mr-1 rounded-lg p-0"
+        @click="$router.go(-1)"
+      >
+        <feather-icon
+          size="2x"
+          icon="ChevronLeftIcon"
+        />
+      </b-button>
+      <h4 class="font-bold text-black d-inline-flex mb-0">
+        Penarikan Barang
+      </h4>
+      <div
+        class="d-inline flex ml-1"
+        :class="handleStatus('class', detail.status)"
+      >
+        {{ handleStatus('text', detail.status) }}
+      </div>
     </div>
     <div class="d-flex mt-2 gap-2 mb-2 mx-1">
       <img
@@ -54,7 +56,7 @@
       />
     </BOverlay>
     <b-button
-      v-if="detail.status === 'Diajukan'"
+      v-if="detail.status === 'Diproses'"
       variant="primary"
       class="float-right"
       @click="confirmDiterima()"
@@ -119,7 +121,7 @@ export default {
       ],
       detail: {},
       barang: [],
-      limit: 2,
+      limit: 50,
       offset: 0,
       lastData: false,
     }
@@ -136,7 +138,6 @@ export default {
   },
   methods: {
     async fetchData() {
-      console.log('first')
       this.loading = true
       await this.$http_komship.get(`/v1/komship/outbound/${this.$route.params.id}/detail`, {
         params: {
@@ -172,7 +173,6 @@ export default {
         })
     },
     async fetchNextData() {
-      console.log('next')
       if (!this.lastData) {
         this.loading = true
         await this.$http_komship.get(`/v1/komship/outbound/${this.$route.params.id}/detail`, {
@@ -208,6 +208,32 @@ export default {
     },
     received() {
       this.$http_komship.put(`/v1/komship/outbound/${this.$route.params.id}/approve`)
+        .then(() => {
+          this.$router.go(-1)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Sukses konfirmasi terima barang',
+              variant: 'success',
+            },
+          }, 2000)
+        })
+        .catch(() => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal konfirmasi terima barang, silahkan coba lagi',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+        })
     },
     confirmDiterima() {
       this.$swal({

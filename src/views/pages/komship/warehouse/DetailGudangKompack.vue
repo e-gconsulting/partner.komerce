@@ -1,7 +1,7 @@
 <template>
   <BCard body>
     <div class="d-flex justify-between">
-      <div class="">
+      <div class="d-flex items-center">
         <b-button
           variant="primary"
           size="sm"
@@ -127,7 +127,8 @@
             id="penarikanBarang"
             style="padding: 7px;"
             variant="outline-primary"
-            @click="$router.push({ name: 'penarikan-barang' })"
+            :disabled="penarikan"
+            @click="handlePenarikanButton(detail.id)"
           >
             <img
               class="w-6"
@@ -167,7 +168,6 @@
           selectable
           hover
           show-empty
-          @row-selected="onRowSelected"
         >
           <template #cell(nama_produk)="data">
             <div class="d-flex items-center gap-2 text-black">
@@ -280,6 +280,7 @@ export default {
       loading: false,
 
       utama: null,
+      penarikan: true,
 
       detail: {},
 
@@ -355,6 +356,11 @@ export default {
   },
 
   methods: {
+    handlePenarikanButton(id) {
+      this.$router.push({
+        path: `/penarikan-barang/${id}`,
+      })
+    },
     handleTambahProduk(id, whId) {
       this.$router.push({
         path: `/tambah-produk-gudang-kompack/${id}`,
@@ -413,6 +419,7 @@ export default {
           this.detail = response.data.data
           this.products = response.data.data.product
           this.loading = false
+          this.penarikan = false
         }).catch(() => {
           this.loading = false
           this.$toast(

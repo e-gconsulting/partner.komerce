@@ -31,6 +31,14 @@
         </template>
         <template #cell(action)="data">
           <button
+            v-if="data.item.reason === 'Barang Rusak'"
+            class="text-[#4285F4] outline-none"
+            @click="handlePopup(data.item.id)"
+          >
+            Lihat Detail
+          </button>
+          <button
+            v-else
             class="text-[#4285F4] outline-none"
             @click="handleDetail(data.item.id)"
           >
@@ -39,14 +47,31 @@
         </template>
       </b-table>
     </BOverlay>
+    <DetailBarangRusak :res="resRusak" />
   </div>
 </template>
 
 <script>
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import DetailBarangRusak from './DetailBarangRusak.vue'
 
 export default {
+  components: { DetailBarangRusak },
+  props: {
+    gudang: {
+      type: String,
+      default: '',
+    },
+    status: {
+      type: String,
+      default: '',
+    },
+    dateRange: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {
       loading: false,
@@ -122,10 +147,13 @@ export default {
       limit: 50,
       offset: 0,
       lastData: false,
+
+      resRusak: {},
     }
   },
   created() {
     this.fetchData()
+    this.$emit('statusFilter', 'dataBarang')
   },
   mounted() {
     window.onscroll = () => {
@@ -135,12 +163,55 @@ export default {
     }
   },
   methods: {
+    async fetchDataNoParams() {
+      this.loading = true
+      await this.$http_komship.get('/v1/komship/outbound', {
+        params: {
+          limit: 50,
+          offset: 0,
+          warehouse_id: '',
+          status: '',
+          start_date: '',
+          end_date: '',
+        },
+      })
+        .then(res => {
+          const { data } = res.data
+          this.barang = data
+          this.loading = false
+          this.offset = data.length
+          if (data.length < this.limit) {
+            this.lastData = true
+          } else {
+            this.lastData = false
+          }
+        }).catch(() => {
+          this.loading = false
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal load data, silahkan coba lagi',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+        })
+    },
     async fetchData() {
+      this.offset = 0
       this.loading = true
       await this.$http_komship.get('/v1/komship/outbound', {
         params: {
           limit: this.limit,
           offset: this.offset,
+          warehouse_id: this.gudang,
+          status: this.status,
+          start_date: this.formatDateFilter(this.dateRange.startDate),
+          end_date: this.formatDateFilter(this.dateRange.endDate),
         },
       })
         .then(res => {
@@ -203,6 +274,27 @@ export default {
           })
       }
     },
+    async handlePopup(id) {
+      await this.$http_komship.get(`/v1/komship/outbound/${id}/detail`)
+        .then(res => {
+          const { data } = res.data
+          this.resRusak = data
+          this.$bvModal.show('modal-detail')
+        }).catch(() => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal load data, silahkan coba lagi',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+        })
+    },
     handleDetail(id) {
       this.$router.push({
         path: `/penarikan-barang/detail/${id}`,
@@ -221,6 +313,9 @@ export default {
     },
     formatDate(date) {
       return moment(date).format('DD MMMM YYYY')
+    },
+    formatDateFilter(value) {
+      return moment(value).format('YYYY-MM-DD')
     },
   },
 }
