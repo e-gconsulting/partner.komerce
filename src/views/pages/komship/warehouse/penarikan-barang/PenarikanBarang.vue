@@ -54,19 +54,34 @@
             </h4>
             <b-form>
               <div class="d-flex flex-column">
+                <v-select
+                  v-model="selected"
+                  multiple
+                  :options="ahay"
+                />
                 <b-form-group
                   id="input-group-3"
                   class="mt-0.5 font-bold"
                   label="Gudang"
                   label-for="filterGudang"
                 >
-                  <b-form-select
+                  <v-select
                     id="filterGudang"
                     v-model="gudang"
+                    placeholder="Pilih Gudang"
+                    class="w-100 font-medium"
+                    :options="gudangList"
+                    :reduce="gudang => gudang.value"
+                    :selectable="gudang => !gudang.disabled"
+                  />
+                  <!-- <b-form-select
+                    id="filterGudang"
+                    v-model="gudang"
+                    class="max-5-opt"
                     :options="gudangList"
                     label-field="text"
                     text-field="text"
-                  />
+                  /> -->
                 </b-form-group>
                 <b-form-group
                   v-if="toggleFilter === 'dataBarang'"
@@ -75,13 +90,21 @@
                   label="Status"
                   label-for="filterStatus"
                 >
-                  <b-form-select
+                  <v-select
+                    id="filterStatus"
+                    v-model="status"
+                    placeholder="Pilih Status"
+                    class="w-100 font-medium"
+                    :options="statusList"
+                    :reduce="status => status.value"
+                  />
+                  <!-- <b-form-select
                     id="filterStatus"
                     v-model="status"
                     :options="statusList"
                     label-field="text"
                     text-field="text"
-                  />
+                  /> -->
                 </b-form-group>
                 <b-form-group
                   id="input-group-3"
@@ -93,7 +116,7 @@
                     id="filterTanggal"
                     ref="picker"
                     v-model="dateRange"
-                    class="w-100"
+                    class="w-100 font-medium"
                     :locale-data="locale"
                     :ranges="ranges"
                     :opens="'left'"
@@ -104,21 +127,21 @@
                     >
                       <div class="d-flex justify-content-between align-items-center w-100">
                         <div class="mr-1">
-                          <span
+                          <!-- <span
                             v-if="
                               formatDateFilter(picker.startDate) === formatDateFilter(today) && formatDateFilter(picker.endDate) === formatDateFilter(today)
                             "
                             style="color: #828282 !important"
                           >
                             Hari ini
-                          </span>
+                          </span> -->
                           <span
-                            v-else-if="
+                            v-if="
                               formatDateFilter(picker.startDate) === formatDateFilter(last7)
                             "
                             style="color: #828282 !important"
                           >
-                            7 Hari Terakhir
+                            7 hari terakhir
                           </span>
                           <span
                             v-else-if="
@@ -126,7 +149,15 @@
                             "
                             style="color: #828282 !important"
                           >
-                            30 Hari Terakhir
+                            1 bulan terakhir
+                          </span>
+                          <span
+                            v-else-if="
+                              formatDateFilter(picker.startDate) === formatDateFilter(last90)
+                            "
+                            style="color: #828282 !important"
+                          >
+                            3 bulan terakhir
                           </span>
                           <span
                             v-else-if="
@@ -135,14 +166,6 @@
                             style="color: #828282 !important"
                           >
                             Semua Tanggal
-                          </span>
-                          <span
-                            v-else-if="
-                              formatDateFilter(picker.startDate) === formatDateFilter(firstDateOfMonth) && formatDateFilter(picker.endDate) === formatDateFilter(lastDateOfMonth)
-                            "
-                            style="color: #828282 !important"
-                          >
-                            Bulan ini
                           </span>
                           <span
                             v-else
@@ -248,8 +271,9 @@ import {
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
-  today, last7, last30, firstDateOfMonth, lastDateOfMonth, kompackDate,
+  today, last7, last30, firstDateOfMonth, lastDateOfMonth, kompackDate, last90,
 } from '@/store/helpers'
+import vSelect from 'vue-select'
 import BarangDikeluarkan from './DataBarangDikeluarkan.vue'
 import MenungguRespon from './MenungguRespon.vue'
 
@@ -261,38 +285,42 @@ export default {
     BarangDikeluarkan,
     MenungguRespon,
     BCard,
+    vSelect,
   },
   data() {
     return {
       waitingRes: null,
 
       gudang: '',
+
+      ahay: {},
+
       gudangList: [
         {
-          text: 'Semua Gudang',
+          label: 'Semua Gudang',
           value: '',
         },
       ],
       status: '',
       statusList: [
         {
-          text: 'Semua',
+          label: 'Semua',
           value: '',
         },
         {
-          text: 'Menunggu respon mitra',
+          label: 'Menunggu respon mitra',
           value: 'Diajukan',
         },
         {
-          text: 'Disetujui',
+          label: 'Disetujui',
           value: 'Diproses',
         },
         {
-          text: 'Ditolak',
+          label: 'Ditolak',
           value: 'Ditolak',
         },
         {
-          text: 'Selesai',
+          label: 'Selesai',
           value: 'Selesai',
         },
       ],
@@ -302,6 +330,7 @@ export default {
       today,
       last7,
       last30,
+      last90,
       firstDateOfMonth,
       lastDateOfMonth,
       dateRange: {
@@ -314,11 +343,13 @@ export default {
         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
       },
       ranges: {
-        'Hari ini': [today, today],
-        '7 Hari Terakhir': [last7, today],
-        '30 Hari Terakhir': [last30, today],
-        'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
+        // 'Hari ini': [today, today],
+        // 'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
         'Semua ': [kompackDate, today],
+        '7 hari terakhir': [last7, today],
+        '1 bulan terakhir': [last30, today],
+        '3 bulan terakhir': [last90, today],
+        'Custom tanggal': [null, null],
       },
     }
   },
@@ -334,7 +365,7 @@ export default {
         .then(res => {
           const { data } = res.data
           const resGudang = data.map(item => ({
-            text: item.warehouse_name,
+            label: item.warehouse_name,
             value: item.warehouse_id,
           }))
           this.gudangList.push(...resGudang)
@@ -412,8 +443,18 @@ export default {
   },
 }
 </script>
+<style lang="scss">
+  @import '@core/scss/vue/libs/vue-select.scss';
+  .vs__dropdown-menu {
+  height: 180px;
+}
+</style>
 <style scoped>
 .padding-arrow {
   padding: 1px 0px;
+}
+.max-5-opt{
+  max-height:120px;
+  overflow-y: scroll;
 }
 </style>

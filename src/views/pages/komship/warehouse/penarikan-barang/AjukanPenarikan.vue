@@ -16,10 +16,14 @@
         Pengajuan penarikan barang
       </h4>
     </div>
-    <b-form-select
+    <v-select
       v-model="warehouse"
-      class="mb-2"
-      :options="whOptions"
+      placeholder="Pilih Gudang"
+      class="w-100 mb-2"
+      :options="gudangList"
+      :reduce="gudang => gudang.value"
+      :selectable="gudang => !gudang.disabled"
+      @input="fetchData()"
     />
     <div class="mb-1 text-black text-lg">
       Data Barang
@@ -42,12 +46,13 @@
         show-empty
         class="mb-0 border-b"
       >
-        <!-- <template #head(checkbox)>
+        <template #head(checkbox)="data">
           <BCheckbox
-            v-model="isSelected"
-            @change="toggleAllRows()"
+            v-model="selectAll"
+            :value="data"
+            @change="checkedAll()"
           />
-        </template> -->
+        </template>
         <template #cell(checkbox)="data">
           <BCheckbox
             v-model="selected"
@@ -126,7 +131,7 @@
             >
               <div class="">
                 <b-button
-                  variant="outline-primary"
+                  :variant="item.total <= 0 ? 'outline-secondary' : 'outline-primary'"
                   class="p-0"
                   style="border-radius:50%;width:25px;height:25px"
                   size="sm"
@@ -137,12 +142,14 @@
                 </b-button>
                 <input
                   v-model="item.total"
+                  onkeydown="return event.keyCode !== 69 && event.keyCode !== 189"
                   type="number"
                   class="total"
+                  min="0"
                   @keyup="event => item.total >= item.variant_stock ? item.total = item.variant_stock : item.total"
                 >
                 <b-button
-                  variant="outline-primary"
+                  :variant="item.total >= item.variant_stock ? 'outline-secondary' : 'outline-primary'"
                   class="p-0"
                   style="border-radius:50%;width:25px;height:25px"
                   size="sm"
@@ -159,7 +166,7 @@
           >
             <div class="">
               <b-button
-                variant="outline-primary"
+                :variant="data.item.total <= 0 ? 'outline-secondary' : 'outline-primary'"
                 class="p-0"
                 style="border-radius:50%;width:25px;height:25px"
                 size="sm"
@@ -170,12 +177,14 @@
               </b-button>
               <input
                 v-model="data.item.total"
+                onkeydown="return event.keyCode !== 69 && event.keyCode !== 189"
                 type="number"
                 class="total"
+                min="0"
                 @keyup="event => data.item.total > data.item.stock ? data.item.total = data.item.stock : data.item.total"
               >
               <b-button
-                variant="outline-primary"
+                :variant="data.item.total >= data.item.stock ? 'outline-secondary' : 'outline-primary'"
                 class="p-0"
                 style="border-radius:50%;width:25px;height:25px"
                 size="sm"
@@ -199,7 +208,8 @@
         </div>
       </div>
       <b-button
-        variant="primary"
+        :variant="handleDisable('var')"
+        :disabled="handleDisable('dis')"
         class="mt-5 float-right"
         @click="confirmAjukan"
       >
@@ -209,181 +219,29 @@
   </b-card>
 </template>
 <script>
+
 import filters from '@/libs/filters'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css'
 
 export default {
+  components: {
+    vSelect,
+  },
   filters: { rupiah: filters.rupiah },
   data() {
     return {
-      payload: {
-        partner_id: 123,
-        warehouse_id: 97,
-        fulfillment_fee: 29000,
-        products: [
-          {
-            product_id: 1,
-            is_variant: 1,
-            total: 10,
-            variants: [
-              {
-                warehouse_variant_id: 10,
-                variant_name: 'Mata, Kaki',
-                option_id: 10,
-                total: 5,
-              },
-            ],
-          },
-        ],
-      },
+      gudangList: [],
 
-      dummy: [
-        {
-          product_id: 1006,
-          is_variant: 0,
-          total: 69,
-          variants: [],
-        },
-        {
-          product_id: 29,
-          is_variant: 1,
-          total: 0,
-          variants: [
-            {
-              warehouse_variant_id: 221,
-              variant_name: 'Kuning',
-              option_id: 393,
-              total: 0,
-            },
-            {
-              warehouse_variant_id: 222,
-              variant_name: 'Hijau',
-              option_id: 394,
-              total: 0,
-            },
-            {
-              warehouse_variant_id: 223,
-              variant_name: 'Biru',
-              option_id: 395,
-              total: 1,
-            },
-          ],
-        },
-      ],
-
-      sel: [
-        {
-          product_id: 1006,
-          is_variant: 0,
-          total: 69,
-          variant: [],
-        },
-        {
-          product_id: 29,
-          is_variant: 1,
-          variant: [
-            {
-              variant_id: 221,
-              option_id: 393,
-              variant_name: 'Kuning',
-              total: 0,
-            },
-            {
-              variant_id: 222,
-              option_id: 394,
-              variant_name: 'Hijau',
-              total: 0,
-            },
-            {
-              variant_id: 223,
-              option_id: 395,
-              variant_name: 'Biru',
-              total: 1,
-            },
-          ],
-        },
-      ],
+      selectAll: false,
 
       totalPay: 0,
-
-      body: {
-        partner_id: 123,
-        warehouse_id: 97,
-        fulfillment_fee: 29000,
-        products: [
-          {
-            product_id: 1,
-            is_variant: 1,
-            total: 10,
-            variants: [
-              {
-                warehouse_variant_id: 10,
-                variant_name: 'Mata, Kaki',
-                option_id: 10,
-                total: 5,
-              },
-            ],
-          },
-        ],
-      },
-
-      susah: [
-        {
-          id: 1,
-          product_name: 'Organ Candra',
-          is_variant: 1,
-          stock: 0,
-          fulfillment_cost: 3000,
-          variant: [
-            {
-              variant_id: 1,
-              option_id: 1293,
-              variant_name: 'Mata, Kaki',
-              variant_stock: 232,
-            },
-            {
-              variant_id: 2,
-              option_id: 1294,
-              variant_name: 'Mata, Mulut',
-              variant_stock: 233,
-            },
-          ],
-        },
-        {
-          id: 2,
-          product_name: 'Organ Candra',
-          is_variant: 1,
-          stock: 0,
-          fulfillment_cost: 3000,
-          variant: [
-            {
-              variant_id: 3,
-              option_id: 1295,
-              variant_name: 'Mata, Badan',
-              variant_stock: 232,
-            },
-            {
-              variant_id: 6,
-              option_id: 1296,
-              variant_name: 'Mata, Kepala',
-              variant_stock: 233,
-            },
-          ],
-        },
-        {
-          id: 3,
-          product_name: 'Organ Candra',
-          is_variant: 0,
-          stock: 10,
-          fulfillment_cost: 3000,
-          variant: [],
-        },
-      ],
 
       loading: false,
       isSelected: false,
       selected: [],
-      warehouse: this.$route.params.id,
+      warehouse: '',
       whOptions: [
         {
           value: '',
@@ -461,15 +319,8 @@ export default {
       ],
     }
   },
-  watch: {
-    warehouse: {
-      handler() {
-        this.fetchData()
-      },
-    },
-  },
   created() {
-    this.fetchData()
+    // this.fetchData()
     this.fetchDataWarehouse()
   },
   methods: {
@@ -505,19 +356,15 @@ export default {
         })
     },
     async fetchDataWarehouse() {
-      this.loading = true
       await this.$http_komship.get('/v1/komship/outbound/warehouses')
         .then(res => {
           const { data } = res.data
-          this.whOptions = data.map(obj => ({
+          this.gudangList = data.map(obj => ({
+            label: obj.outbound_queue === 1 ? `${obj.warehouse_name} (Masih ada antrian)` : obj.warehouse_name,
             value: obj.warehouse_id,
-            text: obj.outbound_queue === 1 ? `${obj.warehouse_name} (Masih ada antrian)` : obj.warehouse_name,
-            // eslint-disable-next-line no-unneeded-ternary
-            disabled: obj.outbound_queue === 1 ? true : false,
+            disabled: obj.outbound_queue === 1,
           }))
-          this.loading = false
         }).catch(() => {
-          this.loading = false
           this.$toast(
             {
               component: ToastificationContent,
@@ -532,9 +379,20 @@ export default {
           )
         })
     },
-    //  onRowSelected(items) {
-    //    this.selected = items
-    //  },
+    checkedAll() {
+      if (this.selectAll) {
+        this.selected = this.barang
+      } else {
+        this.selected = []
+      }
+    },
+    handleCheckbox() {
+      if (this.selected.length === this.barang.length) {
+        this.selectAll = true
+      } else {
+        this.selectAll = false
+      }
+    },
     toggleAllRows() {
       if (this.isSelected) {
         this.$refs.selectableTable.selectAllRows()
@@ -543,10 +401,6 @@ export default {
         this.$refs.selectableTable.clearSelected()
       }
     },
-    //  select(value) {
-    //    this.selected = value
-    //    this.isSelected = false
-    //  },
     confirmAjukan() {
       this.$swal({
         title: 'Pengajuan Penarikan barang',
@@ -628,7 +482,10 @@ export default {
               buttonsStyling: false,
             }).then(result => {
               if (result.value) {
-                console.log('yuhuusss')
+                this.$router.push({
+                  path: `/penarikan-barang/${this.$route.params.id}`,
+                })
+                window.open(`https://wa.me/62${data.data.pic_phone.substring(1)}`, '_blank')
               } else {
                 this.$router.push({
                   path: `/penarikan-barang/${this.$route.params.id}`,
@@ -700,10 +557,22 @@ export default {
       this.totalPay = result
       return result
     },
+    handleDisable(part) {
+      if (part === 'var' && this.selected.length === 0) return 'secondary'
+      if (part === 'var' && this.selected.length !== 0) return 'primary'
+      if (part === 'dis' && this.selected.length === 0) return true
+      if (part === 'dis' && this.selected.length !== 0) return false
+      return ''
+    },
   },
 }
 </script>
-
+<style lang="scss">
+  @import '@core/scss/vue/libs/vue-select.scss';
+  .vs__dropdown-menu {
+  height: 180px;
+}
+</style>
 <style scoped>
 .total {
   width: 15%;

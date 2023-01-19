@@ -300,7 +300,9 @@ export default {
         })
     },
     handleDetail(id) {
-      this.$bvModal.show('modal-detail')
+      this.$router.push({
+        path: `/penarikan-barang/detail/${id}`,
+      })
     },
     closeModal() {
       this.$bvModal.hide('modal-detail')
