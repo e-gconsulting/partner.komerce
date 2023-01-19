@@ -49,7 +49,10 @@
       class="d-flex"
     >
       <div class="w-50">
-        <b-button variant="outline-primary">
+        <b-button
+          variant="outline-primary"
+          @click="handleChat(res.warehouse_phone)"
+        >
           Hubungi Mitra
         </b-button>
       </div>
@@ -177,6 +180,9 @@ export default {
           this.$bvModal.show('modal-detail')
         }
       })
+    },
+    handleChat(number) {
+      window.open(`https://wa.me/62${number.substring(1)}`, '_blank')
     },
     async reject(id) {
       await this.$http_komship.put(`/v1/komship/outbound/${id}/reject`)
