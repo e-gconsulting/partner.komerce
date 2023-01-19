@@ -884,6 +884,7 @@ export default {
       this.boxIsClicked = ''
       this.loadingSendVerificationEmail = false
       this.loadingSendVerificationNo = false
+      this.$refs['popup-new-verification'].hide()
       this.$refs['popup-new-phone'].hide()
     },
     newCheckOtp: _.debounce(function () {
