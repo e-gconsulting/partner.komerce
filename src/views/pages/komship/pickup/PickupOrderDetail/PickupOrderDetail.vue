@@ -554,7 +554,7 @@ export default {
       try {
         const listShipment = await this.$http_komship.get('/v1/shipments')
         const { data } = listShipment.data
-        for (let index = 1; index < data.length; index += 1) {
+        for (let index = 0; index < data.length; index += 1) {
           this.listShipment.push(data[index].shipping_name)
         }
       } catch (error) {
@@ -623,11 +623,13 @@ export default {
       }
     },
     getOrderDataByExpedition() {
+      console.log(this.shipment)
+      console.log(this.order)
       this.order = this.orderDB
       const array = this.order
       const newArray = array.filter(item => item.shipping === this.shipment)
       this.order = newArray
-      if (this.shipment === null) { this.order = this.orderDB }
+      if (this.shipment === 'Semua Ekspedisi' || this.shipment === null) { this.order = this.orderDB }
     },
     selectAllOrder() {
       if (this.checklistAllOrder) {
