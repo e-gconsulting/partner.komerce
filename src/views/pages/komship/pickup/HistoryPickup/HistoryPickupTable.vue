@@ -11,8 +11,14 @@
         {{ data.item.date_submission }}<br>
         <span class="d-flex text-secondary font-normal">
           <img
-            src="@/assets/images/icons/warehouse.svg"
+            v-if="data.item.warehouse_type === 'Mitra Kompack'"
+            src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
             class="mr-[5px]"
+          >
+          <img
+            v-else
+            src="@/assets/images/icons/warehouse.svg"
+            class="mr-[5px] w-5"
           >
           {{ data.item.warehouse }}
         </span>
@@ -93,7 +99,6 @@ export default {
     refreshTable() {
       this.$refs[this.tableRefName].refresh()
     },
-
   },
 }
 

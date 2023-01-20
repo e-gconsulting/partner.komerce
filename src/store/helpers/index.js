@@ -81,6 +81,7 @@ export {
   last7,
   last30,
   last60,
+  last90,
   firstDateOfMonth,
   lastDateOfMonth,
   ranges,
