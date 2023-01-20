@@ -1048,7 +1048,7 @@ export default {
       this.newGrandTotalPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
     },
     formatterNewGrandTotal(e) {
-      return e.replace(/[^\d]/g, '')
+      return e.replace(/[^\d]/g, '').substring(0, 8)
     },
     checkDiscount() {
       if (this.discount > this.subTotal) {
