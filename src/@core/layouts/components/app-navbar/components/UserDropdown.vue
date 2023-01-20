@@ -348,6 +348,7 @@ import { initialAbility } from '@/libs/acl/config'
 import useJwt from '@/auth/jwt/useJwt'
 import { avatarText } from '@core/utils/filter'
 import { mapState } from 'vuex'
+import store from '@/store'
 import moment from 'moment'
 import useAppConfig from '@core/app-config/useAppConfig'
 import { computed } from '@vue/composition-api'
@@ -364,7 +365,6 @@ export default {
     return {
       avatarText,
       notificationTotal: 0,
-
       listNotification: [],
       moment,
       juragan: '',
@@ -373,9 +373,7 @@ export default {
   },
   setup() {
     const { skin } = useAppConfig()
-
     const isDark = computed(() => skin.value === 'dark')
-
     return { skin, isDark }
   },
   computed: {
@@ -397,7 +395,6 @@ export default {
       } else {
         dateChange = (8 + date.getHours())
       }
-
       if (dateChange < 4) {
         str = 'Selamat Malam,'
       } else if (dateChange < 11) {
@@ -421,10 +418,10 @@ export default {
   },
   methods: {
     logout() {
+      store.commit('dashboard/UPDATE_ِِMY_PROFILE', [])
       localStorage.clear()
       // Reset ability
       this.$ability.update(initialAbility)
-
       // Redirect to login page
       this.$router.push({ name: 'auth-login' })
     },
@@ -495,7 +492,6 @@ export default {
   },
 }
 </script>
-
 <style scoped>
 ::v-deep .myclass > .modal-dialog {
   position: unset;
@@ -516,7 +512,6 @@ export default {
   overflow-x: hidden;
   height: 500px;
 }
-
 .wrapper-notification-count {
   background: #F95031;
   height: 24px;
