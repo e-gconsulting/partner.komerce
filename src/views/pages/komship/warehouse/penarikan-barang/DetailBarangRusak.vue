@@ -8,14 +8,21 @@
     centered
   >
     <h4 class="font-bold text-black d-inline-flex mb-0">
-      Penarikan Barang
+      Pengajuan barang rusak
     </h4>
     <div
-      class="d-inline flex ml-1"
+      class="d-inline-flex ml-1"
       :class="handleStatus('class', res.status)"
     >
       {{ handleStatus('text', res.status) }}
     </div>
+    <b-img
+      role="button"
+      style="cursor:pointer"
+      class="float-right"
+      src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
+      @click="closeModal()"
+    />
     <div class="d-flex mt-2 gap-2 mb-2">
       <img
         src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
@@ -162,6 +169,7 @@ export default {
         title: 'Tolak pengajuan Pengeluaran barang',
         text: 'Anda yakin menolak pengajuan?',
         icon: 'warning',
+        width: '50%',
         iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png">',
         showCancelButton: true,
         cancelButtonText: 'Batal',
@@ -222,6 +230,7 @@ export default {
         title: 'Pengajuan Pengeluaran barang',
         text: 'Anda yakin menyutujui pengajuan? stok barang akan berkurang ketika disetujui',
         icon: 'warning',
+        width: '50%',
         iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png">',
         showCancelButton: true,
         cancelButtonText: 'Batal',
@@ -246,18 +255,30 @@ export default {
         .then(() => {
           this.$emit('callParentMethod')
           this.$bvModal.hide('modal-detail')
-          this.$toast(
-            {
-              component: ToastificationContent,
-              props: {
-                title: 'Success',
-                icon: 'AlertCircleIcon',
-                text: 'Sukses setujui pengajuan',
-                variant: 'success',
-              },
+          this.$swal({
+            title: 'Pengajuan barang berhasil disetujui',
+            text: 'Cek stok terupdate di data produk kamu',
+            icon: 'success',
+            width: '50%',
+            iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-success.png">',
+            confirmButtonText: 'Oke',
+            customClass: {
+              icon: 'border-0 w-50 my-5',
+              confirmButton: 'btn btn-primary px-4',
+              cancelButton: 'btn btn-outline-primary mr-1 px-5',
             },
-            2000,
-          )
+            buttonsStyling: false,
+          }).then(result => {
+            if (result.value) {
+              this.$router.push({
+                path: `/penarikan-barang/${this.$route.params.id}`,
+              })
+            } else {
+              this.$router.push({
+                path: `/penarikan-barang/${this.$route.params.id}`,
+              })
+            }
+          })
         }).catch(() => {
           this.$toast(
             {
@@ -272,6 +293,9 @@ export default {
             2000,
           )
         })
+    },
+    closeModal() {
+      this.$bvModal.hide('modal-detail')
     },
   },
 }
