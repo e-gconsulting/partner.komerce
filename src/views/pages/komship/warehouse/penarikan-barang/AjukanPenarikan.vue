@@ -558,8 +558,10 @@ export default {
       return result
     },
     handleDisable(part) {
+      if (part === 'var' && this.totalPay === 0) return 'secondary'
       if (part === 'var' && this.selected.length === 0) return 'secondary'
       if (part === 'var' && this.selected.length !== 0) return 'primary'
+      if (part === 'dis' && this.totalPay === 0) return true
       if (part === 'dis' && this.selected.length === 0) return true
       if (part === 'dis' && this.selected.length !== 0) return false
       return ''
