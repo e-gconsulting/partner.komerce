@@ -349,6 +349,7 @@ import { initialAbility } from '@/libs/acl/config'
 import useJwt from '@/auth/jwt/useJwt'
 import { avatarText } from '@core/utils/filter'
 import { mapState } from 'vuex'
+import store from '@/store'
 import moment from 'moment'
 import useAppConfig from '@core/app-config/useAppConfig'
 import { computed } from '@vue/composition-api'
@@ -418,6 +419,7 @@ export default {
   },
   methods: {
     logout() {
+      store.commit('dashboard/UPDATE_ِِMY_PROFILE', [])
       localStorage.clear()
       // Reset ability
       this.$ability.update(initialAbility)
