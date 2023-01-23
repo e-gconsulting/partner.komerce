@@ -355,12 +355,12 @@ export default {
       }
       return null
     },
-    async searchCustomer(event) {
+    searchCustomer: _.debounce(function (event) {
       const text = event.target.value
       this.customerName = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
       this.customerList = []
       if (this.customerName !== '') {
-        this.customerList = await this.$http_komship.get('v1/customer', {
+        this.customerList = this.$http_komship.get('v1/customer', {
           params: { search: this.customerName },
         }).then(result => {
           const { data } = result.data
@@ -373,7 +373,7 @@ export default {
       if (this.minimalCustomerName || this.requireCustomerName) {
         this.checkValidationCustomerName()
       }
-    },
+    }, 1000),
     checkValidationCustomerName() {
       if (this.customerName.length < 3) {
         this.minimalCustomerName = true
