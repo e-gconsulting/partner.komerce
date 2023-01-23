@@ -1,8 +1,23 @@
 <template>
   <b-card>
-    <h2 class="font-bold mb-2">
-      Rincian Saldo
-    </h2>
+    <b-row class="justify-content-between">
+      <b-col>
+        <h2 class="font-bold mb-2">
+          Rincian Saldo
+        </h2>
+      </b-col>
+      <b-col
+        cols="2"
+        class="text-end"
+      >
+        <b-button
+          variant="primary"
+          @click="$bvModal.show('download-rincian-saldo')"
+        >
+          Download
+        </b-button>
+      </b-col>
+    </b-row>
     <b-row class="mb-1">
       <b-col
         cols="12"
@@ -149,7 +164,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -173,7 +188,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -188,7 +203,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -212,7 +227,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -227,7 +242,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -251,7 +266,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -271,7 +286,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -295,7 +310,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -314,7 +329,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -338,7 +353,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -356,7 +371,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -380,7 +395,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -584,6 +599,95 @@
         />
       </div>
     </b-overlay>
+    <b-modal
+      id="download-rincian-saldo"
+      size="lg"
+      centered
+      hide-header
+      hide-footer
+    >
+      <b-card class="p-3 m-0 bg-white">
+        <div class="text-black text-20-bold mb-1">
+          Download Rincian Saldo
+        </div>
+        <div class="text-black text-lg mb-2">
+          Kustomisasi rincian saldo yang ingin kamu download
+        </div>
+        <div class="text-black text-lg mb-1">
+          Pilih Rentang
+        </div>
+        <div>
+          <date-range-picker
+            ref="picker"
+            v-model="dateRangeFilter"
+            :locale-data="locale"
+            :ranges="rangesDownload"
+            :opens="'left'"
+            class="w-100"
+            @start-selection="setCustomDate"
+            @finish-selection="setCustomDate"
+            @select="removeCustomDate"
+          >
+            <template
+              style="min-width: 350px"
+            >
+              <div
+                class="d-flex justify-content-between align-items-center w-100 pt-50"
+              >
+                <div>
+                  <img
+                    src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg"
+                  >
+                </div>
+              </div>
+            </template>
+          </date-range-picker>
+        </div>
+        <hr class="mt-5">
+        <b-row class="align-items-end">
+          <b-col cols="6">
+            <div
+              v-if="percentageDownload !== 0"
+              class=""
+            >
+              <div>
+                <b-row class="text-start mb-1">
+                  <span class="text-black">Sedang memuat File</span>
+                </b-row>
+                <div class="">
+                  <b-progress
+                    :value="percentageDownload"
+                    max="100"
+                    variant=""
+                    style="min-width: 225px; height: 15px;"
+                  />
+                  <span>{{ percentageDownload }}%</span>
+                </div>
+              </div>
+            </div>
+          </b-col>
+          <b-col>
+            <b-row class="justify-content-between">
+              <b-col cols="4"><b-button variant="outline-primary">
+                Batal
+              </b-button></b-col>
+              <b-col><b-button
+                variant="primary"
+                @click="downloadSaldo"
+              >
+                <b-spinner
+                  v-if="loadingButtonPrintLabel === true"
+                  class="mr-1"
+                  small
+                  variant="light"
+                />
+                Download
+              </b-button></b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-modal>
   </b-card>
 </template>
 <script>
@@ -605,6 +709,8 @@ import {
   today,
   last7,
   last30,
+  last60,
+  kompackDate,
   firstDateOfMonth,
   lastDateOfMonth,
 } from '@/store/helpers'
@@ -684,6 +790,13 @@ export default {
         'Bulan Ini': [firstDateOfMonth, today],
         'Custom Tanggal': [today, today],
       },
+      rangesDownload: {
+        'Custom Tanggal': [null, null],
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        '60 Hari Terakhir': [last60, today],
+        'Real Time': [kompackDate, today],
+      },
       today,
       last7,
       last30,
@@ -694,8 +807,16 @@ export default {
         startDate: last7,
         endDate: today,
       },
+      dateRangeFilter: {
+        startDate: last7,
+        endDate: today,
+      },
 
       titleCustomDate: null,
+
+      // download
+      percentageDownload: 0,
+      loadingButtonPrintLabel: false,
     }
   },
   computed: {
@@ -824,12 +945,81 @@ export default {
     removeCustomDate() {
       this.titleCustomDate = null
     },
+    downloadSaldo() {
+      const self = this
+      this.loadingButtonPrintLabel = true
+      let percent = null
+      percent = setInterval(() => {
+        if (self.percentageDownload < 100) self.percentageDownload += 1
+        if (self.percentageDownload === 90) self.percentageDownload -= 1
+      }, 500)
+      this.$http_komship
+        .get('v1/partner/print/transaction-balance', {
+          params: {
+            start_date: moment(this.dateRangeFilter.startDate).format('YYYY-MM-DD'),
+            end_date: moment(this.dateRangeFilter.endDate).format('YYYY-MM-DD'),
+          },
+        })
+        // .get(`v1/partner/print/transaction-balance?start_date=${moment(this.dateRangeFilter.startDate).format('YYYY-MM-DD')}&end_date=${moment(this.dateRangeFilter.endDate).format('YYYY-MM-DD')}`)
+        .then(response => {
+          try {
+            console.log(response)
+            const decodedData = atob(response.data.data)
+            const data = new Uint8Array(decodedData.length)
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < decodedData.length; i++) {
+              data[i] = decodedData.charCodeAt(i)
+            }
+            let result = null
+            result = `Rincian_Saldo_komship_${this.$moment(this.dateRangeFilter.startDate).format('YYYY-MM-DD')}_${this.$moment(this.dateRangeFilter.endDate).format('YYYY-MM-DD')}`
+            this.percentageDownload = 100
+            clearInterval(percent)
+            const blob = new Blob([data], { type: 'application/vnd.ms-excel' })
+            const objectUrl = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = objectUrl
+            a.download = `${result}.xlsx`
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            this.loadingButtonPrintLabel = false
+            setTimeout(() => {
+              this.loadingButtonPrintLabel = 0
+              this.$bvModal.hide('download-rincian-saldo')
+            }, 1000)
+          } catch (e) {
+            this.percentageDownload = 0
+            this.loadingButtonPrintLabel = false
+            clearInterval(percent)
+          }
+        }).catch(() => {
+          this.loadingButtonPrintLabel = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal print label, silahkan coba lagi!',
+              variant: 'danger',
+            },
+          })
+          clearInterval(percent)
+          this.percentageDownload = 0
+          this.isDownloadActive = false
+        })
+    },
   },
 }
 </script>
-<style>
+<style scoped>
 .btnPage {
   padding: 4px 7px;
   margin-right: 5px;
+}
+.modal-body-custom {
+  padding: 0px !important
+}
+.modal-body {
+  padding: 0px !important
 }
 </style>
