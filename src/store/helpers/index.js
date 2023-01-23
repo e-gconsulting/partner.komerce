@@ -22,8 +22,8 @@ last30.setDate(today.getDate() - 29)
 last30.setHours(0, 0, 0, 0)
 
 const last60 = new Date()
-last30.setDate(today.getDate() - 59)
-last30.setHours(0, 0, 0, 0)
+last60.setDate(today.getDate() - 59)
+last60.setHours(0, 0, 0, 0)
 
 const last90 = new Date()
 last90.setDate(today.getDate() - 89)
