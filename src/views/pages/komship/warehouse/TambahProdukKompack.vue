@@ -355,7 +355,6 @@ export default {
   },
   created() {
     this.fetchDetailGudangKompack()
-    this.fetchProduct()
     this.fetchPackingOptions()
   },
 
@@ -380,6 +379,7 @@ export default {
         .then(response => {
           this.detail = response.data.data
           this.loading = false
+          this.fetchProduct()
         }).catch(() => {
           this.loading = false
           this.$toast({
