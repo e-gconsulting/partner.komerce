@@ -969,7 +969,6 @@ export default {
         })
         .then(response => {
           try {
-            console.log(response)
             const decodedData = atob(response.data.data)
             const data = new Uint8Array(decodedData.length)
             // eslint-disable-next-line no-plusplus
@@ -992,6 +991,8 @@ export default {
             setTimeout(() => {
               this.loadingButtonPrintLabel = 0
               this.$bvModal.hide('download-rincian-saldo')
+              this.percentageDownload = 0
+              this.loadingButtonPrintLabel = false
             }, 1000)
           } catch (e) {
             this.percentageDownload = 0
