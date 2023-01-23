@@ -164,7 +164,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -188,7 +188,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -203,7 +203,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -227,7 +227,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -242,7 +242,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -266,7 +266,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -286,7 +286,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -310,7 +310,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -329,7 +329,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -353,7 +353,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
@@ -371,7 +371,7 @@
               >
               <img
                 :id="`${data.index}-infoSaldo`"
-                src="@/assets/images/icons/info-circle.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               >
             </b-row>
             <b-popover
@@ -395,7 +395,7 @@
                 >
                   <img
                     id="infoSaldo"
-                    src="@/assets/images/icons/icons-copy.svg"
+                    src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                   >
                 </b-button>
               </b-row>
