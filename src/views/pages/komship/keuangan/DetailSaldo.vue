@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <b-row class="justify-content-between">
+    <b-row class="justify-content-between mb-2">
       <b-col>
         <h2 class="font-bold mb-2">
           Rincian Saldo
@@ -668,21 +668,28 @@
           </b-col>
           <b-col>
             <b-row class="justify-content-between">
-              <b-col cols="4"><b-button variant="outline-primary">
-                Batal
-              </b-button></b-col>
-              <b-col><b-button
-                variant="primary"
-                @click="downloadSaldo"
-              >
-                <b-spinner
-                  v-if="loadingButtonPrintLabel === true"
-                  class="mr-1"
-                  small
-                  variant="light"
-                />
-                Download
-              </b-button></b-col>
+              <b-col cols="4">
+                <b-button
+                  variant="outline-primary"
+                  @click="$bvModal.hide('download-rincian-saldo')"
+                >
+                  Batal
+                </b-button>
+              </b-col>
+              <b-col>
+                <b-button
+                  variant="primary"
+                  @click.once="downloadSaldo"
+                >
+                  <b-spinner
+                    v-if="loadingButtonPrintLabel === true"
+                    class="mr-1"
+                    small
+                    variant="light"
+                  />
+                  Download
+                </b-button>
+              </b-col>
             </b-row>
           </b-col>
         </b-row>
@@ -960,7 +967,6 @@ export default {
             end_date: moment(this.dateRangeFilter.endDate).format('YYYY-MM-DD'),
           },
         })
-        // .get(`v1/partner/print/transaction-balance?start_date=${moment(this.dateRangeFilter.startDate).format('YYYY-MM-DD')}&end_date=${moment(this.dateRangeFilter.endDate).format('YYYY-MM-DD')}`)
         .then(response => {
           try {
             console.log(response)
@@ -971,7 +977,7 @@ export default {
               data[i] = decodedData.charCodeAt(i)
             }
             let result = null
-            result = `Rincian_Saldo_komship_${this.$moment(this.dateRangeFilter.startDate).format('YYYY-MM-DD')}_${this.$moment(this.dateRangeFilter.endDate).format('YYYY-MM-DD')}`
+            result = `Rincian_Saldo_komship_${this.$moment(this.dateRangeFilter.startDate).format('DD-MM-YYYY')}_${this.$moment(this.dateRangeFilter.endDate).format('DD-MM-YYYY')}`
             this.percentageDownload = 100
             clearInterval(percent)
             const blob = new Blob([data], { type: 'application/vnd.ms-excel' })
