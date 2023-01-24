@@ -53,7 +53,16 @@
         :fields="fields"
         :items="barang"
         class="mb-0"
-      />
+      >
+        <template #cell(variant)="data">
+          <div v-if="data.item.variant === ''">
+            -
+          </div>
+          <div v-else>
+            {{ data.item.variant }}
+          </div>
+        </template>
+      </b-table>
     </BOverlay>
     <b-button
       v-if="detail.status === 'Diproses'"

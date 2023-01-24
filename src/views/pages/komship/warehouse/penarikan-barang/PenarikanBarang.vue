@@ -54,11 +54,6 @@
             </h4>
             <b-form>
               <div class="d-flex flex-column">
-                <v-select
-                  v-model="selected"
-                  multiple
-                  :options="ahay"
-                />
                 <b-form-group
                   id="input-group-3"
                   class="mt-0.5 font-bold"
@@ -291,9 +286,7 @@ export default {
     return {
       waitingRes: null,
 
-      gudang: '',
-
-      ahay: {},
+      gudang: null,
 
       gudangList: [
         {
