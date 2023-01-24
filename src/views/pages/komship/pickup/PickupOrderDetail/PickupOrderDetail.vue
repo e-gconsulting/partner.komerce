@@ -10,7 +10,7 @@
         <b-icon-chevron-left />
       </b-button>
       <span class="font-bold text-[22px] ml-2 my-auto">
-        Detail Orderan Pickupppp
+        Detail Orderan Pickup
       </span>
     </b-row>
     <b-alert

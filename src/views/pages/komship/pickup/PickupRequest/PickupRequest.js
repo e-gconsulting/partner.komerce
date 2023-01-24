@@ -151,6 +151,7 @@ export default {
         this.pickupTime = this.$route.params.pickup_time
         this.vehicle = this.$route.params.vehicle
         this.order = this.$route.params.order
+        this.totalCost = this.order.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
         const product = []
         this.order.forEach(element => {
           element.product.forEach(items => {
