@@ -806,8 +806,8 @@ export default {
     },
     editNomerHp(data) {
       this.loadingNew = true
-      this.boxIsClicked = data
-      if (data === 'email') {
+      if (data) this.boxIsClicked = data
+      if (this.boxIsClicked === 'email') {
         this.titleVerification = 'Verifikasi Email'
         this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui e-mail ke ${this.censorEmail(this.profile.user_email)}`
         this.loadingSendVerificationEmail = true
@@ -838,7 +838,7 @@ export default {
           this.boxIsClicked = ''
         })
       }
-      if (data === 'no') {
+      if (this.boxIsClicked === 'no') {
         this.titleVerification = 'Verifikasi OTP'
         this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui SMS ke ${this.censorPhone(this.profile.user_phone)}`
         this.loadingSendVerificationNo = true
@@ -881,11 +881,15 @@ export default {
       this.$refs['popup-edit-nomer'].hide()
     },
     handleCloseNewVerification() {
+      this.countOtp = 0
       this.boxIsClicked = ''
       this.loadingSendVerificationEmail = false
       this.loadingSendVerificationNo = false
       this.$refs['popup-new-verification'].hide()
       this.$refs['popup-new-phone'].hide()
+      this.otpItem = ''
+      this.newEmailItem = ''
+      this.newNumberItem = ''
     },
     newCheckOtp: _.debounce(function () {
       this.otpIsWrong = false
@@ -897,6 +901,8 @@ export default {
             activity: this.activityOtp,
           }).then(response => {
             this.$refs['popup-new-verification'].hide()
+            this.newEmailItem = ''
+            this.newNumberItem = ''
             this.$refs['popup-new-phone'].show()
             this.countOtp = 0
           }).catch(err => {
@@ -909,18 +915,11 @@ export default {
             session: 'otp number',
           }).then(response => {
             this.$refs['popup-new-verification'].hide()
+            this.newEmailItem = ''
+            this.newNumberItem = ''
             this.$refs['popup-new-phone'].show()
             this.countOtp = 0
-          }).catch(err => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: err,
-                variant: 'danger',
-              },
-            }, 2000)
+          }).catch(() => {
             this.otpIsWrong = true
           })
         }
@@ -1054,16 +1053,7 @@ export default {
               localStorage.clear()
             }
           })
-        }).catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          }, 2000)
+        }).catch(() => {
           this.otpIsWrong = true
         })
       }
@@ -1072,11 +1062,13 @@ export default {
       this.nextStepVerificationChangeNo()
     },
     handleCloseNewOtpVerification() {
+      this.otpItem = ''
+      this.countOtp = 0
       this.$refs['popup-new-otp-verification'].hide()
     },
     closeSuccessPopup() {
       if (this.activityEdit === 'nomer') {
-        this.$refs['popup-success-nomor'].hide()
+        window.location.reload()
       }
       if (this.activityEdit === 'email') {
         window.location.reload()
@@ -1091,6 +1083,16 @@ export default {
     },
     censorPhone(phone) {
       return '*'.repeat(phone.length) + phone.slice(-3)
+    },
+    changeMethodOtp() {
+      this.$refs['popup-new-verification'].hide()
+      this.$refs['popup-edit-nomer'].show()
+      this.countOtp = 0
+      this.loadingNew = false
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.otpItem = ''
     },
   },
 
