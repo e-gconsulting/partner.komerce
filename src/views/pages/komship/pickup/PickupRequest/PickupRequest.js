@@ -319,6 +319,7 @@ export default {
           pickup_date: this.pickupDate,
           pickup_time: this.pickupTime,
           vehicle: this.vehicle,
+          warehouse_type: this.address.warehouse_type,
         },
       })
     },
@@ -392,6 +393,7 @@ export default {
       })
       this.totalProduct = product.length
       this.itemProductPreview = product.slice(0, 2)
+      this.totalCost = this.itemOrderError.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
       this.totalOrderTimeout = 0
       this.submitProgress = 0
       this.submitStatus = true

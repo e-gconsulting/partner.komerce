@@ -10,7 +10,7 @@
         <b-icon-chevron-left />
       </b-button>
       <span class="font-bold text-[22px] ml-2 my-auto">
-        Detail Orderan Pickup
+        Detail Orderan Pickupppp
       </span>
     </b-row>
     <b-alert
@@ -597,7 +597,7 @@ export default {
       }
     },
     async getOrderData() {
-      if (this.orderID !== '' && !this.lastOrderData) {
+      if (this.$route.params.order_data_id !== undefined && !this.lastOrderData) {
         this.loading = true
         try {
           const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
@@ -620,11 +620,39 @@ export default {
           console.error(error)
           this.loading = false
         }
+      } else {
+        this.loading = true
+        try {
+          const order = await this.$http_komship.get(`/v3/order/${this.profile.partner_detail.id}`, {
+            params: {
+              order_id: this.orderID,
+              page: this.page,
+              total_per_page: this.limit,
+              shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
+            },
+          })
+          const { data } = order.data
+          this.orderDB = data
+          this.order.push(...data)
+          if (this.$route.params.warehouse_type === 'Mitra Kompack') {
+            this.fieldOrder.push(
+              {
+                key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
+              },
+            )
+          }
+          this.page += 1
+          this.loading = false
+          if (data.length < this.limit) {
+            this.lastOrderData = true
+          }
+        } catch (error) {
+          console.error(error)
+          this.loading = false
+        }
       }
     },
     getOrderDataByExpedition() {
-      console.log(this.shipment)
-      console.log(this.order)
       this.order = this.orderDB
       const array = this.order
       const newArray = array.filter(item => item.shipping === this.shipment)
