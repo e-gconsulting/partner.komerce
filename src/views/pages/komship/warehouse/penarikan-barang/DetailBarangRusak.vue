@@ -49,7 +49,16 @@
         :fields="fields"
         :items="res.products"
         class="mb-0"
-      />
+      >
+        <template #cell(variant)="data">
+          <div v-if="data.item.variant === ''">
+            -
+          </div>
+          <div v-else>
+            {{ data.item.variant }}
+          </div>
+        </template>
+      </b-table>
     </BOverlay>
     <div
       v-if="res.status === 'Diajukan'"
