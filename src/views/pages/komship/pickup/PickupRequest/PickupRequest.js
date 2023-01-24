@@ -107,7 +107,7 @@ export default {
     await this.getAddressList()
     await this.getVehicleList()
     await this.generateToken()
-    this.fieldProductPreview = this.fieldProductPreviewKomship
+    // this.fieldProductPreview = this.fieldProductPreviewKomship
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -144,21 +144,30 @@ export default {
         this.pickupTime = this.formatPickupTime(pickupTime - 1)
       }
     },
-    getParamsData() {
+    async getParamsData() {
       if (this.$route.params.order) {
         this.address = this.$route.params.address
         this.pickupDate = this.$route.params.pickup_date
         this.pickupTime = this.$route.params.pickup_time
         this.vehicle = this.$route.params.vehicle
         this.order = this.$route.params.order
+        this.totalCost = this.order.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
         const product = []
         this.order.forEach(element => {
           element.product.forEach(items => {
-            product.push(items)
+            product.push({
+              ...items,
+              fulfillment_cost: element.fulfillment_fee,
+            })
           })
         })
         this.totalProduct = product.length
         this.itemProductPreview = product.slice(0, 2)
+        if (this.address.warehouse_type === 'Mitra Kompack') {
+          this.fieldProductPreview = this.fieldProductPreviewKomship.concat(this.fieldProductPreviewKompack)
+        } else {
+          this.fieldProductPreview = this.fieldProductPreviewKomship
+        }
       } else {
         this.getCurrentDate()
       }
@@ -319,6 +328,7 @@ export default {
           pickup_date: this.pickupDate,
           pickup_time: this.pickupTime,
           vehicle: this.vehicle,
+          warehouse_type: this.address.warehouse_type,
         },
       })
     },
@@ -392,6 +402,7 @@ export default {
       })
       this.totalProduct = product.length
       this.itemProductPreview = product.slice(0, 2)
+      this.totalCost = this.itemOrderError.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
       this.totalOrderTimeout = 0
       this.submitProgress = 0
       this.submitStatus = true

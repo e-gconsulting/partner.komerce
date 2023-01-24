@@ -839,7 +839,7 @@ export default {
       })
     },
     getAddress() {
-      this.$http_komship.get('/v2/address', {
+      this.$http_komship.get('/v3/address', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(async response => {
         const { data } = response.data
