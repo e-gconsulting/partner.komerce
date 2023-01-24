@@ -1038,10 +1038,15 @@
               :formatter="(e) => String(e).substring(0, 14)"
               type="number"
               @blur="checkFormatNumberOnBlur"
+              @keydown="validateInputNumber"
+              @keypress="validateInputPhoneNumber"
               @input="checkFormatNumber"
             />
             <b-row v-if="errorNumber" class="my-50">
               <small class="text-primary ml-1">*Nomor Hp belum benar</small>
+            </b-row>
+            <b-row v-if="numberIsUsed" class="my-50">
+              <small class="text-primary ml-1">*Nomor Hp sudah digunakan orang lain</small>
             </b-row>
             <b-row v-if="newNumberItem === profile.user_phone" class="my-50">
               <small class="text-primary ml-1">*Nomor Hp tidak boleh sama dengan sebelumnya </small>
@@ -1104,6 +1109,9 @@
             />
             <b-row v-if="errorEmail" class="my-50">
               <small class="text-primary ml-1">*Format Email belum benar</small>
+            </b-row>
+            <b-row v-if="emailIsUsed" class="my-50">
+              <small class="text-primary ml-1">*Email sudah digunakan orang lain</small>
             </b-row>
             <b-row v-if="newEmailItem === profile.user_email" class="my-50">
               <small class="text-primary ml-1">*Email tidak boleh sama dengan sebelumnya </small>
@@ -1210,14 +1218,6 @@
           Kirim ulang
         </b-button>
       </small>
-    </b-row>
-
-    <b-row class="mb-1 justify-content-center">
-      <b-button v-if="otpSubmit > 1" variant="flat-primary btn-icon" size="sm">
-        <small class="text-center text-primary">
-          Coba dengan metode lain
-        </small>
-      </b-button>
     </b-row>
   </b-modal>
 
