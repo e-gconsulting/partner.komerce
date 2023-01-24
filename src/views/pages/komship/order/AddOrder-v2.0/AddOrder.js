@@ -189,7 +189,6 @@ export default {
     }
     await this.checkExpedition()
     await this.getAddress()
-    // await this.getProduct()
     await this.addToCart()
     await this.getRekening()
     await this.getCustomLabel()
@@ -440,6 +439,7 @@ export default {
         })
     }, 1000),
     async getProduct(address) {
+      if (address.warehouse_type === 'Mitra Kompack') { this.productSelected = [] }
       await this.$http_komship
         .get(`v2/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}`)
         .then(response => {
