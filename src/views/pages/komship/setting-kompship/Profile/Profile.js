@@ -814,12 +814,17 @@ export default {
       this.loadingSendVerificationNo = false
       this.otpItem = ''
       this.loadingNew = true
+      if (this.activityEdit === 'email') this.activityOtp = 'UPDATE_EMAIL'
+      if (this.activityEdit === 'nomer') this.activityOtp = 'UPDATE_PHONE_NUMBER'
       if (data) this.boxIsClicked = data
       if (this.boxIsClicked === 'email') {
         this.titleVerification = 'Verifikasi Email'
         this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui e-mail ke ${this.censorEmail(this.profile.user_email)}`
         this.loadingSendVerificationEmail = true
-        this.activityOtp = 'UPDATE_EMAIL'
+        this.$http_komship.post('/v1/user/check-activity', {
+          email: this.emailUser,
+          activity: this.activityOtp,
+        })
         this.$http_komship.post('/v1/user/send/otp/email', {
           activity: this.activityOtp,
           email: this.profile.user_email,
@@ -844,13 +849,13 @@ export default {
           }, 2000)
           this.loadingNew = false
           this.boxIsClicked = ''
+          this.loadingSendVerificationEmail = false
         })
       }
       if (this.boxIsClicked === 'no') {
         this.titleVerification = 'Verifikasi OTP'
         this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui SMS ke ${this.censorPhone(this.profile.user_phone)}`
         this.loadingSendVerificationNo = true
-        this.activityOtp = 'UPDATE_PHONE_NUMBER'
         this.$http_komship.post('/v1/user/check-activity', {
           email: this.emailUser,
           activity: this.activityOtp,
@@ -879,6 +884,7 @@ export default {
           }, 2000)
           this.loadingNew = false
           this.boxIsClicked = ''
+          this.loadingSendVerificationNo = false
         })
       }
     },
