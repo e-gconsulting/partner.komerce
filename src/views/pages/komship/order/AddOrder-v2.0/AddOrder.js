@@ -428,7 +428,7 @@ export default {
     getDestination: _.debounce(function () {
       this.destinationList = []
       this.$http_komship
-        .get(`/v3/landingpage/destination?search=${this.destinationLabel}`)
+        .get(`/v1/destination?search=${this.destinationLabel}`)
         .then(res => {
           const { data } = res.data.data
           this.destinationList = data

@@ -397,7 +397,10 @@ export default {
       this.order = this.itemOrderError
       this.order.forEach(element => {
         element.product.forEach(items => {
-          product.push(items)
+          product.push({
+            ...items,
+            fulfillment_cost: element.fulfillment_fee,
+          })
         })
       })
       this.totalProduct = product.length
