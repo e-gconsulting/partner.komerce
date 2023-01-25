@@ -171,6 +171,8 @@ export default {
       confirmChangeTitlePopup: '',
       newEmailItem: '',
       errorEmail: '',
+      emailIsUsed: false,
+      numberIsUsed: false,
     }
   },
   computed: {
@@ -805,6 +807,12 @@ export default {
       this.$refs['popup-edit-nomer'].show()
     },
     editNomerHp(data) {
+      this.countOtp = 0
+      this.loadingNew = false
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.otpItem = ''
       this.loadingNew = true
       if (data) this.boxIsClicked = data
       if (this.boxIsClicked === 'email') {
@@ -876,8 +884,11 @@ export default {
     },
     handleClosePopupEditNomer() {
       this.boxIsClicked = ''
+      this.countOtp = 0
+      this.loadingNew = false
       this.loadingSendVerificationEmail = false
       this.loadingSendVerificationNo = false
+      this.otpItem = ''
       this.$refs['popup-edit-nomer'].hide()
     },
     handleCloseNewVerification() {
@@ -929,7 +940,7 @@ export default {
       this.editNomerHp()
     },
     checkFormatNumberOnBlur() {
-      if (this.newNumberItem.length < 8) {
+      if (this.newNumberItem.length < 9) {
         this.errorNumber = true
       } else {
         this.errorNumber = false
@@ -952,6 +963,7 @@ export default {
       }
     },
     checkFormatNumber() {
+      this.numberIsUsed = false
       if (this.errorNumber) {
         if (this.newNumberItem.length < 8) {
           this.errorNumber = true
@@ -967,53 +979,67 @@ export default {
         }
       }
     },
+    validateInputNumber(event) {
+      if (event.keyCode === 69) {
+        event.preventDefault()
+      }
+      this.$forceUpdate()
+    },
     checkFormatEmail() {
-      if (String(this.newEmailItem)
-        .toLowerCase()
-        .match(
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        )) {
-        this.errorEmail = false
-      } else {
+      this.emailIsUsed = false
+      if (!this.newEmailItem.match(/^[a-zA-Z0-9]+(?:[._-][a-zA-Z0-9]+)*@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/)) {
         this.errorEmail = true
+      } else {
+        this.errorEmail = false
       }
     },
     nextStepVerificationChangeNo() {
       this.loadingNew = true
       const params = {}
       let url
-      if (this.activityEdit === 'email') {
-        url = '/v1/user/send/otp/email'
-        Object.assign(params, { email: this.newEmailItem })
-        Object.assign(params, { session: 'update email' })
-        Object.assign(params, { activity: 'UPDATE_EMAIL' })
-      }
-      if (this.activityEdit === 'nomer') {
-        url = '/v2/partner/sms/otp'
-        Object.assign(params, { phone_number: this.newNumberItem })
-        Object.assign(params, { session: 'update nomer' })
-      }
-      this.$http_komship.post(url, params).then(response => {
-        this.otpSubmit = response.data.data.check_request_otp
-        this.countOtp = response.data.data.expired_at
-        if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
-        if (this.countOtp > 0) this.countDownTimer()
-        this.autofocusInputOtp = true
-        this.$refs['popup-new-phone'].hide()
-        this.$refs['popup-new-otp-verification'].show()
-        this.loadingNew = false
-        this.otpItem = ''
+      let urlCheck = ''
+      if (this.activityEdit === 'email') urlCheck = `/activity/user/check/email?email=${this.newEmailItem}`
+      if (this.activityEdit === 'nomer') urlCheck = `/activity/user/check/phone-number?phone_number=${this.newNumberItem}`
+      this.$http.get(urlCheck).then(() => {
+        if (this.activityEdit === 'email') {
+          url = '/v1/user/send/otp/email'
+          Object.assign(params, { email: this.newEmailItem })
+          Object.assign(params, { session: 'update email' })
+          Object.assign(params, { activity: 'UPDATE_EMAIL' })
+        }
+        if (this.activityEdit === 'nomer') {
+          url = '/v2/partner/sms/otp'
+          Object.assign(params, { phone_number: this.newNumberItem })
+          Object.assign(params, { session: 'update nomer' })
+        }
+        this.$http_komship.post(url, params).then(res => {
+          this.otpSubmit = res.data.data.check_request_otp
+          this.countOtp = res.data.data.expired_at
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
+          if (this.countOtp > 0) this.countDownTimer()
+          this.autofocusInputOtp = true
+          this.$refs['popup-new-phone'].hide()
+          this.$refs['popup-new-otp-verification'].show()
+          this.loadingNew = false
+          this.otpItem = ''
+        }).catch(error => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: error,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingNew = false
+        })
       }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
-        }, 2000)
-        this.loadingNew = false
+        if (err.response.data.code === 1001) {
+          this.loadingNew = false
+          this.emailIsUsed = true
+          this.numberIsUsed = true
+        }
       })
     },
     newCheckConfirmOtp: _.debounce(function () {
@@ -1047,11 +1073,7 @@ export default {
           this.$http_komship.post(url, params).then(async res => {
             this.$refs['popup-new-otp-verification'].hide()
             this.$refs['popup-success-nomor'].show()
-            if (this.activityEdit !== 'email') {
-              await this.$store.dispatch('dashboard/getProfile')
-            } else {
-              localStorage.clear()
-            }
+            localStorage.clear()
           })
         }).catch(() => {
           this.otpIsWrong = true
@@ -1062,8 +1084,13 @@ export default {
       this.nextStepVerificationChangeNo()
     },
     handleCloseNewOtpVerification() {
-      this.otpItem = ''
       this.countOtp = 0
+      this.loadingNew = false
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.otpItem = ''
+      this.emailIsUsed = false
       this.$refs['popup-new-otp-verification'].hide()
     },
     closeSuccessPopup() {
@@ -1093,6 +1120,16 @@ export default {
       this.loadingSendVerificationEmail = false
       this.loadingSendVerificationNo = false
       this.otpItem = ''
+    },
+    validateInputPhoneNumber(e) {
+      if (this.newNumberItem.length === 0) {
+        if (e.keyCode !== 48) {
+          e.preventDefault()
+        }
+      }
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
+        e.preventDefault()
+      }
     },
   },
 
