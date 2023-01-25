@@ -23,12 +23,18 @@ export default {
       addressList: [],
       vehicleList: [],
       totalProduct: 0,
-      fieldProductPreview: [
+      fieldProductPreview: [],
+      fieldProductPreviewKomship: [
         {
           key: 'product_name', label: 'Produk', thClass: 'pl-0', tdClass: 'pl-0',
         },
         {
           key: 'qty', label: 'Total', thClass: 'text-right', tdClass: 'text-right',
+        },
+      ],
+      fieldProductPreviewKompack: [
+        {
+          key: 'fulfillment_cost', label: 'Biaya Fulfillment', thClass: 'text-right', tdClass: 'text-right',
         },
       ],
       itemProductPreview: [],
@@ -87,16 +93,21 @@ export default {
       ],
       itemOrderError: [],
       totalOrderTimeout: 0,
+
+      fieldFullfilmentCost: false,
+      totalCost: 0,
+      totalFulfillment: 0,
     }
   },
   computed: {
-    ...mapState('dashboard', ['profile']),
+    ...mapState('dashboard', ['profile', 'saldo']),
   },
   async mounted() {
     await this.getParamsData()
     await this.getAddressList()
     await this.getVehicleList()
     await this.generateToken()
+    // this.fieldProductPreview = this.fieldProductPreviewKomship
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -133,21 +144,30 @@ export default {
         this.pickupTime = this.formatPickupTime(pickupTime - 1)
       }
     },
-    getParamsData() {
+    async getParamsData() {
       if (this.$route.params.order) {
         this.address = this.$route.params.address
         this.pickupDate = this.$route.params.pickup_date
         this.pickupTime = this.$route.params.pickup_time
         this.vehicle = this.$route.params.vehicle
         this.order = this.$route.params.order
+        this.totalCost = this.order.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
         const product = []
         this.order.forEach(element => {
           element.product.forEach(items => {
-            product.push(items)
+            product.push({
+              ...items,
+              fulfillment_cost: element.fulfillment_fee,
+            })
           })
         })
         this.totalProduct = product.length
         this.itemProductPreview = product.slice(0, 2)
+        if (this.address.warehouse_type === 'Mitra Kompack') {
+          this.fieldProductPreview = this.fieldProductPreviewKomship.concat(this.fieldProductPreviewKompack)
+        } else {
+          this.fieldProductPreview = this.fieldProductPreviewKomship
+        }
       } else {
         this.getCurrentDate()
       }
@@ -157,10 +177,13 @@ export default {
     },
     async getAddressList() {
       this.loading = true
-      await this.$http_komship.get('/v1/address')
+      await this.$http_komship.get('/v1/komship/warehouse/pickup')
         .then(res => {
           const { data } = res.data
-          this.addressList = data
+          this.addressList = data.map(item => ({
+            ...item,
+            flag: 'https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg',
+          }))
           if (this.addressList.length < 1) {
             this.$swal({
               html: '<span class="text-[18px]">Tambahkan Alamat Pick Up untuk melanjutkan kegiatan tambah order.</span>',
@@ -194,6 +217,11 @@ export default {
     onSelectAddress(data) {
       this.$bvModal.hide('modalSelectAddress')
       this.address = data
+      if (this.address.warehouse_type === 'Mitra Kompack') {
+        this.fieldProductPreview = this.fieldProductPreviewKomship.concat(this.fieldProductPreviewKompack)
+      } else {
+        this.fieldProductPreview = this.fieldProductPreviewKomship
+      }
       this.totalProduct = 0
       this.itemProductPreview = []
       this.order = []
@@ -202,10 +230,18 @@ export default {
     async getOrderList() {
       if (this.itemOrderList.length < 1) {
         this.loading = true
-        await this.$http_komship.get(`v2/order/${this.profile.partner_id}`, {
+        let PartnerAddressId = 0
+        let WarehouseId = 0
+        if (this.address.warehouse_type === 'Mitra Kompack') {
+          WarehouseId = this.address.id
+        } else {
+          PartnerAddressId = this.address.id
+        }
+        await this.$http_komship.get(`v3/order/${this.profile.partner_id}`, {
           params: {
             order_status: 'Diajukan',
-            partner_address_id: this.address.address_id,
+            partner_address_id: PartnerAddressId,
+            warehouse_id: WarehouseId,
             limit: this.limit,
             offset: this.offset,
           },
@@ -261,10 +297,14 @@ export default {
       this.order = this.selectedOrder
       this.order.forEach(element => {
         element.product.forEach(items => {
-          product.push(items)
+          product.push({
+            ...items,
+            fulfillment_cost: element.fulfillment_fee,
+          })
         })
       })
       this.totalProduct = product.length
+      this.totalCost = this.order.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
       this.itemProductPreview = product.slice(0, 2)
       this.$bvModal.hide('modalSelectOrder')
     },
@@ -288,6 +328,7 @@ export default {
           pickup_date: this.pickupDate,
           pickup_time: this.pickupTime,
           vehicle: this.vehicle,
+          warehouse_type: this.address.warehouse_type,
         },
       })
     },
@@ -356,11 +397,15 @@ export default {
       this.order = this.itemOrderError
       this.order.forEach(element => {
         element.product.forEach(items => {
-          product.push(items)
+          product.push({
+            ...items,
+            fulfillment_cost: element.fulfillment_fee,
+          })
         })
       })
       this.totalProduct = product.length
       this.itemProductPreview = product.slice(0, 2)
+      this.totalCost = this.itemOrderError.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
       this.totalOrderTimeout = 0
       this.submitProgress = 0
       this.submitStatus = true
@@ -403,15 +448,15 @@ export default {
       }
       for (let index = indexSubmit; index < this.order.length; index += 1) {
         try {
-          const submit = await this.$http_komship.post(`/v3/pickup/${this.profile.partner_id}/store`, {
+          const submit = await this.$http_komship.post(`/v4/pickup/${this.profile.partner_id}/store`, {
             partner_name: this.profile.user_fullname,
             pickup_date: this.pickupDate,
             pickup_time: this.pickupTime.replace(/\s/g, ''),
-            pic: this.address.pic,
-            pic_phone: this.address.phone,
+            pic: this.address.pic_name,
+            pic_phone: this.address.pic_phone,
             vehicle: this.vehicle,
-            address_id: this.address.address_id,
-            address_detail: this.address.address_detail,
+            address_id: this.address.id,
+            address_detail: this.address.detail_address,
             order: this.order[index].order_id,
             token: this.token,
           })
@@ -434,6 +479,9 @@ export default {
               this.$bvModal.hide('modalSubmitPickup')
               this.orderPickupError()
             }
+          } else if (data.code === 1006) {
+            this.$bvModal.hide('modalSubmitPickup')
+            this.$bvModal.show('less-balance-modal')
           } else {
             this.addOrderError(this.order[index])
             this.setProgressSubmit(index)

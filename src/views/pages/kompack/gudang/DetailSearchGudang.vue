@@ -283,7 +283,7 @@
                 class="text-center py-1 px-2"
                 :disabled="detailInfo.availability === 'Penuh' || detailInfo.submission_pending === 1"
                 block
-                @click="redirectToSubmission(detailInfo.subscribe_status)"
+                @click="redirectToSubmission(detailInfo)"
               >
                 <span
                   v-if="detailInfo.subscribe_status === 0"
@@ -371,14 +371,17 @@ export default {
       this.countSlide = parseInt(indexData, 10)
     },
     redirectToSubmission(data) {
-      const { subscribe_status } = data
-      if (data === 0) {
+      const { subscribe_status, id } = data
+      // eslint-disable-next-line camelcase
+      if (subscribe_status === 0) {
         this.$router.push({
           path: `/search-gudang/detail/submission/${this.$route.params.id}`,
         })
-      } if (data === 1) {
+        localStorage.setItem('warehouse_id', id)
+      // eslint-disable-next-line camelcase
+      } if (subscribe_status === 1) {
         this.$router.push({
-          path: '/gudangku-kompack',
+          path: `/detail-gudang-kompack/${this.$route.params.id}`,
         })
       }
     },

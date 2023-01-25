@@ -611,6 +611,15 @@ export default
       return resultVariant
     },
     searchTicket: _.debounce(async function () {
+      for (let x = 0; x < this.filterEkspedisiItem.length; x += 1) {
+        this.filterEkspedisiItem[x].onCheck = false
+      }
+      for (let x = 0; x < this.ticketTypeItems.length; x += 1) {
+        this.ticketTypeItems[x].onCheck = false
+      }
+      for (let x = 0; x < this.ticketStatusItems.length; x += 1) {
+        this.ticketStatusItems[x].onCheck = false
+      }
       this.ticketStatus = []
       this.filterTicketType = []
       this.filterEkspedisi = []

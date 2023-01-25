@@ -181,7 +181,7 @@
           <template #cell(nama_produk)="data">
             <div class="my-2 d-flex gap-2 items-center text-black">
               <b-img
-                :src="data.item.image_path"
+                :src="data.item.image_path ? data.item.image_path : 'https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg'"
                 fluid
                 class="image-product"
               />
@@ -282,7 +282,7 @@
                 class="p-0"
                 style="border-radius:50%;width:25px;height:25px"
                 size="sm"
-                @click="data.item.total_inbound +=1"
+                @click="data.item.total_inbound++"
               >
                 <span class="font-bold text-lg">+</span>
               </b-button>
@@ -465,7 +465,8 @@ export default {
     },
     setQuantity(status, product, index) {
       if (status === 'plus') {
-        this.detailInbound.products[product].variant[index].total_inbound += 1
+        // eslint-disable-next-line no-plusplus
+        this.detailInbound.products[product].variant[index].total_inbound++
       } else if (status === 'minus') {
         this.detailInbound.products[product].variant[index].total_inbound -= 1
       }
@@ -592,7 +593,6 @@ export default {
             })
           }
         }
-        this.body = []
         this.body.push({
           product_id: this.detailInbound.products[i].id,
           is_variant: this.detailInbound.products[i].is_variant,

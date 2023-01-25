@@ -178,7 +178,6 @@
             </b-button>
           </div>
         </template>
-
         <template #cell(customer_name)="data">
           <h5 class="text-top">
             <strong>
@@ -230,6 +229,23 @@
               </strong>
             </span>
           </b-row>
+        </template>
+        <template #cell(warehouse_type)="data">
+          <div>{{ data.item.fulfillment_fee }}</div>
+        </template>
+        <template #head(warehouse_type)>
+          <div>Biaya Fulfillment</div>
+          <div
+            class="d-flex mt-1 text-[12px]"
+            style="place-content: center"
+          >
+            <span class="text-capitalize pr-[5px]">Layanan</span><span class="text-lowercase"> dari</span>
+            <img
+              class="px-[5px]"
+              src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
+            >
+            <span>Kompack</span>
+          </div>
         </template>
       </b-table>
     </b-overlay>
@@ -447,6 +463,7 @@ import axios from 'axios'
 import useJwt from '@core/auth/jwt/useJwt'
 import '@core/scss/vue/libs/vue-select.scss'
 import { mapState } from 'vuex'
+import warningIcon from '@/assets/images/icons/warning.svg'
 
 const { jwt } = useJwt(axios, {})
 const token = jwt.getToken()
@@ -476,6 +493,7 @@ export default {
       ],
       orderID: '',
       order: [],
+      orderDB: [],
       loading: false,
       shipment: 'Semua Ekspedisi',
       listShipment: [],
@@ -484,6 +502,7 @@ export default {
       checklistAllOrder: false,
       page: 1,
       limit: 50,
+      offset: 0,
       lastOrderData: false,
       formatPrint: '',
       printDate: false,
@@ -492,6 +511,7 @@ export default {
 
       percentageDownload: 0,
       isDownloadActive: false,
+      warningIcon,
     }
   },
   computed: {
@@ -520,6 +540,7 @@ export default {
         if ((window.innerHeight + window.scrollY)
         >= main.offsetHeight
         && !this.loading) {
+          this.offset += 50
           this.getOrderData()
         }
       }
@@ -576,10 +597,33 @@ export default {
       }
     },
     async getOrderData() {
-      if (this.orderID !== '' && !this.lastOrderData) {
+      if (this.$route.params.order_data_id !== undefined && !this.lastOrderData) {
         this.loading = true
         try {
-          const order = await this.$http_komship.get(`/v1/order/${this.profile.partner_detail.id}`, {
+          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
+          const { data } = order.data
+          this.orderDB = data
+          this.order.push(...data)
+          if (this.order[0].warehouse_type === 'Mitra Kompack') {
+            this.fieldOrder.push(
+              {
+                key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
+              },
+            )
+          }
+          this.page += 1
+          this.loading = false
+          if (data.length < this.limit) {
+            this.lastOrderData = true
+          }
+        } catch (error) {
+          console.error(error)
+          this.loading = false
+        }
+      } else {
+        this.loading = true
+        try {
+          const order = await this.$http_komship.get(`/v3/order/${this.profile.partner_detail.id}`, {
             params: {
               order_id: this.orderID,
               page: this.page,
@@ -587,8 +631,16 @@ export default {
               shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
             },
           })
-          const { data } = order.data.data
+          const { data } = order.data
+          this.orderDB = data
           this.order.push(...data)
+          if (this.$route.params.warehouse_type === 'Mitra Kompack') {
+            this.fieldOrder.push(
+              {
+                key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
+              },
+            )
+          }
           this.page += 1
           this.loading = false
           if (data.length < this.limit) {
@@ -601,12 +653,11 @@ export default {
       }
     },
     getOrderDataByExpedition() {
-      this.page = 1
-      this.order = []
-      this.listOrderPrint = []
-      this.checklistAllOrder = false
-      this.lastOrderData = false
-      this.getOrderData()
+      this.order = this.orderDB
+      const array = this.order
+      const newArray = array.filter(item => item.shipping === this.shipment)
+      this.order = newArray
+      if (this.shipment === 'Semua Ekspedisi' || this.shipment === null) { this.order = this.orderDB }
     },
     selectAllOrder() {
       if (this.checklistAllOrder) {
