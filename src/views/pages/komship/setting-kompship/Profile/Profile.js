@@ -809,7 +809,6 @@ export default {
       this.$refs['popup-edit-nomer'].show()
     },
     editNomerHp(data) {
-      console.log(this.boxIsClicked)
       this.countOtp = 0
       this.loadingNew = false
       this.boxIsClicked = ''
