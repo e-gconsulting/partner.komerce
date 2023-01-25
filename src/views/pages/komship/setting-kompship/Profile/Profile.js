@@ -918,7 +918,7 @@ export default {
       this.otpIsWrong = false
       if (this.otpItem.length === 6) {
         this.autofocusInputOtp = false
-        if (this.activityOtp === 'UPDATE_EMAIL') {
+        if (this.boxIsClicked === 'email') {
           this.$http_komship.post('/v1/user/send/otp/email/check', {
             otp: Number(this.otpItem),
             activity: this.activityOtp,
@@ -932,7 +932,7 @@ export default {
             this.otpIsWrong = true
           })
         }
-        if (this.activityOtp !== 'UPDATE_PHONE_NUMBER') {
+        if (this.boxIsClicked === 'no') {
           this.$http_komship.post('/v2/partner/sms/otp/verification', {
             otp: Number(this.otpItem),
             session: 'otp number',
