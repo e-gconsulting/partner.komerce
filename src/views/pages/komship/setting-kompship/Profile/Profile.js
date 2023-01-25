@@ -932,7 +932,7 @@ export default {
             this.otpIsWrong = true
           })
         }
-        if (this.activityOtp !== 'UPDATE_EMAIL') {
+        if (this.activityOtp !== 'UPDATE_PHONE_NUMBER') {
           this.$http_komship.post('/v2/partner/sms/otp/verification', {
             otp: Number(this.otpItem),
             session: 'otp number',
