@@ -977,7 +977,7 @@
       <small v-if="countOtp === 0">
         Tidak menerima kode? 
         <b-button variant="flat-primary" class="btn-icon" size="sm" @click="sendOtpAgain">
-          Kirim ulang
+          <b-spinner v-if="loadingNewResend" small /> Kirim ulang
         </b-button>
       </small>
     </b-row>

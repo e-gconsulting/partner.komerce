@@ -173,6 +173,7 @@ export default {
       errorEmail: '',
       emailIsUsed: false,
       numberIsUsed: false,
+      loadingNewResend: false,
     }
   },
   computed: {
@@ -743,6 +744,7 @@ export default {
       if (this.countOtp === 0) {
         this.resendOtp = true
       }
+      if (this.otpSubmit < 1) this.otpSubmit += 1
     },
     handleResendOtp() {
       this.loadingOtp = true
@@ -837,6 +839,7 @@ export default {
           this.$refs['popup-edit-nomer'].hide()
           this.$refs['popup-new-verification'].show()
           this.loadingNew = false
+          this.loadingNewResend = false
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -850,6 +853,7 @@ export default {
           this.loadingNew = false
           this.boxIsClicked = ''
           this.loadingSendVerificationEmail = false
+          this.loadingNewResend = false
         })
       }
       if (this.boxIsClicked === 'no') {
@@ -872,6 +876,7 @@ export default {
           this.$refs['popup-edit-nomer'].hide()
           this.$refs['popup-new-verification'].show()
           this.loadingNew = false
+          this.loadingNewResend = false
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -885,6 +890,7 @@ export default {
           this.loadingNew = false
           this.boxIsClicked = ''
           this.loadingSendVerificationNo = false
+          this.loadingNewResend = false
         })
       }
     },
@@ -912,7 +918,7 @@ export default {
       this.otpIsWrong = false
       if (this.otpItem.length === 6) {
         this.autofocusInputOtp = false
-        if (this.activityOtp === 'UPDATE_EMAIL') {
+        if (this.boxIsClicked === 'email') {
           this.$http_komship.post('/v1/user/send/otp/email/check', {
             otp: Number(this.otpItem),
             activity: this.activityOtp,
@@ -926,7 +932,7 @@ export default {
             this.otpIsWrong = true
           })
         }
-        if (this.activityOtp !== 'UPDATE_EMAIL') {
+        if (this.boxIsClicked === 'no') {
           this.$http_komship.post('/v2/partner/sms/otp/verification', {
             otp: Number(this.otpItem),
             session: 'otp number',
@@ -943,7 +949,8 @@ export default {
       }
     }, 1000),
     sendOtpAgain() {
-      this.editNomerHp()
+      this.loadingNewResend = true
+      this.editNomerHp(this.boxIsClicked)
     },
     checkFormatNumberOnBlur() {
       if (this.newNumberItem.length < 9) {
