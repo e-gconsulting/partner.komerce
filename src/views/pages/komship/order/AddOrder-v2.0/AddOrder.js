@@ -306,6 +306,7 @@ export default {
             this.getProduct(this.address)
           } else {
             this.address = data[0]
+            this.getProduct(this.address)
           }
         } else {
           this.$swal({
