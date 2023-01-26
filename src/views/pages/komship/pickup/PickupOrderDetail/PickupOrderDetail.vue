@@ -534,15 +534,9 @@ export default {
       this.orderID = orderID
     }
     this.getOrderData()
-    const main = document.getElementById('pickup-order-detail')
-    if (main) {
-      window.onscroll = () => {
-        if ((window.innerHeight + window.scrollY)
-        >= main.offsetHeight
-        && !this.loading) {
-          this.offset += 50
-          this.getOrderData()
-        }
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('pickup-order-detail').offsetHeight && !this.loading) {
+        this.getOrderData()
       }
     }
   },
@@ -597,41 +591,45 @@ export default {
       }
     },
     async getOrderData() {
-      if (this.$route.params.order_data_id !== undefined && !this.lastOrderData) {
-        this.loading = true
-        try {
-          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
-          const { data } = order.data
-          this.orderDB = data
-          this.order.push(...data)
-          if (this.order[0].warehouse_type === 'Mitra Kompack') {
-            this.fieldOrder.push(
-              {
-                key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
-              },
-            )
+      if (this.$route.params.order_data_id !== undefined) {
+        if (!this.lastOrderData) {
+          this.loading = true
+          try {
+            const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
+            const { data } = order.data
+            this.offset += data.length
+            this.orderDB = data
+            this.order.push(...data)
+            if (this.order[0].warehouse_type === 'Mitra Kompack') {
+              this.fieldOrder.push(
+                {
+                  key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
+                },
+              )
+            }
+            this.page += 1
+            this.loading = false
+            if (data.length < this.limit) {
+              this.lastOrderData = true
+            }
+          } catch (error) {
+            console.error(error)
+            this.loading = false
           }
-          this.page += 1
-          this.loading = false
-          if (data.length < this.limit) {
-            this.lastOrderData = true
-          }
-        } catch (error) {
-          console.error(error)
-          this.loading = false
         }
-      } else {
+      } else if (!this.lastOrderData) {
         this.loading = true
         try {
           const order = await this.$http_komship.get(`/v3/order/${this.profile.partner_detail.id}`, {
             params: {
               order_id: this.orderID,
-              page: this.page,
-              total_per_page: this.limit,
+              limit: this.limit,
+              offset: this.offset,
               shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
             },
           })
           const { data } = order.data
+          this.offset += data.length
           this.orderDB = data
           this.order.push(...data)
           if (this.$route.params.warehouse_type === 'Mitra Kompack') {
