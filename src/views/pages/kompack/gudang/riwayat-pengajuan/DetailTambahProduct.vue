@@ -191,7 +191,7 @@
             </b-col>
             <b-col cols="2">
               <div class="">
-                Rp. {{ formatRupiah(item.product_price) }}
+                {{ item.range_price }}
               </div>
             </b-col>
             <b-col cols="2">
