@@ -355,12 +355,12 @@ export default {
       }
       return null
     },
-    searchCustomer: _.debounce(function (event) {
+    searchCustomer: _.debounce(async function (event) {
       const text = event.target.value
       this.customerName = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
       this.customerList = []
       if (this.customerName !== '') {
-        this.customerList = this.$http_komship.get('v1/customer', {
+        this.customerList = await this.$http_komship.get('v1/customer', {
           params: { search: this.customerName },
         }).then(result => {
           const { data } = result.data
