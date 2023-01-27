@@ -184,8 +184,6 @@ export default {
     this.loadPartnerCategory()
     this.loadBusinessType()
     this.loadAllProvince()
-    this.$refs['popup-new-phone'].show()
-    this.activityEdit = 'nomer'
   },
   methods: {
     removeLogoBusiness() {
