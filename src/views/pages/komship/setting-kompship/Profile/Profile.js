@@ -184,6 +184,8 @@ export default {
     this.loadPartnerCategory()
     this.loadBusinessType()
     this.loadAllProvince()
+    this.$refs['popup-new-phone'].show()
+    this.activityEdit = 'nomer'
   },
   methods: {
     removeLogoBusiness() {
@@ -744,7 +746,7 @@ export default {
       if (this.countOtp === 0) {
         this.resendOtp = true
       }
-      if (this.otpSubmit < 1) this.otpSubmit += 1
+      if (this.otpSubmit < 1) this.otpSubmit += 2
     },
     handleResendOtp() {
       this.loadingOtp = true
@@ -913,6 +915,8 @@ export default {
       this.otpItem = ''
       this.newEmailItem = ''
       this.newNumberItem = ''
+      this.emailIsUsed = false
+      this.numberIsUsed = false
     },
     newCheckOtp: _.debounce(function () {
       this.otpIsWrong = false
@@ -1137,6 +1141,11 @@ export default {
     validateInputPhoneNumber(e) {
       if (this.newNumberItem.length === 0) {
         if (e.keyCode !== 48) {
+          e.preventDefault()
+        }
+      }
+      if (this.newNumberItem.length === 1) {
+        if (e.keyCode !== 56) {
           e.preventDefault()
         }
       }
