@@ -306,6 +306,7 @@ export default {
             this.getProduct(this.address)
           } else {
             this.address = data[0]
+            this.getProduct(this.address)
           }
         } else {
           this.$swal({
@@ -354,12 +355,12 @@ export default {
       }
       return null
     },
-    searchCustomer: _.debounce(function (event) {
+    searchCustomer: _.debounce(async function (event) {
       const text = event.target.value
       this.customerName = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
       this.customerList = []
       if (this.customerName !== '') {
-        this.customerList = this.$http_komship.get('v1/customer', {
+        this.customerList = await this.$http_komship.get('v1/customer', {
           params: { search: this.customerName },
         }).then(result => {
           const { data } = result.data
@@ -428,7 +429,7 @@ export default {
     getDestination: _.debounce(function () {
       this.destinationList = []
       this.$http_komship
-        .get(`/v3/landingpage/destination?search=${this.destinationLabel}`)
+        .get(`/v1/destination?search=${this.destinationLabel}`)
         .then(res => {
           const { data } = res.data.data
           this.destinationList = data
