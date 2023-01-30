@@ -10,7 +10,6 @@ import {
   BFormSelect,
   BSpinner,
 } from 'bootstrap-vue'
-import useJwt from '@/auth/jwt/useJwt'
 import vSelect from 'vue-select'
 import moment from 'moment'
 import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
@@ -365,6 +364,26 @@ export default {
       maxValueWithdraw: 0,
 
       isDisableSubmitWithdraw: false,
+      filterRangking: 1,
+      dataFilterRangking: [],
+      dataTopAdminOrder: [],
+      loadingRanking: false,
+      loadingAdminOrder: false,
+      partnerId: this.$store.state.auth.userData.partner_detail.id,
+      filterRangkingOptions: [
+        {
+          value: 1,
+          text: 'Bulan ini',
+        },
+        {
+          value: '',
+          text: 'Life time',
+        },
+        {
+          value: 2,
+          text: 'Tahun ini',
+        },
+      ],
     }
   },
   computed: {
@@ -379,15 +398,15 @@ export default {
       'cashback',
       'orderanPerluDikirim',
       'orderanRetur',
-      'topAdminOrders',
+      // 'topAdminOrders',
       'customerLoyals',
       'produkTerlarises',
       'optionsChart',
       'loadingCurrentSaldo',
       'loadingOrderSummary',
       'loadingProductTerlaris',
-      'loadingTopAdminOrder',
-      'loadingTopAdminOrder',
+      // 'loadingTopAdminOrder',
+      // 'loadingTopAdminOrder',
       'loadingCustomerLoyal',
       'profile',
     ]),
@@ -399,6 +418,13 @@ export default {
       'pin',
     ]),
     ...mapGetters('saldo', ['rekenings', 'rekening', 'rekTujuanOptions']),
+  },
+  watch: {
+    filterRangking: {
+      handler() {
+        this.getRankingSales()
+      },
+    },
   },
   async mounted() {
     await this.$store.dispatch('dashboard/init')
@@ -423,6 +449,8 @@ export default {
         this.loadingOnboarding = false
       }
     }
+    this.getRankingSales()
+    this.getTopAdminOrder()
   },
   methods: {
     fetchTicketPartnerCount() {
@@ -1270,6 +1298,28 @@ export default {
             },
           }, 2000)
           this.loadingLoadDataWithdraw = false
+        })
+    },
+    async getRankingSales() {
+      this.loadingRanking = true
+      const url = '/v1/dashboard/partner/rankingTrackingSales'
+      await this.$http_komship.get(`${url}`)
+        .then(res => {
+          this.loadingRanking = false
+          const { data } = res.data
+          this.dataFilterRangking = data
+        })
+    },
+    async getTopAdminOrder() {
+      this.loadingAdminOrder = true
+      const params = `partner_id=${this.partnerId}`
+      const url = '/v1/dashboard/partner/topAdminOrder'
+      await this.$http_komship.get(`${url}?${params}`)
+        .then(res => {
+          this.loadingAdminOrder = false
+          const { data } = res.data
+          console.log(data)
+          this.dataTopAdminOrder = data
         })
     },
   },

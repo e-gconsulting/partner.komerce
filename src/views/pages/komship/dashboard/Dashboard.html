@@ -637,52 +637,138 @@
             </div>
           </div>
         </b-overlay>
-          <div :class="loadingTopAdminOrder ? 'card mb-0 topAdminOrder d-flex justify-content-center align-items-center' : 'card mb-0 topAdminOrder'">
-            <b-spinner v-if="loadingTopAdminOrder" variant="primary" />
-            <div v-if="!loadingTopAdminOrder" class="card-header">
-              <div class="d-flex align-items-center">
-                <div class="first-card-header-text me-8 mb-0">
-                  Top Admin Order
+          <div class="card mb-0 topAdminOrder">
+            <div class="card-header">
+              <div class="flex items-center">
+                <div class="first-card-header-text me-8 text-black">
+                  Rangking Penjualan
                 </div>
-                <img
-                  id="infoTopAdmin"
-                  src="@/assets/images/icons/info-circle.svg"
-                />
-                <b-popover
-                  triggers="hover"
-                  target="infoTopAdmin"
-                  placement="bottomleft"
-                  >Top Admin Order merupakan orang yang menginputkan order paling
-                  banyak berdasarkan nilai orderan</b-popover
-                >
+                <div class="w-40">
+                  <b-form-select
+                    v-model="filterRangking"
+                    :options="filterRangkingOptions"
+                  />
+                </div>
               </div>
             </div>
-            <div v-if="!loadingTopAdminOrder" class="card-body">
-              <ul class="list-group list-group-flush">
-                <li
-                  v-for="topAdminOrder in topAdminOrders"
-                  :key="topAdminOrders.indexOf(topAdminOrder)"
-                  class="list-group-item px-0"
+            <b-tabs>
+              <b-tab v-if="profile.partner_is_tracking_sales_dashboard">
+                <b-overlay
+                  :show="loadingRanking"
+                  spinner-variant="primary"
+                  variant="light"
+                  blur="0"
+                  opacity=".5"
+                  rounded="sm"
                 >
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                      <b-avatar :src="topAdminOrder.photo" />
-                      <p class="list-text-1 h-text-dark ml-2 mb-0">
-                        {{ topAdminOrder.name }}
-                      </p>
-                    </div>
-                    <div class="right">
-                      <p class="list-text-2 text-green mb-0">
-                        {{ formatRupiah(topAdminOrder.totalDana) }}
-                      </p>
-                      <p class="list-text-3 mb-0">
-                        {{ topAdminOrder.totalProduk }}pcs
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
+                <div 
+                  v-if="dataFilterRangking.length === 0"
+                  class="text-lg text-center mt-4"
+                >
+                  Belum ada admin penjualan
+                </div>
+                <div class="p-[5px] h-[32vh] overflow-auto" v-else>
+                  <ul class="list-group list-group-flush">
+                    <li
+                      v-for="(data, idx) in dataFilterRangking"
+                      :key="idx"
+                      class="list-group-item"
+                    >
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <b-avatar />
+                          <p class="list-text-1 h-text-dark ml-2 mb-0">
+                            {{ data.name }}
+                          </p>
+                        </div>
+                        <div class="right">
+                          <p class="list-text-2 text-green mb-0">
+                            {{ formatRupiah(data.total_transactions) }}
+                          </p>
+                          <p class="list-text-3 mb-0">
+                            {{ data.total_order }}pcs
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                </b-overlay>
+                <template #title>
+                  <div class="mr-[5px]">Admin Penjualan</div> 
+                  <img 
+                    id="adminSale"
+                    src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" 
+                    alt="Komerce"
+                  />
+                  <b-popover
+                    triggers="hover"
+                    target="adminSale"
+                    placement="topleft"
+                  >
+                    Ranking Admin Penjualan berdasarkan tim yang ditambahkan pada fiturPelacakan Penjualan
+                  </b-popover>
+                </template>
+              </b-tab>
+              <b-tab>
+                <b-overlay
+                  :show="loadingRanking"
+                  spinner-variant="primary"
+                  variant="light"
+                  blur="0"
+                  opacity=".5"
+                  rounded="sm"
+                >
+                <div 
+                  v-if="dataTopAdminOrder.length === 0"
+                  class="text-lg text-center mt-4"
+                >
+                  Belum ada input order
+                </div>
+                <div class="p-[5px] h-[32vh] overflow-auto" v-else>
+                  <ul class="list-group list-group-flush">
+                    <li
+                      v-for="(data, idx) in dataTopAdminOrder"
+                      :key="idx"
+                      class="list-group-item"
+                    >
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                          <b-avatar :src="data.photo_profile_url" />
+                          <p class="list-text-1 h-text-dark ml-2 mb-0">
+                            {{ data.admin_name }}
+                          </p>
+                        </div>
+                        <div class="right">
+                          <p class="list-text-2 text-green mb-0">
+                            {{ formatRupiah(data.net_profit) }}
+                          </p>
+                          <p class="list-text-3 mb-0">
+                            {{ data.total_order }}pcs
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                </b-overlay>
+                <template #title>
+                  <div class="mr-[5px]">Input Order</div> 
+                  <img
+                    id="inputOrder"
+                    src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" 
+                    alt="Komerce"
+                  />
+                  <b-popover
+                    triggers="hover"
+                    target="inputOrder"
+                    placement="topLeft"
+                  >
+                    Ranking admin yang menginputkan order paling banyak berdasarkan nilai orderan. Untuk menampilkan lebih dari satu admin kamu perlu menggunakan fitur akses akun
+                  </b-popover>
+                </template>
+              </b-tab>
+            </b-tabs>
           </div>
       </b-col>
     </b-row>
