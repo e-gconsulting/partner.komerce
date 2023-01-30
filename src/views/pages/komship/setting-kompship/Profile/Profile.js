@@ -174,6 +174,7 @@ export default {
       emailIsUsed: false,
       numberIsUsed: false,
       loadingNewResend: false,
+      typeNumber: false,
     }
   },
   computed: {
@@ -910,6 +911,7 @@ export default {
       this.loadingSendVerificationNo = false
       this.$refs['popup-new-verification'].hide()
       this.$refs['popup-new-phone'].hide()
+      this.typeNumber = false
       this.otpItem = ''
       this.newEmailItem = ''
       this.newNumberItem = ''
@@ -928,6 +930,7 @@ export default {
             this.$refs['popup-new-verification'].hide()
             this.newEmailItem = ''
             this.newNumberItem = ''
+            this.typeNumber = false
             this.$refs['popup-new-phone'].show()
             this.countOtp = 0
           }).catch(err => {
@@ -942,6 +945,7 @@ export default {
             this.$refs['popup-new-verification'].hide()
             this.newEmailItem = ''
             this.newNumberItem = ''
+            this.typeNumber = false
             this.$refs['popup-new-phone'].show()
             this.countOtp = 0
           }).catch(() => {
@@ -1033,6 +1037,7 @@ export default {
           if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
           if (this.countOtp > 0) this.countDownTimer()
           this.autofocusInputOtp = true
+          this.typeNumber = false
           this.$refs['popup-new-phone'].hide()
           this.$refs['popup-new-otp-verification'].show()
           this.loadingNew = false
@@ -1137,13 +1142,16 @@ export default {
       this.otpItem = ''
     },
     validateInputPhoneNumber(e) {
+      this.typeNumber = false
       if (this.newNumberItem.length === 0) {
         if (e.keyCode !== 48) {
+          this.typeNumber = true
           e.preventDefault()
         }
       }
       if (this.newNumberItem.length === 1) {
         if (e.keyCode !== 56) {
+          this.typeNumber = true
           e.preventDefault()
         }
       }
