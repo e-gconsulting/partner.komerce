@@ -961,7 +961,6 @@
           </b-row>
         </b-collapse>
       </div>
-
     <div
       v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
       class="p-1 mt-2"
@@ -984,6 +983,7 @@
               type="number"
               :formatter="formatterNewGrandTotal"
               @keyup="checkTotal"
+              @keypress="handleInputTotal"
               @paste="handlePasteCheckTotal"
             />
           </b-col>

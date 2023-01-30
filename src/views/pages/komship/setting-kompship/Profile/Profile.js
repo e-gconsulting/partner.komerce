@@ -24,6 +24,7 @@ import useJwt from '@/auth/jwt/useJwt'
 import PincodeInput from 'vue-pincode-input'
 import { NoSpace } from '@/libs/helpers'
 import { mapState } from 'vuex'
+import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 
 export default {
   components: {
@@ -44,6 +45,7 @@ export default {
     BSpinner,
     BOverlay,
     PincodeInput,
+    LottieAnimation,
   },
   directives: {
     Ripple,
@@ -146,6 +148,32 @@ export default {
 
       usernameExist: false,
       NoSpace,
+
+      boxIsClicked: '',
+      loadingSendVerificationEmail: false,
+      loadingSendVerificationNo: false,
+      titleVerification: '',
+      verificationMode: '',
+      verificationDescriptionMode: '',
+      otpItem: '',
+      autofocusInputOtp: false,
+      otpSubmit: 0,
+      errorNumber: false,
+      newNumberItem: '',
+      sameOldNumber: false,
+
+      loadingNew: false,
+      otpIsWrong: false,
+      activityOtp: '',
+
+      activityEdit: '',
+      titlePopup: '',
+      confirmChangeTitlePopup: '',
+      newEmailItem: '',
+      errorEmail: '',
+      emailIsUsed: false,
+      numberIsUsed: false,
+      loadingNewResend: false,
     }
   },
   computed: {
@@ -385,9 +413,6 @@ export default {
     },
     async openModalEdit(data) {
       this.editMode = data
-      if (data === 'number') {
-        this.nameLabelEdit = 'No HP'
-      }
       if (data === 'username') {
         this.modalTitle = await 'Edit Username'
         this.modalSubtitle = await 'Kamu hanya dapat mengganti username satu kali'
@@ -719,6 +744,7 @@ export default {
       if (this.countOtp === 0) {
         this.resendOtp = true
       }
+      if (this.otpSubmit < 1) this.otpSubmit += 2
     },
     handleResendOtp() {
       this.loadingOtp = true
@@ -771,6 +797,359 @@ export default {
       this.messageErrorPassword = false
       this.messageErrorUsernameIsSame = false
       this.usernameExist = false
+    },
+    popupEdit(data) {
+      this.activityEdit = data
+      if (this.activityEdit === 'email') {
+        this.titlePopup = 'Edit Email'
+      }
+      if (this.activityEdit === 'nomer') {
+        this.titlePopup = 'Edit Nomer HP'
+      }
+      this.$refs['popup-edit-nomer'].show()
+    },
+    editNomerHp(data) {
+      this.countOtp = 0
+      this.loadingNew = false
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.otpItem = ''
+      this.loadingNew = true
+      if (this.activityEdit === 'email') this.activityOtp = 'UPDATE_EMAIL'
+      if (this.activityEdit === 'nomer') this.activityOtp = 'UPDATE_PHONE_NUMBER'
+      if (data) this.boxIsClicked = data
+      if (this.boxIsClicked === 'email') {
+        this.titleVerification = 'Verifikasi Email'
+        this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui e-mail ke ${this.censorEmail(this.profile.user_email)}`
+        this.loadingSendVerificationEmail = true
+        this.$http_komship.post('/v1/user/check-activity', {
+          email: this.emailUser,
+          activity: this.activityOtp,
+        })
+        this.$http_komship.post('/v1/user/send/otp/email', {
+          activity: this.activityOtp,
+          email: this.profile.user_email,
+        }).then(response => {
+          this.otpSubmit = response.data.data.check_request_otp
+          this.countOtp = response.data.data.expired_at
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
+          if (this.countOtp > 0) this.countDownTimer()
+          this.autofocusInputOtp = true
+          this.$refs['popup-edit-nomer'].hide()
+          this.$refs['popup-new-verification'].show()
+          this.loadingNew = false
+          this.loadingNewResend = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingNew = false
+          this.boxIsClicked = ''
+          this.loadingSendVerificationEmail = false
+          this.loadingNewResend = false
+        })
+      }
+      if (this.boxIsClicked === 'no') {
+        this.titleVerification = 'Verifikasi OTP'
+        this.verificationDescriptionMode = `Kode verifikasi telah dikirim melalui SMS ke ${this.censorPhone(this.profile.user_phone)}`
+        this.loadingSendVerificationNo = true
+        this.$http_komship.post('/v1/user/check-activity', {
+          email: this.emailUser,
+          activity: this.activityOtp,
+        })
+        this.$http_komship.post('/v2/partner/sms/otp', {
+          phone_number: this.noHP,
+          session: 'otp number',
+        }).then(response => {
+          this.otpSubmit = response.data.data.check_request_otp
+          this.countOtp = response.data.data.expired_at
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
+          if (this.countOtp > 0) this.countDownTimer()
+          this.autofocusInputOtp = true
+          this.$refs['popup-edit-nomer'].hide()
+          this.$refs['popup-new-verification'].show()
+          this.loadingNew = false
+          this.loadingNewResend = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingNew = false
+          this.boxIsClicked = ''
+          this.loadingSendVerificationNo = false
+          this.loadingNewResend = false
+        })
+      }
+    },
+    handleClosePopupEditNomer() {
+      this.boxIsClicked = ''
+      this.countOtp = 0
+      this.loadingNew = false
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.otpItem = ''
+      this.$refs['popup-edit-nomer'].hide()
+    },
+    handleCloseNewVerification() {
+      this.countOtp = 0
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.$refs['popup-new-verification'].hide()
+      this.$refs['popup-new-phone'].hide()
+      this.otpItem = ''
+      this.newEmailItem = ''
+      this.newNumberItem = ''
+      this.emailIsUsed = false
+      this.numberIsUsed = false
+    },
+    newCheckOtp: _.debounce(function () {
+      this.otpIsWrong = false
+      if (this.otpItem.length === 6) {
+        this.autofocusInputOtp = false
+        if (this.boxIsClicked === 'email') {
+          this.$http_komship.post('/v1/user/send/otp/email/check', {
+            otp: Number(this.otpItem),
+            activity: this.activityOtp,
+          }).then(response => {
+            this.$refs['popup-new-verification'].hide()
+            this.newEmailItem = ''
+            this.newNumberItem = ''
+            this.$refs['popup-new-phone'].show()
+            this.countOtp = 0
+          }).catch(err => {
+            this.otpIsWrong = true
+          })
+        }
+        if (this.boxIsClicked === 'no') {
+          this.$http_komship.post('/v2/partner/sms/otp/verification', {
+            otp: Number(this.otpItem),
+            session: 'otp number',
+          }).then(response => {
+            this.$refs['popup-new-verification'].hide()
+            this.newEmailItem = ''
+            this.newNumberItem = ''
+            this.$refs['popup-new-phone'].show()
+            this.countOtp = 0
+          }).catch(() => {
+            this.otpIsWrong = true
+          })
+        }
+      }
+    }, 1000),
+    sendOtpAgain() {
+      this.loadingNewResend = true
+      this.editNomerHp(this.boxIsClicked)
+    },
+    checkFormatNumberOnBlur() {
+      if (this.newNumberItem.length < 9) {
+        this.errorNumber = true
+      } else {
+        this.errorNumber = false
+      }
+      if (this.profile.user_phone === this.newNumberItem) {
+        this.sameOldNumber = true
+      } else {
+        this.sameOldNumber = false
+      }
+    },
+    checkFormatEmailOnBlur() {
+      if (String(this.newEmailItem)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        )) {
+        this.errorEmail = false
+      } else {
+        this.errorEmail = true
+      }
+    },
+    checkFormatNumber() {
+      this.numberIsUsed = false
+      if (this.errorNumber) {
+        if (this.newNumberItem.length < 8) {
+          this.errorNumber = true
+        } else {
+          this.errorNumber = false
+        }
+      }
+      if (this.sameOldNumber) {
+        if (this.profile.user_phone === this.newNumberItem) {
+          this.sameOldNumber = true
+        } else {
+          this.sameOldNumber = false
+        }
+      }
+    },
+    validateInputNumber(event) {
+      if (event.keyCode === 69) {
+        event.preventDefault()
+      }
+      this.$forceUpdate()
+    },
+    checkFormatEmail() {
+      this.emailIsUsed = false
+      if (!this.newEmailItem.match(/^[a-zA-Z0-9]+(?:[._-][a-zA-Z0-9]+)*@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/)) {
+        this.errorEmail = true
+      } else {
+        this.errorEmail = false
+      }
+    },
+    nextStepVerificationChangeNo() {
+      this.loadingNew = true
+      const params = {}
+      let url
+      let urlCheck = ''
+      if (this.activityEdit === 'email') urlCheck = `/activity/user/check/email?email=${this.newEmailItem}`
+      if (this.activityEdit === 'nomer') urlCheck = `/activity/user/check/phone-number?phone_number=${this.newNumberItem}`
+      this.$http.get(urlCheck).then(() => {
+        if (this.activityEdit === 'email') {
+          url = '/v1/user/send/otp/email'
+          Object.assign(params, { email: this.newEmailItem })
+          Object.assign(params, { session: 'update email' })
+          Object.assign(params, { activity: 'UPDATE_EMAIL' })
+        }
+        if (this.activityEdit === 'nomer') {
+          url = '/v2/partner/sms/otp'
+          Object.assign(params, { phone_number: this.newNumberItem })
+          Object.assign(params, { session: 'update nomer' })
+        }
+        this.$http_komship.post(url, params).then(res => {
+          this.otpSubmit = res.data.data.check_request_otp
+          this.countOtp = res.data.data.expired_at
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
+          if (this.countOtp > 0) this.countDownTimer()
+          this.autofocusInputOtp = true
+          this.$refs['popup-new-phone'].hide()
+          this.$refs['popup-new-otp-verification'].show()
+          this.loadingNew = false
+          this.otpItem = ''
+        }).catch(error => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: error,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingNew = false
+        })
+      }).catch(err => {
+        if (err.response.data.code === 1001) {
+          this.loadingNew = false
+          this.emailIsUsed = true
+          this.numberIsUsed = true
+        }
+      })
+    },
+    newCheckConfirmOtp: _.debounce(function () {
+      this.otpIsWrong = false
+      if (this.otpItem.length === 6) {
+        this.autofocusInputOtp = false
+        const paramData = {
+          otp: this.otpItem,
+        }
+        let urls
+        if (this.activityEdit === 'email') {
+          Object.assign(paramData, { session: 'update email' })
+          Object.assign(paramData, { activity: 'UPDATE_EMAIL' })
+          urls = '/v1/user/send/otp/email/check'
+        }
+        if (this.activityEdit === 'nomer') {
+          Object.assign(paramData, { session: 'update nomer' })
+          urls = '/v2/partner/sms/otp/verification'
+        }
+        this.$http_komship.post(urls, paramData).then(response => {
+          const params = {}
+          let url
+          if (this.activityEdit === 'email') {
+            url = '/v1/user/update/email'
+            Object.assign(params, { email: this.newEmailItem })
+          }
+          if (this.activityEdit === 'nomer') {
+            url = '/v1/user/update/phonenumber'
+            Object.assign(params, { phone_number: this.newNumberItem })
+          }
+          this.$http_komship.post(url, params).then(async res => {
+            this.$refs['popup-new-otp-verification'].hide()
+            this.$refs['popup-success-nomor'].show()
+            localStorage.clear()
+          })
+        }).catch(() => {
+          this.otpIsWrong = true
+        })
+      }
+    }, 1000),
+    sendOtpConfirmationAgain() {
+      this.nextStepVerificationChangeNo()
+    },
+    handleCloseNewOtpVerification() {
+      this.countOtp = 0
+      this.loadingNew = false
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.otpItem = ''
+      this.emailIsUsed = false
+      this.$refs['popup-new-otp-verification'].hide()
+    },
+    closeSuccessPopup() {
+      if (this.activityEdit === 'nomer') {
+        window.location.reload()
+      }
+      if (this.activityEdit === 'email') {
+        window.location.reload()
+      }
+    },
+    censorWord(str) {
+      return str[0] + '*'.repeat(str.length - 2) + str.slice(-1)
+    },
+    censorEmail(emails) {
+      const arr = emails.split('@')
+      return `${this.censorWord(arr[0])}@${this.censorWord(arr[1])}`
+    },
+    censorPhone(phone) {
+      return '*'.repeat(phone.length) + phone.slice(-3)
+    },
+    changeMethodOtp() {
+      this.$refs['popup-new-verification'].hide()
+      this.$refs['popup-edit-nomer'].show()
+      this.countOtp = 0
+      this.loadingNew = false
+      this.boxIsClicked = ''
+      this.loadingSendVerificationEmail = false
+      this.loadingSendVerificationNo = false
+      this.otpItem = ''
+    },
+    validateInputPhoneNumber(e) {
+      if (this.newNumberItem.length === 0) {
+        if (e.keyCode !== 48) {
+          e.preventDefault()
+        }
+      }
+      if (this.newNumberItem.length === 1) {
+        if (e.keyCode !== 56) {
+          e.preventDefault()
+        }
+      }
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
+        e.preventDefault()
+      }
     },
   },
 

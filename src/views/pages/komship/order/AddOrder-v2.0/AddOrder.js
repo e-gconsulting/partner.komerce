@@ -1049,7 +1049,7 @@ export default {
       this.newGrandTotalPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
     },
     formatterNewGrandTotal(e) {
-      return e.replace(/[^\d]/g, '')
+      return e.replace(/[^\d]/g, '').substring(0, 8)
     },
     checkDiscount() {
       if (this.discount > this.subTotal) {
@@ -1681,6 +1681,12 @@ export default {
         this.messageErrorAddressDetail = true
       } else {
         this.messageErrorAddressDetail = false
+      }
+    },
+    handleInputTotal(e) {
+      if (this.loadingCalculate) e.preventDefault()
+      if (e.keyCode === 44 || e.keyCode === 45 || e.keyCode === 46 || e.keyCode === 43 || e.keyCode === 101) {
+        e.preventDefault()
       }
     },
   },

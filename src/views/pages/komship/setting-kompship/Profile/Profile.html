@@ -139,7 +139,7 @@
                     disabled
                   />
                   <template #append>
-                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('noHP')">
+                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="popupEdit('nomer')">
                       <b-img src="@/assets/images/icons/new-edit-icon.svg" />
                     </b-button>
                   </template>
@@ -175,7 +175,7 @@
                     disabled
                   />
                   <template #append>
-                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('email')">
+                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="popupEdit('email')">
                       <b-img src="@/assets/images/icons/new-edit-icon.svg" />
                     </b-button>
                   </template>
@@ -816,6 +816,446 @@
           Oke
         </b-button>
       </b-row>
+  </b-modal>
 
+  <!-- new modal edit nomer hp -->
+  <b-modal
+    ref="popup-edit-nomer"
+    hide-footer
+    hide-header
+    no-close-on-backdrop
+    no-close-on-esc
+    centered
+  >
+    <b-row class="justify-content-end">
+      <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg" class="cursor-pointer m-50" @click="handleClosePopupEditNomer" />
+    </b-row>
+    <b-row class="justify-content-center mb-1">
+      <h3 class="text-black">
+        <strong>
+          {{ titlePopup }}
+        </strong>
+      </h3>
+    </b-row>
+    <b-row class="justify-content-center mb-1">
+      <h4 class="text-black">
+        <strong>
+          Pilih Metode Verifikasi
+        </strong>
+      </h4>
+    </b-row>
+    <b-row class="justify-content-center mb-1 mx-5">
+      <span class="text-center">
+        Pilih salah satu metode dibawah ini untuk mendapatkan kode verifikasi
+      </span>
+    </b-row>
+    <b-row class="justify-content-center mb-1">
+      <b-col cols="11" class="wrapper-box-email" :style="boxIsClicked === 'email' ? 'background: #FCD4BE; cursor: not-allowed' : 'cursor: pointer;'" @click="loadingNew ? '' : editNomerHp('email')">
+        <b-row class="my-1">
+          <b-col cols="2" class="p-0 d-flex justify-content-center align-items-center">
+            <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/sms.svg" style="width: 40px;" />
+          </b-col>
+          <b-col cols="10" style="position: relative;">
+            <div class="d-flex align-items-center">
+              <div>
+                <h5>
+                  <strong>
+                    E-mail ke
+                  </strong>
+                </h5>
+                <span>
+                  {{ censorEmail(profile.user_email) }}
+                </span>
+              </div>
+              <div v-if="loadingSendVerificationEmail" style="position: absolute; right: 0;">
+                <lottie-animation
+                  path="animation/LoadingProcess.json"
+                  :width="80"
+                />
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+      </b-col>
+      <b-col cols="10">
+        <b-row>
+        </b-row>
+      </b-col>
+    </b-row>
+    <b-row class="justify-content-center mb-2 cursor-pointer">
+      <b-col cols="11" class="wrapper-box-email" :style="boxIsClicked === 'no' ? 'background: #FCD4BE; cursor: not-allowed' : 'cursor: pointer;'" @click="editNomerHp('no')">
+        <b-row class="my-1">
+          <b-col cols="2" class="p-0 d-flex justify-content-center align-items-center">
+            <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/call.svg" style="width: 40px;" />
+          </b-col>
+          <b-col cols="10" style="position: relative;">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <h5>
+                  <strong>
+                    SMS kode OTP ke
+                  </strong>
+                </h5>
+                <span>
+                  {{ censorPhone(profile.user_phone) }}
+                </span>
+              </div>
+              <div v-if="loadingSendVerificationNo" style="position: absolute; right: 0;">
+                <lottie-animation
+                  path="animation/LoadingProcess.json"
+                  :width="80"
+                />
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+      </b-col>
+    </b-row>
+  </b-modal>
+
+  <b-modal
+    ref="popup-new-verification"
+    hide-footer
+    hide-header
+    no-close-on-backdrop
+    no-close-on-esc
+    centered
+  >
+    <b-row class="justify-content-end">
+      <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg" class="cursor-pointer m-50" @click="handleCloseNewVerification" />
+    </b-row>
+
+    <b-row class="mb-1 justify-content-center">
+      <h4 class="text-black text-center">
+        <strong>
+          {{ titleVerification }}
+        </strong>
+      </h4>
+    </b-row>
+    
+    <b-row class="mb-1 justify-content-center">
+      <b-img v-if="boxIsClicked === 'email'" src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/sms.svg" style="width: 40px;" />
+      <b-img v-if="boxIsClicked === 'no'" src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/call.svg" style="width: 40px;" />
+    </b-row>
+
+    <b-row class="mb-1 justify-content-center">
+      <h5 class="text-black text-center">
+        <strong>
+          Masukkan Kode Verifikasi
+        </strong>
+      </h5>
+    </b-row>
+
+    <b-row v-if="otpIsWrong" class="mb-2 justify-content-center mx-2">
+      <span class="text-center">
+        Kode OTP yang kamu masukkan <strong class="text-primary">salah</strong> harap cek kode OTP di email kamu kemudian masukkan kembali
+      </span>
+    </b-row>
+    
+    <b-row v-if="!otpIsWrong" class="mb-2 justify-content-center">
+      <span class="text-center">
+        {{ verificationDescriptionMode }}
+      </span>
+    </b-row>
+
+    
+    <b-row class="justify-content-center mb-50">
+      <PincodeInput
+        v-model="otpItem"
+        placeholder="0"
+        :length="6"
+        :autofocus="autofocusInputOtp"
+        class="pincode"
+        @input="newCheckOtp"
+      />
+    </b-row>
+    
+    <b-row class="mb-50 justify-content-center">
+      <small v-if="countOtp !== 0" class="text-center">
+        Mohon tunggu dalam {{ countOtp }} detik untuk kirim ulang
+      </small>
+      <small v-if="countOtp === 0">
+        Tidak menerima kode? 
+        <b-button variant="flat-primary" class="btn-icon" size="sm" @click="sendOtpAgain">
+          <b-spinner v-if="loadingNewResend" small /> Kirim ulang
+        </b-button>
+      </small>
+    </b-row>
+
+    <b-row class="mb-1 justify-content-center">
+      <b-button v-if="otpSubmit > 1" variant="flat-primary btn-icon" size="sm" @click="changeMethodOtp">
+        <small class="text-center text-primary">
+          Coba dengan metode lain
+        </small>
+      </b-button>
+    </b-row>
+  </b-modal>
+
+  <!-- Confirm New Nomer -->
+  <b-modal
+    ref="popup-new-phone"
+    hide-footer
+    hide-header
+    no-close-on-backdrop
+    no-close-on-esc
+    centered
+  >
+    <b-row class="justify-content-end">
+      <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg" class="cursor-pointer m-50" @click="handleCloseNewVerification" />
+    </b-row>
+    <div v-if="activityEdit === 'nomer'">
+      <b-row class="justify-content-center mb-50">
+        <h4 class="text-center text-black">
+          <strong>
+            Ubah No HP
+          </strong>
+        </h4>
+      </b-row>
+      <b-row class="justify-content-center mx-2 mb-2">
+        <span class="text-center">
+          Demi keamanan, pengguna diharuskan memperbarui nomor Hp yang bisa dihubungi secara berkala
+        </span>
+      </b-row>
+      <form class="mb-1">
+        <b-row class="justify-content-center">
+          <b-col cols="11" class="mb-1">
+            <label for="old-number">
+              <strong class="text-black">Nomor HP Lama</strong>
+            </label>
+            <div class="d-flex align-items-center pl-1" style="background: #F4F4F4;
+            border-radius: 8px; height: 3rem!important; border: 0;">
+             {{ censorPhone(profile.user_phone) }}
+            </div>
+          </b-col>
+          <b-col cols="11" class="mb-50">
+            <label for="new-number">
+              <strong class="text-black">Nomor HP Baru</strong>
+            </label>
+            <b-form-input
+              id="new-number"
+              v-model="newNumberItem"
+              :style="errorNumber || newNumberItem === profile.user_phone ? 'border: 1px solid #E31A1A; border-radius: 8px; height: 3rem!important; background: #FFEDED;' : 'border: 1px solid #E2E2E2; border-radius: 8px; height: 3rem!important;'"
+              :formatter="(e) => String(e).substring(0, 14)"
+              type="number"
+              @blur="checkFormatNumberOnBlur"
+              @keydown="validateInputNumber"
+              @keypress="validateInputPhoneNumber"
+              @input="checkFormatNumber"
+            />
+            <b-row v-if="errorNumber" class="my-50">
+              <small class="text-primary ml-1">*Nomor Hp belum benar</small>
+            </b-row>
+            <b-row v-if="numberIsUsed" class="my-50">
+              <small class="text-primary ml-1">*Nomor Hp sudah digunakan orang lain</small>
+            </b-row>
+            <b-row v-if="newNumberItem === profile.user_phone" class="my-50">
+              <small class="text-primary ml-1">*Nomor Hp tidak boleh sama dengan sebelumnya </small>
+            </b-row>
+          </b-col>
+          <b-col cols="11" class="mb-1">
+            <label for="old-number" class="text-black">
+              Kami akan mengirimkan kode verifikasi melalui SMS
+            </label>
+          </b-col>
+          <b-col cols="12" class="text-center">
+            <b-button class="wrapper-loading-next-verification" :style="newNumberItem.length >= 8 && newNumberItem !== profile.user_phone ? 'background: #FF6A3A!important; border: 1px solid #E2E2E2!important; border-radius: 8px; color: white;' : 'background: #E2E2E2!important; border: 1px solid #E2E2E2!important; border-radius: 8px; color: #626262!important; cursor: not-allowed!important;'" :disabled="newNumberItem.length < 8 || newNumberItem === profile.user_phone" @click="nextStepVerificationChangeNo">
+              <strong :style="loadingNew ? 'visibility: hidden;' : ''">Selanjutnya</strong>
+              <lottie-animation
+                v-if="loadingNew"
+                path="animation/LoadingProcess.json"
+                class="loadingNextVerification"
+              />
+            </b-button>
+          </b-col>
+        </b-row>
+      </form>
+    </div>
+    <div v-else>
+      <b-row class="justify-content-center mb-50">
+        <h4 class="text-center text-black">
+          <strong>
+            Ubah Email
+          </strong>
+        </h4>
+      </b-row>
+      <b-row class="justify-content-center mx-2 mb-2">
+        <span class="text-center">
+          Demi keamanan, pengguna diharuskan memperbarui email yang bisa dihubungi secara berkala
+        </span>
+      </b-row>
+      <form class="mb-1">
+        <b-row class="justify-content-center">
+          <b-col cols="11" class="mb-1">
+            <label for="old-number">
+              <strong class="text-black">Email Lama</strong>
+            </label>
+            <div class="d-flex align-items-center pl-1" style="background: #F4F4F4;
+            border-radius: 8px; height: 3rem!important; border: 0;">
+             {{ censorEmail(profile.user_email) }}
+            </div>
+          </b-col>
+          <b-col cols="11" class="mb-50">
+            <label for="new-number">
+              <strong class="text-black">Email Baru</strong>
+            </label>
+            <b-form-input
+              id="new-number"
+              v-model="newEmailItem"
+              :style="errorEmail || newEmailItem === profile.user_email ? 'border: 1px solid #E31A1A; border-radius: 8px; height: 3rem!important; background: #FFEDED;' : 'border: 1px solid #E2E2E2; border-radius: 8px; height: 3rem!important;'"
+              type="email"
+              :formatter="(e) => String(e).substring(0, 50)"
+              @blur="checkFormatEmailOnBlur"
+              @input="checkFormatEmail"
+            />
+            <b-row v-if="errorEmail" class="my-50">
+              <small class="text-primary ml-1">*Format Email belum benar</small>
+            </b-row>
+            <b-row v-if="emailIsUsed" class="my-50">
+              <small class="text-primary ml-1">*Email sudah digunakan orang lain</small>
+            </b-row>
+            <b-row v-if="newEmailItem === profile.user_email" class="my-50">
+              <small class="text-primary ml-1">*Email tidak boleh sama dengan sebelumnya </small>
+            </b-row>
+          </b-col>
+          <b-col cols="11" class="mb-1">
+            <label for="old-number" class="text-black">
+              Kami akan mengirimkan kode verifikasi melalui Email
+            </label>
+          </b-col>
+          <b-col cols="12" class="text-center">
+            <b-button v-if="activityEdit === 'nomer'" class="wrapper-loading-next-verification" :style=" newNumberItem.length >= 8? 'background: #FF6A3A!important; border: 1px solid #E2E2E2!important; border-radius: 8px; color: white;' : 'background: #E2E2E2!important; border: 1px solid #E2E2E2!important; border-radius: 8px; color: #626262!important; cursor: not-allowed!important;'" :disabled="newNumberItem.length < 8" @click="nextStepVerificationChangeNo">
+              <strong :style="loadingNew ? 'visibility: hidden;' : ''">Selanjutnya</strong>
+              <lottie-animation
+                v-if="loadingNew"
+                path="animation/LoadingProcess.json"
+                class="loadingNextVerification"
+              />
+            </b-button>
+            <b-button v-else class="wrapper-loading-next-verification" :style="!errorEmail && newEmailItem !== '' && newEmailItem !== profile.user_email ? 'background: #FF6A3A!important; border: 1px solid #E2E2E2!important; border-radius: 8px; color: white;' : 'background: #E2E2E2!important; border: 1px solid #E2E2E2!important; border-radius: 8px; color: #626262!important; cursor: not-allowed!important;'" :disabled="errorEmail || newEmailItem === profile.user_email" @click="nextStepVerificationChangeNo">
+              <strong :style="loadingNew ? 'visibility: hidden;' : ''">Selanjutnya</strong>
+              <lottie-animation
+                v-if="loadingNew"
+                path="animation/LoadingProcess.json"
+                class="loadingNextVerification"
+              />
+            </b-button>
+          </b-col>
+        </b-row>
+      </form>
+    </div>
+  </b-modal>
+
+  <!-- Popup New OTP Confirmation -->
+  
+  <b-modal
+    ref="popup-new-otp-verification"
+    hide-footer
+    hide-header
+    no-close-on-backdrop
+    no-close-on-esc
+    centered
+  >
+    <b-row class="justify-content-end">
+      <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg" class="cursor-pointer m-50" @click="handleCloseNewOtpVerification" />
+    </b-row>
+
+    <b-row class="mb-1 justify-content-center">
+      <h4 class="text-black text-center">
+        <strong>
+          Verifikasi OTP
+        </strong>
+      </h4>
+    </b-row>
+    
+    <b-row class="mb-1 justify-content-center">
+      <b-img v-if="activityEdit === 'email'" src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/sms.svg" style="width: 40px;" />
+      <b-img v-if="activityEdit === 'nomer'" src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/call.svg" style="width: 40px;" />
+    </b-row>
+
+    <b-row class="mb-1 justify-content-center">
+      <h5 class="text-black text-center">
+        <strong>
+          Masukkan Kode Verifikasi
+        </strong>
+      </h5>
+    </b-row>
+    
+    <b-row v-if="!otpIsWrong" class="mb-2 justify-content-center flex-column align">
+      <span class="text-center">
+        Kode verifikasi telah dikirim melalui {{ activityEdit === 'nomer' ? 'SMS' : 'EMAIL' }} ke
+      </span>
+      <span class="text-center">
+        <strong>
+          {{ activityEdit === 'nomer' ? newNumberItem : newEmailItem }}
+        </strong>
+      </span>
+    </b-row>
+
+    <b-row v-if="otpIsWrong" class="mb-2 justify-content-center mx-2">
+      <span class="text-center">
+        Kode OTP yang kamu masukkan <strong class="text-primary">salah</strong> harap cek kode OTP di email kamu kemudian masukkan kembali
+      </span>
+    </b-row>
+
+    
+    <b-row class="justify-content-center mb-50">
+      <PincodeInput
+        v-model="otpItem"
+        placeholder="0"
+        :length="6"
+        :autofocus="autofocusInputOtp"
+        @input="newCheckConfirmOtp"
+      />
+    </b-row>
+    
+    <b-row class="mb-50 justify-content-center">
+      <small v-if="countOtp !== 0" class="text-center">
+        Mohon tunggu dalam {{ countOtp }} detik untuk kirim ulang
+      </small>
+      <small v-if="countOtp === 0">
+        Tidak menerima kode? 
+        <b-button variant="flat-primary" class="btn-icon" size="sm" @click="sendOtpConfirmationAgain">
+          Kirim ulang
+        </b-button>
+      </small>
+    </b-row>
+  </b-modal>
+
+  <!-- Success -->
+  <b-modal
+    ref="popup-success-nomor"
+    hide-footer
+    hide-header
+    centered
+    :no-close-on-esc="activityEdit === 'email' ? true : false"
+    :no-close-on-backdrop="activityEdit === 'email' ? true : false"
+  >
+    <b-row class="justify-content-center mt-1 mb-2">
+      <b-img src="@/assets/images/icons/success.svg" />
+    </b-row>
+
+    <b-row class="justify-content-center mb-50">
+      <h4 class="text-black text-center">
+        <strong>
+          {{ activityEdit === 'email' ? 'Email Berhasil Diganti' : 'Nomor HP Berhasil Diganti' }}
+        </strong>
+      </h4>
+    </b-row>
+    <b-row class="justify-content-center mb-2 mx-3">
+      <span v-if="activityEdit === 'nomer'" class="text-black text-center">
+        Selamat! Kami telah mengkonfirmasi {{ newNumberItem }} sebagai nomor HP untuk akun Komerce kamu. Setelah ini coba login ulang yaa..
+      </span>
+      <span v-else class="text-black text-center">
+        Selamat! Kami telah mengkonfirmasi {{ newEmailItem }} sebagai email untuk akun Komerce kamu. Setelah ini coba login ulang yaa..
+      </span>
+    </b-row>
+    <b-row class="justify-content-center mb-2">
+      <b-button
+        variant="primary"
+        @click="closeSuccessPopup"
+      >
+        Oke
+      </b-button>
+    </b-row>
   </b-modal>
 </b-overlay>
