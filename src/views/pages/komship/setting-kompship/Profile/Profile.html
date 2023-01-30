@@ -1051,6 +1051,9 @@
             <b-row v-if="newNumberItem === profile.user_phone" class="my-50">
               <small class="text-primary ml-1">*Nomor Hp tidak boleh sama dengan sebelumnya </small>
             </b-row>
+            <b-row v-if="typeNumber" class="my-50">
+              <small class="text-primary ml-1"> *Dimulai dari 08 dulu ya..</small>
+            </b-row>
           </b-col>
           <b-col cols="11" class="mb-1">
             <label for="old-number" class="text-black">
