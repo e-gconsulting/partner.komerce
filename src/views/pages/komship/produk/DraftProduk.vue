@@ -1,5 +1,8 @@
 <template>
-  <b-col class="pl-0 pr-0">
+  <b-col
+    id="draft-produk"
+    class="pl-0 pr-0"
+  >
     <b-form>
       <b-row>
         <b-col cols="12">
@@ -928,32 +931,121 @@ export default {
       stockTo: '',
       soldFrom: '',
       soldTo: '',
+
+      limit: 50,
+      offset: 0,
+      lastDraftProduct: false,
     }
   },
   mounted() {
-    this.getProduct()
+    this.fetchProduct()
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('draft-produk').offsetHeight && !this.loading) {
+        this.getNextProduct()
+      }
+    }
   },
   methods: {
-    // eslint-disable-next-line func-names
-    getProduct: _.debounce(function () {
+    fetchProduct() {
       this.loading = true
       const params = {
         status: 0,
+        limits: this.limit,
+        offset: this.offset,
       }
       if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
       if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
       if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
       if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
       if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
-      return this.$http_komship.get('/v1/product', {
+      this.$http_komship.get('/v4/product', {
         params,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         this.variantData = data
+        this.offset = data.length
         this.loading = false
-        return this.variantData
+      }).catch(() => {
+        this.loading = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal me-load produk, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
+      })
+    },
+    getNextProduct() {
+      if (!this.lastDraftProduct) {
+        this.loading = true
+        const params = {
+          status: 0,
+          limits: this.limit,
+          offset: this.offset,
+        }
+        if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
+        if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
+        if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
+        if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
+        if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
+        this.$http_komship.get('/v4/product', {
+          params,
+        }, {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+          const { data } = response.data
+          this.variantData.push(...data)
+          this.offset += data.length
+          this.loading = false
+          if (data.length < this.limit) {
+            this.lastDraftProduct = true
+          } else {
+            this.lastDraftProduct = false
+          }
+        }).catch(() => {
+          this.loading = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal me-load produk, silahkan coba lagi!',
+              variant: 'danger',
+            },
+          })
+        })
+      }
+    },
+    // eslint-disable-next-line func-names
+    getProduct: _.debounce(function () {
+      this.loading = true
+      this.limit = 50
+      this.offset = 0
+      const params = {
+        status: 0,
+        limits: this.limit,
+        offset: this.offset,
+      }
+      if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
+      if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
+      if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
+      if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
+      if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
+      this.$http_komship.get('/v4/product', {
+        params,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        this.variantData = data
+        this.offset = data.length
+        this.loading = false
+        // return this.variantData
       }).catch(() => {
         this.loading = false
         this.$toast({

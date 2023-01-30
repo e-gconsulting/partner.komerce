@@ -620,7 +620,6 @@ export default
       for (let x = 0; x < this.ticketStatusItems.length; x += 1) {
         this.ticketStatusItems[x].onCheck = false
       }
-      console.log(this.ticketStatusItems)
       this.ticketStatus = []
       this.filterTicketType = []
       this.filterEkspedisi = []

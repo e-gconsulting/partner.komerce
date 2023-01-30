@@ -13,7 +13,6 @@ import flatPickr from 'vue-flatpickr-component'
 import { Indonesian } from 'flatpickr/dist/l10n/id'
 import 'flatpickr/dist/themes/light.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { VListItemSubtitle } from 'vuetify/lib'
 
 export default {
   components: {
@@ -82,6 +81,11 @@ export default {
           this.listProdukDB = response.data.data.map(item => ({
             ...item,
             isActive: false,
+            stockEdit: 0,
+            variant: item.variant.map(variant => ({
+              ...variant,
+              stockEdit: 0,
+            })),
           }))
           this.listProdukEdit = this.listProdukDB
         })
@@ -120,26 +124,38 @@ export default {
       this.TambahProduct = !this.TambahProduct
       this.TableProduct = !this.TambahProduct
     },
-    inputStock(stock, item) {
-      if (stock > 0) {
-        // eslint-disable-next-line no-param-reassign
-        item.isActive = true
-      } else {
+    inputStock(stock, product, index, item) {
+      if (stock < 0) {
+        this.listProdukEdit[product].variant[index].stockEdit = 0
         // eslint-disable-next-line no-param-reassign
         item.isActive = false
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = true
+      }
+    },
+    inputStockNoVariant(stock, product, item) {
+      if (stock < 0) {
+        this.listProdukEdit[product].stockEdit = 0
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = false
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = true
       }
     },
     setQuantity(status, product, index, item) {
       if (status === 'plus') {
-        this.listProdukEdit[product].variant[index].stock += 1
-        if (this.listProdukEdit[product].variant[index].stock > 0) {
+        // eslint-disable-next-line no-plusplus
+        this.listProdukEdit[product].variant[index].stockEdit++
+        if (this.listProdukEdit[product].variant[index].stockEdit > 0) {
           // eslint-disable-next-line no-param-reassign
           item.isActive = true
         }
       } else if (status === 'minus') {
-        this.listProdukEdit[product].variant[index].stock -= 1
-        if (this.listProdukEdit[product].variant[index].stock <= 0) {
-          this.listProdukEdit[product].variant[index].stock = 0
+        this.listProdukEdit[product].variant[index].stockEdit -= 1
+        if (this.listProdukEdit[product].variant[index].stockEdit <= 0) {
+          this.listProdukEdit[product].variant[index].stockEdit = 0
           // eslint-disable-next-line no-param-reassign
           item.isActive = false
         }
@@ -147,15 +163,16 @@ export default {
     },
     setQuantityNoVariant(status, product, item) {
       if (status === 'plus') {
-        this.listProdukEdit[product].stock += 1
-        if (this.listProdukEdit[product].stock > 0) {
+        // eslint-disable-next-line no-plusplus
+        this.listProdukEdit[product].stockEdit++
+        if (this.listProdukEdit[product].stockEdit > 0) {
           // eslint-disable-next-line no-param-reassign
           item.isActive = true
         }
       } else if (status === 'minus') {
-        this.listProdukEdit[product].stock -= 1
-        if (this.listProdukEdit[product].stock <= 0) {
-          this.listProdukEdit[product].stock = 0
+        this.listProdukEdit[product].stockEdit -= 1
+        if (this.listProdukEdit[product].stockEdit <= 0) {
+          this.listProdukEdit[product].stockEdit = 0
           // eslint-disable-next-line no-param-reassign
           item.isActive = false
         }
@@ -166,10 +183,10 @@ export default {
       const product = await this.selectedOrder.map(object => ({
         product_id: object.id,
         is_variant: object.is_variant,
-        total_inbound: object.stock,
+        total_inbound: object.stockEdit,
         variant: object.variant.map(variant => ({
           option_id: variant.option_id,
-          total_inbound: variant.stock,
+          total_inbound: variant.stockEdit,
         })),
       }))
 

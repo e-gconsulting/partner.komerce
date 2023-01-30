@@ -126,7 +126,7 @@ export default {
       }
     },
     async checkAddress() {
-      await this.$http_komship.get('/v2/address')
+      await this.$http_komship.get('/v3/address')
         .then(response => {
           const { data } = response.data
           this.address = data

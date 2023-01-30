@@ -355,7 +355,6 @@ export default {
   },
   created() {
     this.fetchDetailGudangKompack()
-    this.fetchProduct()
     this.fetchPackingOptions()
   },
 
@@ -380,6 +379,7 @@ export default {
         .then(response => {
           this.detail = response.data.data
           this.loading = false
+          this.fetchProduct()
         }).catch(() => {
           this.loading = false
           this.$toast({
@@ -394,16 +394,14 @@ export default {
         })
     },
     async fetchProduct() {
-      if (this.searchProduct === '') {
-        this.offset = 0
-      }
+      this.offset = 0
       this.loading = true
       await this.$http_komship.get('/v1/komship/submission/product', {
         params: {
           warehouse_id: this.wh,
           name: this.searchProduct,
-          limits: this.searchProduct === '' ? this.limits : null,
-          offset: this.searchProduct === '' ? this.offset : null,
+          limits: this.limits,
+          offset: this.offset,
         },
       })
         .then(response => {

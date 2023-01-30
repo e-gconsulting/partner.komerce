@@ -534,15 +534,9 @@ export default {
       this.orderID = orderID
     }
     this.getOrderData()
-    const main = document.getElementById('pickup-order-detail')
-    if (main) {
-      window.onscroll = () => {
-        if ((window.innerHeight + window.scrollY)
-        >= main.offsetHeight
-        && !this.loading) {
-          this.offset += 50
-          this.getOrderData()
-        }
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('pickup-order-detail').offsetHeight && !this.loading) {
+        this.getOrderData()
       }
     }
   },
@@ -554,7 +548,7 @@ export default {
       try {
         const listShipment = await this.$http_komship.get('/v1/shipments')
         const { data } = listShipment.data
-        for (let index = 1; index < data.length; index += 1) {
+        for (let index = 0; index < data.length; index += 1) {
           this.listShipment.push(data[index].shipping_name)
         }
       } catch (error) {
@@ -597,14 +591,48 @@ export default {
       }
     },
     async getOrderData() {
-      if (this.orderID !== '' && !this.lastOrderData) {
+      if (this.$route.params.order_data_id !== undefined) {
+        if (!this.lastOrderData) {
+          this.loading = true
+          try {
+            const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
+            const { data } = order.data
+            this.offset += data.length
+            this.orderDB = data
+            this.order.push(...data)
+            if (this.order[0].warehouse_type === 'Mitra Kompack') {
+              this.fieldOrder.push(
+                {
+                  key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
+                },
+              )
+            }
+            this.page += 1
+            this.loading = false
+            if (data.length < this.limit) {
+              this.lastOrderData = true
+            }
+          } catch (error) {
+            console.error(error)
+            this.loading = false
+          }
+        }
+      } else if (!this.lastOrderData) {
         this.loading = true
         try {
-          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
+          const order = await this.$http_komship.get(`/v3/order/${this.profile.partner_detail.id}`, {
+            params: {
+              order_id: this.orderID,
+              limit: this.limit,
+              offset: this.offset,
+              shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
+            },
+          })
           const { data } = order.data
+          this.offset += data.length
           this.orderDB = data
           this.order.push(...data)
-          if (this.order[0].warehouse_type === 'Mitra Kompack') {
+          if (this.$route.params.warehouse_type === 'Mitra Kompack') {
             this.fieldOrder.push(
               {
                 key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
@@ -627,7 +655,7 @@ export default {
       const array = this.order
       const newArray = array.filter(item => item.shipping === this.shipment)
       this.order = newArray
-      if (this.shipment === null) { this.order = this.orderDB }
+      if (this.shipment === 'Semua Ekspedisi' || this.shipment === null) { this.order = this.orderDB }
     },
     selectAllOrder() {
       if (this.checklistAllOrder) {

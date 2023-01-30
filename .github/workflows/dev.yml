@@ -11,16 +11,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - uses: actions/cache@v1 # this allows for re-using node_modules caching, making builds a bit faster.
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - run: npm cache clean --force
-      - run: npm install
+      - name: Install dependencies
+        run: yarn
       - name: Build dependencies
-        run: npm run build
+        run: yarn build
       - name: Archive development artifact
         uses: actions/upload-artifact@v3
         with:

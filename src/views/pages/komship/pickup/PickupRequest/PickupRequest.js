@@ -107,7 +107,7 @@ export default {
     await this.getAddressList()
     await this.getVehicleList()
     await this.generateToken()
-    this.fieldProductPreview = this.fieldProductPreviewKomship
+    // this.fieldProductPreview = this.fieldProductPreviewKomship
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -144,21 +144,30 @@ export default {
         this.pickupTime = this.formatPickupTime(pickupTime - 1)
       }
     },
-    getParamsData() {
+    async getParamsData() {
       if (this.$route.params.order) {
         this.address = this.$route.params.address
         this.pickupDate = this.$route.params.pickup_date
         this.pickupTime = this.$route.params.pickup_time
         this.vehicle = this.$route.params.vehicle
         this.order = this.$route.params.order
+        this.totalCost = this.order.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
         const product = []
         this.order.forEach(element => {
           element.product.forEach(items => {
-            product.push(items)
+            product.push({
+              ...items,
+              fulfillment_cost: element.fulfillment_fee,
+            })
           })
         })
         this.totalProduct = product.length
         this.itemProductPreview = product.slice(0, 2)
+        if (this.address.warehouse_type === 'Mitra Kompack') {
+          this.fieldProductPreview = this.fieldProductPreviewKomship.concat(this.fieldProductPreviewKompack)
+        } else {
+          this.fieldProductPreview = this.fieldProductPreviewKomship
+        }
       } else {
         this.getCurrentDate()
       }
@@ -240,7 +249,7 @@ export default {
           .then(async res => {
             const { data } = res.data
             this.itemOrderList = data
-            this.offset = data.length
+            this.offset += data.length
             this.loading = false
             if (data.length < this.limit) {
               this.isLastOrder = true
@@ -258,29 +267,40 @@ export default {
       e.preventDefault()
       if (e.target.scrollTop + e.target.clientHeight
         >= e.target.scrollHeight - 500) {
-        if (this.isLastOrder || this.loading) return
-        this.loading = true
-        await this.$http_komship.get(`v2/order/${this.profile.partner_id}`, {
-          params: {
-            order_status: 'Diajukan',
-            partner_address_id: this.address.address_id,
-            limit: this.limit,
-            offset: this.offset,
-          },
-        })
-          .then(result => {
-            const { data } = result.data
-            this.itemOrderList.push(...data)
-            this.offset += data.length
-            this.loading = false
-            if (data.length < this.limit) {
-              this.isLastOrder = true
-            }
+        if (!this.isLastOrder) {
+          let PartnerAddressId = 0
+          let WarehouseId = 0
+          if (this.address.warehouse_type === 'Mitra Kompack') {
+            WarehouseId = this.address.id
+          } else {
+            PartnerAddressId = this.address.id
+          }
+          this.loading = true
+          await this.$http_komship.get(`v3/order/${this.profile.partner_id}`, {
+            params: {
+              order_status: 'Diajukan',
+              partner_address_id: PartnerAddressId,
+              warehouse_id: WarehouseId,
+              limit: this.limit,
+              offset: this.offset,
+            },
           })
-          .catch(err => {
-            this.loading = false
-            console.log(err.response)
-          })
+            .then(result => {
+              const { data } = result.data
+              this.itemOrderList.push(...data)
+              this.offset += data.length
+              this.loading = false
+              if (data.length < this.limit) {
+                this.isLastOrder = true
+              } else {
+                this.isLastOrder = false
+              }
+            })
+            .catch(err => {
+              this.loading = false
+              console.log(err.response)
+            })
+        }
       }
     },
     submitSelectedOrder() {
@@ -319,6 +339,7 @@ export default {
           pickup_date: this.pickupDate,
           pickup_time: this.pickupTime,
           vehicle: this.vehicle,
+          warehouse_type: this.address.warehouse_type,
         },
       })
     },
@@ -387,11 +408,15 @@ export default {
       this.order = this.itemOrderError
       this.order.forEach(element => {
         element.product.forEach(items => {
-          product.push(items)
+          product.push({
+            ...items,
+            fulfillment_cost: element.fulfillment_fee,
+          })
         })
       })
       this.totalProduct = product.length
       this.itemProductPreview = product.slice(0, 2)
+      this.totalCost = this.itemOrderError.reduce((totalCost, item) => totalCost + item.fulfillment_fee, 0)
       this.totalOrderTimeout = 0
       this.submitProgress = 0
       this.submitStatus = true

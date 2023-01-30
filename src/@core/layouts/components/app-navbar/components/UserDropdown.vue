@@ -299,7 +299,6 @@
             />
           </div>
         </b-row>
-
         <div class="wrapper-content-notification">
           <b-row
             v-for="(item, index) in listNotification"

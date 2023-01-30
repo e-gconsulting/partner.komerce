@@ -60,3 +60,15 @@
 .collapse {
     visibility: unset!important;
 }
+
+#swal2-title {
+    font-size: 20px;
+    color: #222222;
+    font-weight: 600;
+}
+
+#swal2-content {
+    color: #222222;
+    font-weight: 400;
+    font-size: 16px;
+}
