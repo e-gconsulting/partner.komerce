@@ -73,6 +73,7 @@ export default {
       deleteItemAdmin: {},
       loadingListAdminSalesTracking: false,
       loadingAddAdminSalesTracking: false,
+      checkRankingSales: false,
     }
   },
   computed: {
@@ -80,6 +81,7 @@ export default {
   },
   mounted() {
     this.getProfile()
+    this.myProfile()
   },
   methods: {
     getProfile() {
@@ -737,6 +739,32 @@ export default {
               variant: 'danger',
             },
           }, 2000)
+        })
+    },
+    myProfile() {
+      const url = '/v1/my-profile'
+      this.$http_komship.post(url)
+        .then(res => {
+          const { data } = res.data
+          this.checkRankingSales = data.partner_is_tracking_sales_dashboard
+        })
+    },
+    onOffTrackingSales(value) {
+      const onOff = value ? 1 : 0
+      const url = `/v1/setting/onOffTrackingSalesDashboard?is_dashboard=${onOff}`
+      this.$http_komship.post(url)
+        .then(res => {
+          const { data } = res
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckCircleIcon',
+              text: data.message,
+              variant: 'success',
+            },
+          }, { timeout: 1000 })
+          this.checkRankingSales = value
         })
     },
   },

@@ -690,21 +690,37 @@
       </b-button>
     </b-row>
 
-     <b-row class="justify-content-center my-2">
+     <b-row class="justify-content-center my-1">
        <h4 class="text-black">
          <strong>Buat Admin</strong>
        </h4>
      </b-row>
+    <div class="max-h-[70vh] overflow-auto">
+      <b-row class="justify-content-center mb-2">
+        <b-col cols="10" class="text-center">
+          <span class="text-black">
+          Tambahkan Nama admin agar dapat dilacak di Data Order.
+          </span>
+        </b-col>
+      </b-row>
 
-     <b-row class="justify-content-center mb-2">
-      <b-col cols="10" class="text-center">
-       <span class="text-black">
-        Tambahkan Nama admin agar dapat dilacak di Data Order.
-       </span>
+      <b-row class="justify-content-center mb-2">
+        <img src="https://storage.googleapis.com/komship-bucket/komerce/Group.svg" alt="Komerce"/>
+      </b-row>
+
+      <b-row class="justify-content-center mb-2">
+      <b-col cols="10" class="text-center flex items-center">
+        <b-form-checkbox 
+          v-model="checkRankingSales"
+          @change="onOffTrackingSales"
+        />
+        <span class="text-black">
+          tampilkan Report Ranking Admin ke dashboard
+        </span>
       </b-col>
-     </b-row>
+      </b-row>
 
-     <b-overlay
+      <b-overlay
         :show="loadingListAdminSalesTracking"
         spinner-variant="primary"
         variant="light" blur="0"
@@ -779,64 +795,66 @@
         </b-row>
         
         <b-row class="justify-content-center mb-2">
-       <!-- Add -->
-       <b-col v-if="addSalesTrackingMode" cols="10" class="mb-2">
-         <div class="p-2" style="border: 1px solid #E2E2E2;
-         border-radius: 8px;">
-           <b-row class="mb-2 justify-content-between">
-             <b-col cols="auto">
-               <span class="text-black">Tambah Admin</span>
-             </b-col>
-             <b-col cols="auto" class="d-flex align-items-center">
-               <div>
-                 <b-button
-                   variant="primary"
-                   :class="errorInputAdmin ? 'btn-icon mr-50 cursor-not-allowed d-flex align-items-center' : 'btn-icon mr-50 d-flex align-items-center'"
-                   size="sm"
-                   :disabled="errorInputAdmin"
-                   @click="submitAdminSalesTracking"
-                 >
-                   <span class="text-white mr-50">Simpan</span>
-                   <b-spinner
+        <!-- Add -->
+        <b-col v-if="addSalesTrackingMode" cols="10" class="mb-2">
+          <div class="p-2" style="border: 1px solid #E2E2E2;
+          border-radius: 8px;">
+            <b-row class="mb-2 justify-content-between">
+              <b-col cols="auto">
+                <span class="text-black">Tambah Admin</span>
+              </b-col>
+              <b-col cols="auto" class="d-flex align-items-center">
+                <div>
+                  <b-button
+                    variant="primary"
+                    :class="errorInputAdmin ? 'btn-icon mr-50 cursor-not-allowed d-flex align-items-center' : 'btn-icon mr-50 d-flex align-items-center'"
+                    size="sm"
+                    :disabled="errorInputAdmin"
+                    @click="submitAdminSalesTracking"
+                  >
+                    <span class="text-white mr-50">Simpan</span>
+                    <b-spinner
                     v-if="loadingAddAdminSalesTracking"
                     small
-                   />
-                 </b-button>
-               </div>
-               <div>
-                 <b-img
-                   src="@/assets/images/icons/trash.svg"
-                   @click="addSalesTrackingMode = false"
-                 />
-               </div>
-             </b-col>
-           </b-row>
-           <b-row class="align-items-center">
-             <b-col cols="3">
-               <span class="text-black">Nama</span>
-             </b-col>
-             <b-col cols="9">
-               <b-form-input v-model="nameAdmin" placeholder="Masukan nama disini" @input="checkValidInputAdmin" />
-               <small v-if="errorInputAdmin" class="text-primary">
+                    />
+                  </b-button>
+                </div>
+                <div>
+                  <b-img
+                    src="@/assets/images/icons/trash.svg"
+                    @click="addSalesTrackingMode = false"
+                  />
+                </div>
+              </b-col>
+            </b-row>
+            <b-row class="align-items-center">
+              <b-col cols="3">
+                <span class="text-black">Nama</span>
+              </b-col>
+              <b-col cols="9">
+                <b-form-input v-model="nameAdmin" placeholder="Masukan nama disini" @input="checkValidInputAdmin" />
+                <small v-if="errorInputAdmin" class="text-primary">
                 Nama ini harus diisi*
-               </small>
-             </b-col>
-           </b-row>
-         </div>
-       </b-col>
+                </small>
+              </b-col>
+            </b-row>
+          </div>
+        </b-col>
         </b-row>
-     </b-overlay>
+      </b-overlay>
 
-     <b-row class="justify-content-center mb-2">
-       <b-button
-         variant="primary"
-         class="d-flex align-items-center btn-icon"
-         @click="handleFormAddAdminSalesTracking"
-       >
-         <feather-icon icon="PlusIcon" class="mr-50" />
-         <span class="text-white">Tambah Identitas</span>
-       </b-button>
-     </b-row>
+      <b-row class="justify-content-center mb-2">
+        <b-button
+          variant="primary"
+          class="d-flex align-items-center btn-icon"
+          @click="handleFormAddAdminSalesTracking"
+        >
+          <feather-icon icon="PlusIcon" class="mr-50" />
+          <span class="text-white">Tambah Identitas</span>
+        </b-button>
+      </b-row>
+
+    </div>
    </b-modal>
 
    <!-- Popup delete admin sales tracking -->
