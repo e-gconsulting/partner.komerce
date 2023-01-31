@@ -1,7 +1,7 @@
 <template>
   <b-card body>
     <div v-if="!TambahProduct">
-      <b-row class="justify-content-between mt-2 mb-4">
+      <b-row class="justify-content-between mt-2 mb-4 mx-2">
         <h4 class="text-black font-bold mb-1">
           Ajukan Inbound
         </h4>
