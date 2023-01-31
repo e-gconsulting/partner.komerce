@@ -564,7 +564,7 @@ export default {
         'Bulan Ini': [this.$moment().startOf('month').toDate(), today],
       },
       rangeDate: {
-        startDate: this.$moment().subtract(0, 'days').startOf('day').toDate(),
+        startDate: this.$moment().startOf('month').toDate(),
         endDate: today,
       },
       filterProductWarehouse: {},
