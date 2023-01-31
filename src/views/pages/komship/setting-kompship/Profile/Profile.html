@@ -1038,7 +1038,6 @@
               :formatter="(e) => String(e).substring(0, 14)"
               type="number"
               @blur="checkFormatNumberOnBlur"
-              @keydown="validateInputNumber"
               @keypress="validateInputPhoneNumber"
               @input="checkFormatNumber"
             />
