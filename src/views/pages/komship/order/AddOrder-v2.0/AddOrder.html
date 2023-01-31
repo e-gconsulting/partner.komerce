@@ -1181,7 +1181,7 @@
       <b-col md="6" class="d-flex justify-center mt-1">
         <b-button
           variant="outline-primary"
-          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone"
+          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
           @click="submit(true)"
         >
           Submit & Tambah Order Lagi
@@ -1190,7 +1190,7 @@
           v-if="isSubmitOrder === false && messageErrorAddressDetail === false"
           variant="primary"
           class="ml-1"
-          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone"
+          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
           @click="submit(false)"
         >
           Submit
