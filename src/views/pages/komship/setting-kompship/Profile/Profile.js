@@ -998,12 +998,6 @@ export default {
         }
       }
     },
-    validateInputNumber(event) {
-      if (event.keyCode === 69) {
-        event.preventDefault()
-      }
-      this.$forceUpdate()
-    },
     checkFormatEmail() {
       this.emailIsUsed = false
       if (!this.newEmailItem.match(/^[a-zA-Z0-9]+(?:[._-][a-zA-Z0-9]+)*@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/)) {
@@ -1143,6 +1137,9 @@ export default {
     },
     validateInputPhoneNumber(e) {
       this.typeNumber = false
+      if (e.keyCode === 69) {
+        e.preventDefault()
+      }
       if (this.newNumberItem.length === 0) {
         if (e.keyCode !== 48) {
           this.typeNumber = true
