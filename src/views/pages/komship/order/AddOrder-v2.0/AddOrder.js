@@ -1026,7 +1026,7 @@ export default {
       }
     },
     checkNewTotal: _.debounce(async function () {
-      if (this.newGrandTotal < this.shippingCost) {
+      if (this.newGrandTotal <= this.shippingCost) {
         this.newGrandTotal = await this.shippingCost
         await this.calculate(false)
         this.newGrandTotalPasteMode = false
@@ -1057,7 +1057,7 @@ export default {
         this.calculate(true)
       }
     },
-    calculate: _.debounce(function (getAdditional) {
+    calculate: _.debounce(async function (getAdditional) {
       if (this.shipping && this.cartId.length > 0) {
         this.loadingCalculate = true
         let grandTotalNew
@@ -1080,7 +1080,7 @@ export default {
         } else {
           grandTotalNew = null
         }
-        this.$http_komship.get('v3/calculate', {
+        await this.$http_komship.get('v3/calculate', {
           params: {
             cart: this.cartId.toString(),
             receiver_destination: this.destination.id,
@@ -1684,7 +1684,6 @@ export default {
       }
     },
     handleInputTotal(e) {
-      if (this.loadingCalculate) e.preventDefault()
       if (e.keyCode === 44 || e.keyCode === 45 || e.keyCode === 46 || e.keyCode === 43 || e.keyCode === 101) {
         e.preventDefault()
       }
