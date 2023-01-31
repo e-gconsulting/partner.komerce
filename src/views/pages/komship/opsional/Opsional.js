@@ -74,6 +74,7 @@ export default {
       loadingListAdminSalesTracking: false,
       loadingAddAdminSalesTracking: false,
       checkRankingSales: false,
+      adminName: '',
     }
   },
   computed: {
@@ -619,6 +620,7 @@ export default {
       this.$http_komship.post('/v1/tracking-sales/store', {
         name: this.nameAdmin,
       }).then(async response => {
+        this.nameAdmin = ''
         await this.$toast({
           component: ToastificationContent,
           props: {
@@ -713,6 +715,7 @@ export default {
     },
     handleDeleteAdminSalesTracking(data) {
       this.deleteItemAdmin = data
+      this.adminName = data.name
       this.$refs['popup-delete-sales-tracking'].show()
     },
     deleteAdminSalesTracking() {
