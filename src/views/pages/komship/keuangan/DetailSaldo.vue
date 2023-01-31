@@ -1,24 +1,6 @@
 <template>
   <b-card>
-    <b-row class="justify-content-between mb-2">
-      <b-col>
-        <h2 class="font-bold mb-2">
-          Rincian Saldo
-        </h2>
-      </b-col>
-      <b-col
-        cols="2"
-        class="text-end"
-      >
-        <b-button
-          variant="primary"
-          @click="$bvModal.show('download-rincian-saldo')"
-        >
-          Download
-        </b-button>
-      </b-col>
-    </b-row>
-    <b-row class="justify-content-between mb-2">
+    <b-row class="justify-content-between mb-2 mr-1">
       <b-col>
         <h2 class="font-bold mb-2">
           Rincian Saldo

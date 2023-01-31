@@ -357,10 +357,15 @@
                   >
                     <b-form-input
                       v-model="fieldAddAccountNo"
-                      :state="errors.length > 0 ? false:null"
+                      placeholder="Masukkan Nomor Rekening"
+                      :state="errors.length > 5 ? false:null"
+                      maxlength="20"
                       @keyup="getAccount"
+                      @keypress="isNumber($event)"
+                      @paste.prevent="AccountBankNo"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
+                    <small class="text-danger">{{ validateLength }}</small>
                     <small
                       v-if="messageSameNoBank !== ''"
                       class="text-danger"
@@ -415,7 +420,7 @@
                   class="mr-1"
                   @click="cancelAddRekening"
                 >
-                  Hapus
+                  Batal
                 </b-button>
                 <b-button
                   v-ripple.400="'rgba(186, 191, 199, 0.15)'"
@@ -906,6 +911,7 @@ import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
 import useJwt from '@/auth/jwt/useJwt'
 import moment from 'moment'
+import { isNumber } from '@/libs/helpers'
 
 export default {
   components: {
@@ -1003,6 +1009,8 @@ export default {
 
       ValidateAccountName: false,
       accountNameDB: false,
+      validateLength: '',
+      isNumber,
     }
   },
   computed: {
@@ -1662,9 +1670,17 @@ export default {
     },
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     getAccount: _.debounce(function () {
+      let lenghtNoAccount = false
+      if (this.fieldAddAccountNo.length > 5 && this.fieldAddAccountNo.length < 20) {
+        lenghtNoAccount = true
+        this.validateLength = ''
+      } else {
+        lenghtNoAccount = false
+        this.validateLength = 'Minimal 5 angka ya, pastikan jenis bank sudah benar'
+      }
       this.ValidateAccountName = true
       this.fieldAddAccountName = '    Memeriksa Nama Rekening'
-      if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '') {
+      if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && lenghtNoAccount === true) {
         this.$http.post('/v2/bank/check',
           {
             bank_name: this.fieldAddBankName,
@@ -1689,6 +1705,11 @@ export default {
         })
       }
     }, 1000),
+    AccountBankNo(e) {
+      this.fieldAddAccountNo = ''
+      const dummyAccountBank = e.clipboardData.getData('text').replace(/\D/g, '')
+      this.fieldAddAccountNo = dummyAccountBank
+    },
   },
 }
 </script>
