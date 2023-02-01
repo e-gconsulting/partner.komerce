@@ -364,12 +364,12 @@
                       @keypress="isNumber($event)"
                       @paste.prevent="AccountBankNo"
                     />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                    <small class="text-danger">{{ validateLength }}</small>
+                    <small class="text-danger">{{ errors[0] }} </small>
+                    <small class="text-danger">{{ validateLength }} </small>
                     <small
                       v-if="messageSameNoBank !== ''"
                       class="text-danger"
-                    >{{ messageSameNoBank }}</small>
+                    >{{ messageSameNoBank }}, </small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
@@ -1346,6 +1346,11 @@ export default {
     },
     cancelAddRekening() {
       this.fieldActionAddRekening = false
+      this.validateLength = ''
+      this.ValidateAccountName = false
+      this.fieldAddAccountNo = ''
+      this.fieldAddAccountName = 'Nama akan otomatis muncul'
+      this.fieldAddBankName = ''
     },
     removeFormRekening(index) {
       this.formRekening.splice(index, 1)
@@ -1671,16 +1676,16 @@ export default {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     getAccount: _.debounce(function () {
       let lenghtNoAccount = false
-      if (this.fieldAddAccountNo.length > 5 && this.fieldAddAccountNo.length < 20) {
-        lenghtNoAccount = true
-        this.validateLength = ''
-      } else {
+      if (this.fieldAddAccountNo.length >= 1 && this.fieldAddAccountNo.length < 5) {
         lenghtNoAccount = false
         this.validateLength = 'Minimal 5 angka ya, pastikan jenis bank sudah benar'
+      } else {
+        lenghtNoAccount = true
+        this.validateLength = ''
       }
-      this.ValidateAccountName = true
-      this.fieldAddAccountName = '    Memeriksa Nama Rekening'
       if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && lenghtNoAccount === true) {
+        this.ValidateAccountName = true
+        this.fieldAddAccountName = '    Memeriksa Nama Rekening'
         this.$http.post('/v2/bank/check',
           {
             bank_name: this.fieldAddBankName,
