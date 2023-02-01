@@ -157,6 +157,7 @@ export default {
   created() {
     this.fetchData()
     this.$emit('removeStatusFilter', 'menungguRespon')
+    this.$router.replace({ query: { tab: 'menunggu-response' } })
   },
   mounted() {
     window.onscroll = () => {

@@ -154,6 +154,7 @@ export default {
   created() {
     this.fetchData()
     this.$emit('statusFilter', 'dataBarang')
+    this.$router.replace({ query: { tab: 'data-barang-dikeluarkan' } })
   },
   mounted() {
     window.onscroll = () => {

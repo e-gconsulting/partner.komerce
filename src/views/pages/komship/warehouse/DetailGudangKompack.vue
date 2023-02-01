@@ -128,7 +128,7 @@
             style="padding: 7px;"
             variant="outline-primary"
             :disabled="penarikan"
-            @click="handlePenarikanButton(detail.id)"
+            @click="handlePenarikanButton()"
           >
             <img
               class="w-6"
@@ -356,9 +356,9 @@ export default {
   },
 
   methods: {
-    handlePenarikanButton(id) {
+    handlePenarikanButton() {
       this.$router.push({
-        path: `/penarikan-barang/${id}`,
+        path: '/penarikan-barang',
       })
     },
     handleTambahProduk(id, whId) {
