@@ -1313,8 +1313,8 @@ export default {
     },
     async getTopAdminOrder() {
       this.loadingAdminOrder = true
-      const params = `partner_id=${this.partnerId}`
-      const url = `/v1/dashboard/partner/topAdminOrder?filter=${this.filterRangking}`
+      const params = `partner_id=${this.partnerId}&filter=${this.filterRangking}`
+      const url = '/v1/dashboard/partner/topAdminOrder'
       await this.$http_komship.get(`${url}?${params}`)
         .then(res => {
           this.loadingAdminOrder = false
