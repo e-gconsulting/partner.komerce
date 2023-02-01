@@ -376,12 +376,12 @@ export default {
           text: 'Bulan ini',
         },
         {
-          value: '',
-          text: 'Life time',
-        },
-        {
           value: 2,
           text: 'Tahun ini',
+        },
+        {
+          value: '',
+          text: 'Life time',
         },
       ],
     }
