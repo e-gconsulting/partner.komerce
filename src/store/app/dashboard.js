@@ -157,7 +157,7 @@ export default {
     async init({ dispatch }) {
       dispatch('getBalanceSummary')
       dispatch('getOrderSummary')
-      dispatch('getTopAdminOrders')
+      // dispatch('getTopAdminOrders')
       dispatch('getCustomerLoyal')
       dispatch('getProdukTerlarises')
       dispatch('getPartnerIncomeGraph')
