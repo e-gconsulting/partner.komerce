@@ -332,11 +332,11 @@
                     </div>
                     <div class="my-1">
                       <b-form-checkbox
-                        id="chcekedIDExpress"
+                        id="chcekedSAP"
                         v-model="shipping"
-                        name="chcekedIDExpress"
+                        name="chcekedSAP"
                         class="text-left"
-                        value="IDEXPRESS"
+                        value="SAP"
                       >
                         SAP
                       </b-form-checkbox>
