@@ -253,7 +253,7 @@
           <span class="d-flex align-items-center">
             Reputasi Customer
             <img
-              id="infoReturnInsight"
+              id="infoCustomerInsight"
               src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
               class="icon-info ml-[5px] mr-1"
             >
@@ -264,10 +264,10 @@
           <b-spinner v-if="loadingCustomerReputation" small variant="primary" class="ml-50" />
           <b-popover
             triggers="hover"
-            target="infoReturnInsight"
+            target="infoCustomerInsight"
             placement="bottomleft"
           >
-          Tingkat kegagalan transaksi user tersebut selama ini. Itungannya adalah transaksi yang gagal dibandingkan dengan semua transaksi yang pernah dilakukan (identifikasi No.HP)
+          Tingkat kegagalan transaksi user tersebut selama ini. Hitungannya adalah transaksi yang gagal dibandingkan dengan semua transaksi yang pernah dilakukan (identifikasi No.HP)
           </b-popover>
         </b-row>
       </b-col>
@@ -335,7 +335,7 @@
           target="infoReturnInsight"
           placement="bottomleft"
         >
-        Tingkat retur di daerah tersebut berdasarkan data yang terkumpul di Komship, itungannya dari jumlah retur dibanding jumlah pengiriman ke daerah tersebut dalam 5 bulan terakhir,
+        Tingkat retur di daerah tersebut berdasarkan data yang terkumpul di Komship, Hitungannya dari jumlah retur dibanding jumlah pengiriman ke daerah tersebut dalam 5 bulan terakhir.
         </b-popover><br>
         <b-row class="md:-mt-4">
           <b-col v-if="returnInsight.percenatge_return_jne" cols="auto" class="d-flex py-[5px] px-1 mb-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
