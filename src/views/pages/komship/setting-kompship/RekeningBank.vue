@@ -1686,7 +1686,7 @@ export default {
       if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && lenghtNoAccount === true) {
         this.ValidateAccountName = true
         this.fieldAddAccountName = '    Memeriksa Nama Rekening'
-        this.$http.post('/v2/bank/check',
+        this.$http.post('/v1/bank/check-bank-owner',
           {
             bank_name: this.fieldAddBankName,
             account_no: this.fieldAddAccountNo,
