@@ -138,7 +138,7 @@
                 </b-badge>
               </b-col>
             </b-row>
-            <span class="d-flex mt-20">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
+            <span class="d-flex mt-20">Telah ditambahkan oleh ‘{{ userFullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
             <span
               v-if="editBy !== null || editDate !== null"
               class="d-flex mb-1"
@@ -599,6 +599,7 @@ export default {
       listAwb: '',
 
       valuePromiseModal: null,
+      userFullname: '',
     }
   },
   computed: {
@@ -642,6 +643,7 @@ export default {
         this.statusOrder = await this.setAlert(data.order_status)
         this.statusOrderMobile = await this.setAlertMobile(data.order_status)
         this.loadingDetailOrder = false
+        this.userFullname = data.user_fullname
       } catch (err) {
         this.$toast({
           component: ToastificationContent,

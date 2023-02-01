@@ -595,7 +595,13 @@ export default {
         if (!this.lastOrderData) {
           this.loading = true
           try {
-            const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
+            const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}`, {
+              params: {
+                limit: this.limit,
+                offset: this.offset,
+                shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
+              },
+            })
             const { data } = order.data
             this.offset += data.length
             this.orderDB = data
@@ -650,12 +656,12 @@ export default {
         }
       }
     },
-    getOrderDataByExpedition() {
-      this.order = this.orderDB
-      const array = this.order
-      const newArray = array.filter(item => item.shipping === this.shipment)
-      this.order = newArray
-      if (this.shipment === 'Semua Ekspedisi' || this.shipment === null) { this.order = this.orderDB }
+    async getOrderDataByExpedition() {
+      this.limit = 50
+      this.offset = 0
+      this.lastOrderData = false
+      this.order = []
+      this.getOrderData()
     },
     selectAllOrder() {
       if (this.checklistAllOrder) {

@@ -428,16 +428,18 @@ export default {
     }, 1000),
     getDestination: _.debounce(function () {
       this.destinationList = []
-      this.$http_komship
-        .get(`/v1/destination?search=${this.destinationLabel}`)
-        .then(res => {
-          const { data } = res.data.data
-          this.destinationList = data
-          this.loadingSearchDestination = false
-        })
-        .catch(err => {
-          this.loadingSearchDestination = false
-        })
+      if (this.destinationLabel.length > 2) {
+        this.$http_komship
+          .get(`/v1/destination?search=${this.destinationLabel}`)
+          .then(res => {
+            const { data } = res.data.data
+            this.destinationList = data
+            this.loadingSearchDestination = false
+          })
+          .catch(err => {
+            this.loadingSearchDestination = false
+          })
+      }
     }, 1000),
     async getProduct(address) {
       if (address.warehouse_type === 'Mitra Kompack') { this.productSelected = [] }
