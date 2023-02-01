@@ -423,6 +423,7 @@ export default {
     filterRangking: {
       handler() {
         this.getRankingSales()
+        this.getTopAdminOrder()
       },
     },
   },
@@ -1302,7 +1303,7 @@ export default {
     },
     async getRankingSales() {
       this.loadingRanking = true
-      const url = '/v1/dashboard/partner/rankingTrackingSales'
+      const url = `/v1/dashboard/partner/rankingTrackingSales?filter=${this.filterRangking}`
       await this.$http_komship.get(`${url}`)
         .then(res => {
           this.loadingRanking = false
@@ -1313,12 +1314,11 @@ export default {
     async getTopAdminOrder() {
       this.loadingAdminOrder = true
       const params = `partner_id=${this.partnerId}`
-      const url = '/v1/dashboard/partner/topAdminOrder'
+      const url = `/v1/dashboard/partner/topAdminOrder?filter=${this.filterRangking}`
       await this.$http_komship.get(`${url}?${params}`)
         .then(res => {
           this.loadingAdminOrder = false
           const { data } = res.data
-          console.log(data)
           this.dataTopAdminOrder = data
         })
     },
