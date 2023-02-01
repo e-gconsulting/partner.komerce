@@ -1,5 +1,8 @@
 <template>
-  <b-col class="pl-0 pr-0">
+  <b-col
+    id="data-produk"
+    class="pl-0 pr-0"
+  >
     <b-form>
       <b-row>
         <b-col cols="12">
@@ -882,9 +885,7 @@ export default {
     return {
       defaultFilter: 0,
       headVariant: null,
-
       idDelete: '',
-
       loading: false,
       variantFieldsTable: [
         {
@@ -922,45 +923,87 @@ export default {
         },
       ],
       items: [],
-
       imageFileProduct: null,
-
       searchProduct: '',
-
       expandCollapseIsActive: false,
-
       // Filter
       name: '',
       stockFrom: '',
       stockTo: '',
       soldFrom: '',
       soldTo: '',
+      limit: 50,
+      offset: 0,
+      lastOrderProduct: false,
     }
   },
   mounted() {
-    this.getProduct()
+    this.fetchProduct()
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('data-produk').offsetHeight && !this.loading) {
+        this.getNextProduct()
+      }
+    }
   },
   methods: {
-    // eslint-disable-next-line func-names
-    getProduct: _.debounce(function () {
+    fetchProduct() {
       this.loading = true
       const params = {
         status: 1,
+        limits: this.limit,
+        offset: this.offset,
       }
       if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
       if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
       if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
       if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
       if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
-      return this.$http_komship.get('/v1/product', {
+      this.$http_komship.get('/v4/product', {
         params,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         this.variantData = data
+        this.offset = data.length
         this.loading = false
-        return this.variantData
+      }).catch(() => {
+        this.loading = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal me-load produk, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
+      })
+    },
+    getProduct: _.debounce(function () {
+      this.loading = true
+      this.limit = 50
+      this.offset = 0
+      const params = {
+        status: 1,
+        limits: this.limit,
+        offset: this.offset,
+      }
+      if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
+      if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
+      if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
+      if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
+      if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
+      this.$http_komship.get('/v4/product', {
+        params,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        this.variantData = data
+        this.offset = data.length
+        this.loading = false
+        // return this.variantData
       }).catch(() => {
         this.loading = false
         this.$toast({
@@ -974,6 +1017,48 @@ export default {
         })
       })
     }, 1000),
+    getNextProduct() {
+      if (!this.lastOrderProduct) {
+        this.loading = true
+        const params = {
+          status: 1,
+          limits: this.limit,
+          offset: this.offset,
+        }
+        if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
+        if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
+        if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
+        if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
+        if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
+        this.$http_komship.get('/v4/product', {
+          params,
+        }, {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+          const { data } = response.data
+          this.variantData.push(...data)
+          this.offset += data.length
+          this.loading = false
+          if (data.length < this.limit) {
+            this.lastOrderProduct = true
+          } else {
+            this.lastOrderProduct = false
+          }
+          return this.variantData
+        }).catch(() => {
+          this.loading = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal me-load produk, silahkan coba lagi!',
+              variant: 'danger',
+            },
+          })
+        })
+      }
+    },
     showConfirmDelete(id) {
       this.idDelete = id
       this.$refs['modal-confirm-delete-product'].show()
@@ -1027,17 +1112,14 @@ export default {
 * {
   font-family: Poppins;
 }
-
 [dir] .background-table-variant {
   background: #FFF;
 }
-
 @media only screen and (max-width: 922px) {
     [dir] .table-list-product {
         display: none;
     }
 }
-
 @media only screen and (min-width: 923px) {
     [dir] .table-list-product {
         display: inline-block;
@@ -1046,33 +1128,27 @@ export default {
         display: none;
     }
 }
-
 [dir] .when-closed {
   display: inline-block;
 }
-
 [dir] .when-opened {
   display: inline-block;
 }
-
 .collapsed > .when-opened,
     :not(.collapsed) > .when-closed {
         display: none;
     }
-
 .image-product {
   object-fit: cover;
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
 }
-
 @media only screen and (min-width: 991px) {
   [dir] .wrapper__filter__data__product__mobile {
     display: none!important;
   }
 }
-
 @media only screen and (max-width: 990px) {
   [dir] .wrapper__filter__data__product {
     display: none!important;
@@ -1081,5 +1157,4 @@ export default {
     width: 270px!important;
   }
 }
-
 </style>

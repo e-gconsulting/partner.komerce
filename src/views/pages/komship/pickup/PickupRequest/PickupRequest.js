@@ -249,7 +249,7 @@ export default {
           .then(async res => {
             const { data } = res.data
             this.itemOrderList = data
-            this.offset = data.length
+            this.offset += data.length
             this.loading = false
             if (data.length < this.limit) {
               this.isLastOrder = true
@@ -267,29 +267,40 @@ export default {
       e.preventDefault()
       if (e.target.scrollTop + e.target.clientHeight
         >= e.target.scrollHeight - 500) {
-        if (this.isLastOrder || this.loading) return
-        this.loading = true
-        await this.$http_komship.get(`v2/order/${this.profile.partner_id}`, {
-          params: {
-            order_status: 'Diajukan',
-            partner_address_id: this.address.address_id,
-            limit: this.limit,
-            offset: this.offset,
-          },
-        })
-          .then(result => {
-            const { data } = result.data
-            this.itemOrderList.push(...data)
-            this.offset += data.length
-            this.loading = false
-            if (data.length < this.limit) {
-              this.isLastOrder = true
-            }
+        if (!this.isLastOrder) {
+          let PartnerAddressId = 0
+          let WarehouseId = 0
+          if (this.address.warehouse_type === 'Mitra Kompack') {
+            WarehouseId = this.address.id
+          } else {
+            PartnerAddressId = this.address.id
+          }
+          this.loading = true
+          await this.$http_komship.get(`v3/order/${this.profile.partner_id}`, {
+            params: {
+              order_status: 'Diajukan',
+              partner_address_id: PartnerAddressId,
+              warehouse_id: WarehouseId,
+              limit: this.limit,
+              offset: this.offset,
+            },
           })
-          .catch(err => {
-            this.loading = false
-            console.log(err.response)
-          })
+            .then(result => {
+              const { data } = result.data
+              this.itemOrderList.push(...data)
+              this.offset += data.length
+              this.loading = false
+              if (data.length < this.limit) {
+                this.isLastOrder = true
+              } else {
+                this.isLastOrder = false
+              }
+            })
+            .catch(err => {
+              this.loading = false
+              console.log(err.response)
+            })
+        }
       }
     },
     submitSelectedOrder() {
