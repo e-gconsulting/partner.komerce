@@ -279,11 +279,17 @@ export default {
           }).then(result => {
             if (result.value) {
               this.$router.push({
-                path: `/penarikan-barang/${this.$route.params.id}`,
+                path: '/penarikan-barang',
+                query: {
+                  tab: 'menunggu-response',
+                },
               })
             } else {
               this.$router.push({
-                path: `/penarikan-barang/${this.$route.params.id}`,
+                path: '/penarikan-barang',
+                query: {
+                  tab: 'menunggu-response',
+                },
               })
             }
           })

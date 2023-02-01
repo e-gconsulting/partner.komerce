@@ -451,12 +451,15 @@ export default {
         ...product,
         variants: product.variants.filter(variant => variant.total > 0),
       }))
+
+      const FinalFilteredVar = filteredVar.filter(product => product.total > 0)
+
       const payload = {
         fulfillment_fee: this.totalPay,
         partner_id: JSON.parse(localStorage.getItem('userData')).partner_detail.id,
         // eslint-disable-next-line radix
         warehouse_id: parseInt(this.warehouse),
-        products: filteredVar,
+        products: FinalFilteredVar,
       }
 
       await this.$http_komship.post('/v1/komship/outbound/store', payload)

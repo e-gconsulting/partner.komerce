@@ -219,6 +219,7 @@ export default {
       this.$http_komship.put(`/v1/komship/outbound/${this.$route.params.id}/approve`)
         .then(() => {
           this.$router.go(-1)
+          this.$router.replace({ query: { tab: 'data-barang-dikeluarkan' } })
           this.$toast({
             component: ToastificationContent,
             props: {
