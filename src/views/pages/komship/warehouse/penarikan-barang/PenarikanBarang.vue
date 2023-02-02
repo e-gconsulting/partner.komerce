@@ -290,7 +290,6 @@ export default {
         '3 bulan terakhir': [last90, today],
         'Custom tanggal': [today, today],
       },
-      tabs: ['data-barang-dikeluarkan', 'menunggu-response'],
     }
   },
 
