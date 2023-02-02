@@ -208,10 +208,10 @@
         </div>
       </div>
       <b-button
-        :variant="handleDisable('var')"
-        :disabled="handleDisable('dis')"
+        :variant="handleVariantDisable()"
+        :disabled="handleDisable()"
         class="mt-5 float-right"
-        @click="confirmAjukan"
+        @click.once="confirmAjukan"
       >
         Ajukan Penarikan Barang
       </b-button>
@@ -319,6 +319,12 @@ export default {
       ],
     }
   },
+  watch: {
+    selected() {
+      console.log(this.selected)
+    },
+  },
+
   created() {
     // this.fetchData()
     this.fetchDataWarehouse()
@@ -486,12 +492,12 @@ export default {
             }).then(result => {
               if (result.value) {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
                 window.open(`https://wa.me/62${data.data.pic_phone.substring(1)}`, '_blank')
               } else {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
               }
             })
@@ -512,7 +518,7 @@ export default {
             }).then(result => {
               if (result.value) {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
               }
             })
@@ -541,7 +547,7 @@ export default {
                 })
               } else {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
               }
             })
@@ -550,6 +556,7 @@ export default {
         .catch(() => {})
     },
     countTotalPay() {
+      // console.log(this.selected.map(product => product.variant.filter(variant => variant.total !== 0).length > 0).includes(false) === true)
       const result = this.selected.reduce((acc, item) => {
         if (item.is_variant === 1) {
           // eslint-disable-next-line no-shadow
@@ -560,14 +567,27 @@ export default {
       this.totalPay = result
       return result
     },
+    handleVariantDisable(part) {
+      const nonVariantFiltered = this.selected.filter(product => (product.is_variant === 0 && product.total > 0))
+      const variantFiltered = this.selected.filter(product => (product.is_variant === 1)).map(product => (product.variant.filter(item => item.total > 0)))
+
+      if (this.selected.length === 0) return 'secondary'
+      if ((nonVariantFiltered?.length + variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return 'primary'
+      if ((variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return 'primary'
+      if (nonVariantFiltered?.length > 0 && (nonVariantFiltered?.length) === this.selected.length) return 'primary'
+
+      return 'secondary'
+    },
     handleDisable(part) {
-      if (part === 'var' && this.totalPay === 0) return 'secondary'
-      if (part === 'var' && this.selected.length === 0) return 'secondary'
-      if (part === 'var' && this.selected.length !== 0) return 'primary'
-      if (part === 'dis' && this.totalPay === 0) return true
-      if (part === 'dis' && this.selected.length === 0) return true
-      if (part === 'dis' && this.selected.length !== 0) return false
-      return ''
+      const nonVariantFiltered = this.selected.filter(product => (product.is_variant === 0 && product.total > 0))
+      const variantFiltered = this.selected.filter(product => (product.is_variant === 1)).map(product => (product.variant.filter(item => item.total > 0)))
+
+      if (this.selected.length === 0) return true
+      if ((nonVariantFiltered?.length + variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return false
+      if ((variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return false
+      if (nonVariantFiltered?.length > 0 && (nonVariantFiltered?.length) === this.selected.length) return false
+
+      return true
     },
   },
 }
