@@ -319,12 +319,6 @@ export default {
       ],
     }
   },
-  watch: {
-    selected() {
-      console.log(this.selected)
-    },
-  },
-
   created() {
     // this.fetchData()
     this.fetchDataWarehouse()
@@ -567,7 +561,7 @@ export default {
       this.totalPay = result
       return result
     },
-    handleVariantDisable(part) {
+    handleVariantDisable() {
       const nonVariantFiltered = this.selected.filter(product => (product.is_variant === 0 && product.total > 0))
       const variantFiltered = this.selected.filter(product => (product.is_variant === 1)).map(product => (product.variant.filter(item => item.total > 0)))
 
@@ -578,7 +572,7 @@ export default {
 
       return 'secondary'
     },
-    handleDisable(part) {
+    handleDisable() {
       const nonVariantFiltered = this.selected.filter(product => (product.is_variant === 0 && product.total > 0))
       const variantFiltered = this.selected.filter(product => (product.is_variant === 1)).map(product => (product.variant.filter(item => item.total > 0)))
 
