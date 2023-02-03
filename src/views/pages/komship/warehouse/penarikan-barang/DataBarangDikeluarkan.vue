@@ -24,8 +24,8 @@
           <div
             class="d-flex justify-content-center"
           >
-            <div :class="handleStatus('class', data.item.status, data.item.reason)">
-              {{ handleStatus('text', data.item.status, data.item.reason) }}
+            <div :class="handleStatus('class', data.item.status)">
+              {{ handleStatus('text', data.item.status) }}
             </div>
           </div>
         </template>
@@ -301,17 +301,15 @@ export default {
         path: `/penarikan-barang/detail/${id}`,
       })
     },
-    handleStatus(part, status, reason) {
+    handleStatus(part, status) {
       if (part === 'class') {
         if (status === 'Diajukan') return 'status status-waiting'
-        if (status === 'Selesai' && reason === 'Penarikan Barang') return 'status status-done'
+        if (status === 'Selesai') return 'status status-done'
         if (status === 'Ditolak') return 'status status-reject'
         if (status === 'Diproses') return 'status status-acc'
-        if (status === 'Selesai' && reason === 'Barang Rusak') return 'status status-acc'
       }
       if (status === 'Diajukan') return 'Menunggu respon mitra'
       if (status === 'Diproses') return 'Disetujui'
-      if (status === 'Selesai' && reason === 'Barang Rusak') return 'Disetujui'
       return status
     },
     formatDate(date) {

@@ -251,10 +251,6 @@ export default {
           value: 'Diajukan',
         },
         {
-          label: 'Disetujui',
-          value: 'Diproses',
-        },
-        {
           label: 'Ditolak',
           value: 'Ditolak',
         },
@@ -387,9 +383,12 @@ export default {
 </script>
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
-  .vs__dropdown-menu {
-  height: 180px;
-}
+//   .vs__dropdown-menu:nth-of-type(1) {
+//   height: 180px !important;
+// }
+//   .vs__dropdown-menu:nth-last-of-type(1) {
+//   height: 100px !important;
+// }
 </style>
 <style scoped>
 .padding-arrow {
