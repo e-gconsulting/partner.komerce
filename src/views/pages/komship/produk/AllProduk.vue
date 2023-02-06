@@ -885,9 +885,7 @@ export default {
     return {
       defaultFilter: 0,
       headVariant: null,
-
       idDelete: '',
-
       loading: false,
       variantFieldsTable: [
         {
@@ -925,13 +923,9 @@ export default {
         },
       ],
       items: [],
-
       imageFileProduct: null,
-
       searchProduct: '',
-
       expandCollapseIsActive: false,
-
       // Filter
       name: '',
       stockFrom: '',
@@ -1119,17 +1113,14 @@ export default {
 * {
   font-family: Poppins;
 }
-
 [dir] .background-table-variant {
   background: #FFF;
 }
-
 @media only screen and (max-width: 922px) {
     [dir] .table-list-product {
         display: none;
     }
 }
-
 @media only screen and (min-width: 923px) {
     [dir] .table-list-product {
         display: inline-block;
@@ -1138,33 +1129,27 @@ export default {
         display: none;
     }
 }
-
 [dir] .when-closed {
   display: inline-block;
 }
-
 [dir] .when-opened {
   display: inline-block;
 }
-
 .collapsed > .when-opened,
     :not(.collapsed) > .when-closed {
         display: none;
     }
-
 .image-product {
   object-fit: cover;
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
 }
-
 @media only screen and (min-width: 991px) {
   [dir] .wrapper__filter__data__product__mobile {
     display: none!important;
   }
 }
-
 @media only screen and (max-width: 990px) {
   [dir] .wrapper__filter__data__product {
     display: none!important;
@@ -1173,5 +1158,4 @@ export default {
     width: 270px!important;
   }
 }
-
 </style>
