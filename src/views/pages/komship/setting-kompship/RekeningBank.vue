@@ -194,6 +194,7 @@
                         :filterable="true"
                         :state="errors.length > 0 ? false : null"
                         placeholder="Ketik untuk mencari..."
+                        @keyup="getAccount"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -221,6 +222,7 @@
                       <b-form-input
                         v-model="accountNo"
                         :state="errors.length > 0 ? false:null"
+                        @keyup="getAccount"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -248,6 +250,7 @@
                       <b-form-input
                         v-model="accountName"
                         :state="errors.length > 0 ? false:null"
+                        disabled
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -336,7 +339,6 @@
                       :filterable="true"
                       :state="errors.length > 0 ? false : null"
                       placeholder="Ketik untuk mencari..."
-                      @input="checkBank"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -355,14 +357,19 @@
                   >
                     <b-form-input
                       v-model="fieldAddAccountNo"
-                      :state="errors.length > 0 ? false:null"
-                      @input="checkBank"
+                      placeholder="Masukkan Nomor Rekening"
+                      :state="errors.length > 5 ? false:null"
+                      maxlength="20"
+                      @keyup="getAccount"
+                      @keypress="isNumber($event)"
+                      @paste.prevent="AccountBankNo"
                     />
-                    <small class="text-danger">{{ errors[0] }}</small>
+                    <small class="text-danger">{{ errors[0] }} </small>
+                    <small class="text-danger">{{ validateLength }} </small>
                     <small
                       v-if="messageSameNoBank !== ''"
                       class="text-danger"
-                    >{{ messageSameNoBank }}</small>
+                    >{{ messageSameNoBank }}, </small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
@@ -377,11 +384,22 @@
                     name="Nama"
                     rules="required"
                   >
-                    <b-form-input
-                      v-model="fieldAddAccountName"
-                      :state="errors.length > 0 ? false:null"
-                      @input="checkBank"
-                    />
+                    <b-form-group class="has-spinner">
+                      <b-spinner
+                        v-if="ValidateAccountName"
+                        size="sm"
+                        variant="secondary"
+                        class="spinner-border spinner-border-sm"
+                      />
+                      <b-form-input
+                        v-model="fieldAddAccountName"
+                        class="mr-3 pr-2"
+                        :state="errors.length > 0 ? false:null"
+                        disabled
+                      >
+                        <b-spinner variant="" />
+                      </b-form-input>
+                    </b-form-group>
                     <small class="text-danger">{{ errors[0] }}</small>
                     <small
                       v-if="messageSameNameBank !== ''"
@@ -402,12 +420,12 @@
                   class="mr-1"
                   @click="cancelAddRekening"
                 >
-                  Hapus
+                  Batal
                 </b-button>
                 <b-button
                   v-ripple.400="'rgba(186, 191, 199, 0.15)'"
                   type="reset"
-                  variant="primary"
+                  :variant="checkValidBank ? 'secondary' : 'primary'"
                   class="mr-1"
                   :disabled="checkValidBank"
                   @click.prevent="submitVerification"
@@ -893,6 +911,7 @@ import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
 import useJwt from '@/auth/jwt/useJwt'
 import moment from 'moment'
+import { isNumber } from '@/libs/helpers'
 
 export default {
   components: {
@@ -948,7 +967,7 @@ export default {
       // Create Rekening Bank
       fieldAddBankName: '',
       fieldAddAccountNo: '',
-      fieldAddAccountName: '',
+      fieldAddAccountName: 'Nama akan otomatis muncul',
 
       phoneUser: '',
 
@@ -980,13 +999,18 @@ export default {
 
       partnerId: null,
 
-      checkValidBank: false,
+      checkValidBank: true,
       messageSameNameBank: '',
       messageSameNoBank: '',
 
       banksDataMinus: [],
       reasonCreateRekening: '',
       buttonSubmitIsDisabled: false,
+
+      ValidateAccountName: false,
+      accountNameDB: false,
+      validateLength: '',
+      isNumber,
     }
   },
   computed: {
@@ -1322,6 +1346,11 @@ export default {
     },
     cancelAddRekening() {
       this.fieldActionAddRekening = false
+      this.validateLength = ''
+      this.ValidateAccountName = false
+      this.fieldAddAccountNo = ''
+      this.fieldAddAccountName = 'Nama akan otomatis muncul'
+      this.fieldAddBankName = ''
     },
     removeFormRekening(index) {
       this.formRekening.splice(index, 1)
@@ -1599,8 +1628,8 @@ export default {
       this.$refs['modal-verification-OTP'].hide()
     },
     checkBank: _.debounce(function () {
-      if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && this.fieldAddAccountName !== '') {
-        this.checkValidBank = true
+      if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && this.fieldAddAccountName !== '' && this.accountNameDB === true) {
+        this.checkValidBank = false
         this.loadingSubmit = true
         const formData = new FormData()
         formData.append('bank_name', this.fieldAddBankName)
@@ -1636,7 +1665,7 @@ export default {
             this.loadingSubmit = false
           })
       }
-    }, 1000),
+    }),
     closeCheckRek() {
       this.$refs['popup-check-rekening'].hide()
     },
@@ -1645,6 +1674,47 @@ export default {
       this.$refs['popup-check-rekening'].hide()
     },
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    getAccount: _.debounce(function () {
+      let lenghtNoAccount = false
+      if (this.fieldAddAccountNo.length >= 1 && this.fieldAddAccountNo.length < 5) {
+        lenghtNoAccount = false
+        this.validateLength = 'Minimal 5 angka ya, pastikan jenis bank sudah benar'
+      } else {
+        lenghtNoAccount = true
+        this.validateLength = ''
+      }
+      if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && lenghtNoAccount === true) {
+        this.ValidateAccountName = true
+        this.fieldAddAccountName = '    Memeriksa Nama Rekening'
+        this.$http.post('/v1/bank/check-bank-owner',
+          {
+            bank_name: this.fieldAddBankName,
+            account_no: this.fieldAddAccountNo,
+          }, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+          }).then(response => {
+          if (response.data.data.account_name !== undefined) {
+            this.ValidateAccountName = false
+            this.accountNameDB = true
+            this.fieldAddAccountName = response.data.data.account_name
+            this.checkBank()
+          } else {
+            this.ValidateAccountName = false
+            this.checkValidBank = true
+            this.fieldAddAccountName = 'Nomor Rekening Tidak Benar'
+          }
+        }).catch(err => {
+          this.ValidateAccountName = false
+          this.checkValidBank = true
+          this.fieldAddAccountName = 'Nomor Rekening Tidak Benar'
+        })
+      }
+    }, 1000),
+    AccountBankNo(e) {
+      this.fieldAddAccountNo = ''
+      const dummyAccountBank = e.clipboardData.getData('text').replace(/\D/g, '')
+      this.fieldAddAccountNo = dummyAccountBank
+    },
   },
 }
 </script>
@@ -1695,6 +1765,16 @@ export default {
 
   [dir] .border__table__check__rek {
     border: 1px solid #E2E2E2;
+  }
+
+  .has-spinner {
+  position: relative;
+  }
+
+  .spinner-border {
+    position: absolute;
+    left: 1%;
+    top: 40%;
   }
 
 </style>

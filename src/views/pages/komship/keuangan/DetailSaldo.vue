@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <b-row class="justify-content-between mb-2">
+    <b-row class="justify-content-between mb-2 mr-1">
       <b-col>
         <h2 class="font-bold mb-2">
           Rincian Saldo
