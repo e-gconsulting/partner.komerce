@@ -249,13 +249,8 @@ export default {
           .then(async res => {
             const { data } = res.data
             this.itemOrderList = data
-            this.offset += data.length
+            this.offset = data.length
             this.loading = false
-            if (data.length < this.limit) {
-              this.isLastOrder = true
-            } else {
-              this.isLastOrder = false
-            }
           })
           .catch(() => { this.loading = false })
       }
@@ -266,7 +261,7 @@ export default {
     async getNextOrderList(e) {
       e.preventDefault()
       if (e.target.scrollTop + e.target.clientHeight
-        >= e.target.scrollHeight - 500) {
+        >= e.target.scrollHeight - 500 && !this.loading) {
         if (!this.isLastOrder) {
           let PartnerAddressId = 0
           let WarehouseId = 0

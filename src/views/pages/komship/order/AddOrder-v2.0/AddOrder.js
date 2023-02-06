@@ -428,16 +428,18 @@ export default {
     }, 1000),
     getDestination: _.debounce(function () {
       this.destinationList = []
-      this.$http_komship
-        .get(`/v1/destination?search=${this.destinationLabel}`)
-        .then(res => {
-          const { data } = res.data.data
-          this.destinationList = data
-          this.loadingSearchDestination = false
-        })
-        .catch(err => {
-          this.loadingSearchDestination = false
-        })
+      if (this.destinationLabel.length > 2) {
+        this.$http_komship
+          .get(`/v1/destination?search=${this.destinationLabel}`)
+          .then(res => {
+            const { data } = res.data.data
+            this.destinationList = data
+            this.loadingSearchDestination = false
+          })
+          .catch(err => {
+            this.loadingSearchDestination = false
+          })
+      }
     }, 1000),
     async getProduct(address) {
       if (address.warehouse_type === 'Mitra Kompack') { this.productSelected = [] }
@@ -1026,7 +1028,7 @@ export default {
       }
     },
     checkNewTotal: _.debounce(async function () {
-      if (this.newGrandTotal < this.shippingCost) {
+      if (this.newGrandTotal <= this.shippingCost) {
         this.newGrandTotal = await this.shippingCost
         await this.calculate(false)
         this.newGrandTotalPasteMode = false
@@ -1049,7 +1051,7 @@ export default {
       this.newGrandTotalPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
     },
     formatterNewGrandTotal(e) {
-      return e.replace(/[^\d]/g, '')
+      return e.replace(/[^\d]/g, '').substring(0, 8)
     },
     checkDiscount() {
       if (this.discount > this.subTotal) {
@@ -1057,7 +1059,7 @@ export default {
         this.calculate(true)
       }
     },
-    calculate: _.debounce(function (getAdditional) {
+    calculate: _.debounce(async function (getAdditional) {
       if (this.shipping && this.cartId.length > 0) {
         this.loadingCalculate = true
         let grandTotalNew
@@ -1080,7 +1082,7 @@ export default {
         } else {
           grandTotalNew = null
         }
-        this.$http_komship.get('v3/calculate', {
+        await this.$http_komship.get('v3/calculate', {
           params: {
             cart: this.cartId.toString(),
             receiver_destination: this.destination.id,
@@ -1681,6 +1683,11 @@ export default {
         this.messageErrorAddressDetail = true
       } else {
         this.messageErrorAddressDetail = false
+      }
+    },
+    handleInputTotal(e) {
+      if (e.keyCode === 44 || e.keyCode === 45 || e.keyCode === 46 || e.keyCode === 43 || e.keyCode === 101) {
+        e.preventDefault()
       }
     },
   },

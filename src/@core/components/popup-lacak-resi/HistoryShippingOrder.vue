@@ -16,7 +16,7 @@
       </div>
       <img
         v-if="handleCloseModalResi === true"
-        src="@/assets/images/icons/close-circle.svg"
+        src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/close-circle.svg"
         style="cursor:pointer"
         @click="$bvModal.hide('bv-modal-cek-resi')"
       >
@@ -169,13 +169,13 @@ export default {
         if (items.send_wa === 1) {
           if (items.type === 'sending') {
             this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
+            this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/whatsapp-notif.svg">'
             this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
             this.listAwb += '</div>'
           }
           if (items.type === 'arrived') {
             this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
+            this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/whatsapp-notif.svg">'
             this.listAwb += '<span class="my-auto" style="margin-left:6px">Info paket COD hampir sampai telah terkirim ke WA Pelanggan</span>'
             this.listAwb += '</div>'
           }
