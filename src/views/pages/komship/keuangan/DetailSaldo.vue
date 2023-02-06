@@ -167,6 +167,14 @@
           </div>
         </b-row>
       </b-col>
+      <div
+        v-for="item in ListFilterItem"
+        :key="item"
+      >
+        <!-- <b-form-checkbox> -->
+          <span>{{ test(item) }} hallo</span>
+        <!-- </b-form-checkbox> -->
+      </div>
     </b-row>
     <b-overlay
       variant="light"
@@ -745,8 +753,8 @@ export default {
       },
       today,
       last7,
-      last30,
       last60,
+      last30,
       firstDateOfMonth,
       lastDateOfMonth,
 
