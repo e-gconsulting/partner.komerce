@@ -211,7 +211,7 @@
         :variant="handleVariantDisable()"
         :disabled="handleDisable()"
         class="mt-5 float-right"
-        @click.once="confirmAjukan"
+        @click="confirmAjukan"
       >
         Ajukan Penarikan Barang
       </b-button>
@@ -589,7 +589,7 @@ export default {
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
   .vs__dropdown-menu {
-  height: 180px;
+  max-height: 180px;
 }
 </style>
 <style scoped>

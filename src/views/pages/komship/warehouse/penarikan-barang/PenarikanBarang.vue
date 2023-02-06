@@ -172,7 +172,9 @@
           :gudang="gudang"
           :status="status"
           :date-range="dateRange"
+          @callParentMethod="fetchWaitingLength"
           @statusFilter="handleShowStatus"
+          @resetFilter="clearFilter"
         />
       </b-tab>
       <b-tab
@@ -197,6 +199,7 @@
           :date-range="dateRange"
           @callParentMethod="fetchWaitingLength"
           @removeStatusFilter="handleRemoveStatus"
+          @resetFilter="clearFilter"
         />
       </b-tab>
     </b-tabs>
@@ -378,17 +381,23 @@ export default {
     handleShowStatus(value) {
       this.toggleFilter = value
     },
+    clearFilter() {
+      this.gudang = ''
+      this.status = ''
+      this.dateRange = {
+        startDate: kompackDate,
+        endDate: today,
+      }
+      this.$refs.myDropdown.hide()
+    },
   },
 }
 </script>
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
-//   .vs__dropdown-menu:nth-of-type(1) {
-//   height: 180px !important;
-// }
-//   .vs__dropdown-menu:nth-last-of-type(1) {
-//   height: 100px !important;
-// }
+  .vs__dropdown-menu {
+  max-height: 180px;
+}
 </style>
 <style scoped>
 .padding-arrow {

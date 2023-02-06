@@ -60,8 +60,8 @@ export default {
   components: { DetailBarangRusak },
   props: {
     gudang: {
-      type: Number,
-      default: null,
+      type: [String, Number],
+      default: '',
     },
     status: {
       type: String,
@@ -152,9 +152,9 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    this.fetchDataNoParams()
     this.$emit('statusFilter', 'dataBarang')
-    this.$router.replace({ query: { tab: 'data-barang-dikeluarkan' } })
+    this.$emit('resetFilter')
   },
   mounted() {
     window.onscroll = () => {
@@ -162,6 +162,7 @@ export default {
         this.fetchNextData()
       }
     }
+    this.$router.replace({ query: { tab: 'data-barang-dikeluarkan' } })
   },
   methods: {
     async fetchDataNoParams() {
@@ -186,6 +187,7 @@ export default {
           } else {
             this.lastData = false
           }
+          this.$emit('callParentMethod')
         }).catch(() => {
           this.loading = false
           this.$toast(
@@ -225,6 +227,7 @@ export default {
           } else {
             this.lastData = false
           }
+          this.$emit('callParentMethod')
         }).catch(() => {
           this.loading = false
           this.$toast(
@@ -248,6 +251,10 @@ export default {
           params: {
             limit: this.limit,
             offset: this.offset,
+            warehouse_id: this.gudang,
+            status: this.status,
+            start_date: this.formatDateFilter(this.dateRange.startDate),
+            end_date: this.formatDateFilter(this.dateRange.endDate),
           },
         })
           .then(res => {
