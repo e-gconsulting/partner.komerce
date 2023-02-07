@@ -86,13 +86,18 @@
                   target="popoverTransactionType"
                   triggers="hover focus"
                   placement="left"
-
                 >
-                  <div
-                    v-for="item in ListFilterType"
-                    :key="item.value"
-                  >
+                  <div>
                     <b-form-checkbox
+                      v-model="isAllChecked"
+                      class="my-1 text-black text-[12px]"
+                      @change="CeklistAll"
+                    >
+                      Semua
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                      v-for="item in ListFilterType"
+                      :key="item.value"
                       v-model="item.selected"
                       class="my-1 text-black text-[12px]"
                       @change="getSelectedFilter"
@@ -169,14 +174,6 @@
           </div>
         </b-row>
       </b-col>
-      <div
-        v-for="item in ListFilterItem"
-        :key="item"
-      >
-        <!-- <b-form-checkbox> -->
-          <span>{{ test(item) }} hallo</span>
-        <!-- </b-form-checkbox> -->
-      </div>
     </b-row>
     <b-overlay
       variant="light"
@@ -783,7 +780,6 @@ export default {
       loadingButtonPrintLabel: false,
 
       ListFilterType: [
-        { value: 0, label: 'Semua', selected: false },
         { value: 1, label: 'Orderan COD Diterima', selected: false },
         { value: 2, label: 'Ongkir Non-COD', selected: false },
         { value: 3, label: 'Ongkir Non-COD Dibatalkan', selected: false },
@@ -798,6 +794,7 @@ export default {
       ],
       dropdownFilter: false,
       lengthFilter: [],
+      isAllChecked: false,
     }
   },
   computed: {
@@ -854,14 +851,11 @@ export default {
         }
       })
       let valueFilter = ''
-      if (this.ListFilterType[0].selected === true || this.lengthFilter.length < 1) {
+      if (this.isAllChecked === true || this.lengthFilter.length < 1 || this.lengthFilter.length > 10) {
         valueFilter = 0
       } else {
         valueFilter = this.lengthFilter.join()
       }
-      console.log(this.lengthFilter)
-      console.log(this.ListFilterType)
-      console.log(valueFilter)
 
       this.items = await this.$http_komship
         .get('v1/partner/order-transaction-balance', {
@@ -1004,13 +998,25 @@ export default {
       this.lengthFilter = ''
       this.fetchData()
     },
-    getSelectedFilter() {
-      if (this.ListFilterType[0].selected === true) {
+    CeklistAll() {
+      if (this.isAllChecked === true) {
         this.ListFilterType.forEach(item => {
-          // eslint-disable-next-line no-param-reassign
+        // eslint-disable-next-line no-param-reassign
           item.selected = true
         })
+      } else {
+        this.ListFilterType.forEach(item => {
+        // eslint-disable-next-line no-param-reassign
+          item.selected = false
+        })
       }
+    },
+    getSelectedFilter() {
+      this.ListFilterType.forEach(item => {
+        if (item.selected === false) {
+          this.isAllChecked = false
+        }
+      })
     },
   },
 }
