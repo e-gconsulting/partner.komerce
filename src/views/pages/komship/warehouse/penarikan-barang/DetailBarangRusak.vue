@@ -183,6 +183,8 @@ export default {
         cancelButtonText: 'Batal',
         confirmButtonText: 'Tolak',
         reverseButtons: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         customClass: {
           icon: 'border-0 w-50 my-5',
           confirmButton: 'btn btn-primary px-4',
@@ -244,6 +246,8 @@ export default {
         cancelButtonText: 'Batal',
         confirmButtonText: 'Setujui',
         reverseButtons: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         customClass: {
           icon: 'border-0 w-50 my-5',
           confirmButton: 'btn btn-primary px-4',
@@ -270,6 +274,8 @@ export default {
             width: '50%',
             iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-success.png">',
             confirmButtonText: 'Oke',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
             customClass: {
               icon: 'border-0 w-50 my-5',
               confirmButton: 'btn btn-primary px-4',

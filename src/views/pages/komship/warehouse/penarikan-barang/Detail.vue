@@ -255,6 +255,8 @@ export default {
         cancelButtonText: 'Batal',
         confirmButtonText: 'Konfirmasi',
         reverseButtons: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         customClass: {
           icon: 'border-0 w-50 my-5',
           confirmButton: 'btn btn-primary px-4',

@@ -396,7 +396,7 @@ export default {
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
   .vs__dropdown-menu {
-  max-height: 180px;
+  max-height: 130px;
 }
 </style>
 <style scoped>
