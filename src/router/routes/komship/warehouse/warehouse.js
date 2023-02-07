@@ -29,18 +29,22 @@ export default [
     },
   },
   {
-    path: '/penarikan-barang/:id',
+    path: '/penarikan-barang',
     name: 'penarikan-barang',
-    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/PenarikanBarang.vue'),
+    component: () => import(
+      '@/views/pages/komship/warehouse/penarikan-barang/PenarikanBarang.vue'
+    ),
     meta: {
       resource: 'Gudang Komship',
       action: 'manage',
     },
   },
   {
-    path: '/ajukan-penarikan-barang/:id',
+    path: '/ajukan-penarikan-barang',
     name: 'ajukan-penarikan-barang',
-    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/AjukanPenarikan.vue'),
+    component: () => import(
+      '@/views/pages/komship/warehouse/penarikan-barang/AjukanPenarikan.vue'
+    ),
     meta: {
       resource: 'Gudang Komship',
       action: 'manage',

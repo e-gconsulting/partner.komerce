@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <b-row class="justify-content-between mb-2">
+    <b-row class="justify-content-between mb-2 mr-1">
       <b-col>
         <h2 class="font-bold mb-2">
           Rincian Saldo
@@ -8,7 +8,7 @@
       </b-col>
       <b-col
         cols="2"
-        class="text-end"
+        class="text-end mr-1"
       >
         <b-button
           variant="primary"
@@ -47,7 +47,7 @@
               </b-input-group-prepend>
               <b-form-input
                 v-model="searchResi"
-                placeholder="Copas resi kesini"
+                placeholder="No Resi"
                 @input="handleSearchResi"
               />
             </b-input-group>
@@ -86,6 +86,7 @@
                   target="popoverTransactionType"
                   triggers="hover focus"
                   placement="left"
+
                 >
                   <div
                     v-for="item in ListFilterType"
@@ -168,6 +169,14 @@
           </div>
         </b-row>
       </b-col>
+      <div
+        v-for="item in ListFilterItem"
+        :key="item"
+      >
+        <!-- <b-form-checkbox> -->
+          <span>{{ test(item) }} hallo</span>
+        <!-- </b-form-checkbox> -->
+      </div>
     </b-row>
     <b-overlay
       variant="light"
@@ -504,6 +513,7 @@
             v-if="data.item.kompoint_status === true"
             class="d-flex align-items-center mt-50"
           >
+
             <img
               style="width: 24px"
               src="https://storage.googleapis.com/komerce/assets/icons/Kompoints.svg"
@@ -580,9 +590,6 @@
             :ranges="rangesDownload"
             :opens="'left'"
             class="w-100"
-            @start-selection="setCustomDate"
-            @finish-selection="setCustomDate"
-            @select="removeCustomDate"
           >
             <template
               style="min-width: 350px"
@@ -624,28 +631,21 @@
           </b-col>
           <b-col>
             <b-row class="justify-content-between">
-              <b-col cols="4">
-                <b-button
-                  variant="outline-primary"
-                  @click="$bvModal.hide('download-rincian-saldo')"
-                >
-                  Batal
-                </b-button>
-              </b-col>
-              <b-col>
-                <b-button
-                  variant="primary"
-                  @click.once="downloadSaldo"
-                >
-                  <b-spinner
-                    v-if="loadingButtonPrintLabel === true"
-                    class="mr-1"
-                    small
-                    variant="light"
-                  />
-                  Download
-                </b-button>
-              </b-col>
+              <b-col cols="4"><b-button variant="outline-primary">
+                Batal
+              </b-button></b-col>
+              <b-col><b-button
+                variant="primary"
+                @click="downloadSaldo"
+              >
+                <b-spinner
+                  v-if="loadingButtonPrintLabel === true"
+                  class="mr-1"
+                  small
+                  variant="light"
+                />
+                Download
+              </b-button></b-col>
             </b-row>
           </b-col>
         </b-row>
@@ -684,7 +684,6 @@ export default {
     BCard,
     BRow,
     BCol,
-    // BFormSelect,
     BTable,
     BButton,
     BPagination,
@@ -738,7 +737,9 @@ export default {
       currentPage: 1,
       perPage: 20,
       totalItems: 0,
+
       searchResi: '',
+
       // Date range picker
       locale: {
         format: 'dd/mm/yyyy',
@@ -748,6 +749,7 @@ export default {
       ranges: {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
+        '60 Hari Terakhir': [last60, today],
         'Bulan Ini': [firstDateOfMonth, today],
         'Custom Tanggal': [today, today],
       },
@@ -760,9 +762,11 @@ export default {
       },
       today,
       last7,
+      last60,
       last30,
       firstDateOfMonth,
       lastDateOfMonth,
+
       dateRange: {
         startDate: last7,
         endDate: today,
@@ -771,28 +775,33 @@ export default {
         startDate: last7,
         endDate: today,
       },
+
       titleCustomDate: null,
+
       // download
       percentageDownload: 0,
       loadingButtonPrintLabel: false,
+
+      ListFilterType: [
+        { value: 0, label: 'Semua', selected: false },
+        { value: 1, label: 'Orderan COD Diterima', selected: false },
+        { value: 2, label: 'Ongkir Non-COD', selected: false },
+        { value: 3, label: 'Ongkir Non-COD Dibatalkan', selected: false },
+        { value: 4, label: 'Tarik Saldo', selected: false },
+        { value: 5, label: 'Top-up Saldo', selected: false },
+        { value: 6, label: 'Retur COD', selected: false },
+        { value: 7, label: 'Claim Retur Diterima', selected: false },
+        { value: 8, label: 'Ganti Rugi Paket Hilang', selected: false },
+        { value: 9, label: 'Ganti Rugi Paket Rusak', selected: false },
+        { value: 10, label: 'Belanja Talent Komtim', selected: false },
+        { value: 11, label: 'Pengembalian Dana Komtim', selected: false },
+      ],
+      dropdownFilter: false,
+      lengthFilter: [],
     }
   },
   computed: {
     ...mapState('saldoDetail', ['totalSaldo']),
-  },
-  watch: {
-    currentPage: {
-      handler(value) {
-        this.fetchData().catch(error => {
-          console.error(error)
-        })
-      },
-    },
-    dateRange: {
-      handler() {
-        this.fetchData()
-      },
-    },
   },
   mounted() {
     this.fetchData().catch(error => {
@@ -853,6 +862,7 @@ export default {
       console.log(this.lengthFilter)
       console.log(this.ListFilterType)
       console.log(valueFilter)
+
       this.items = await this.$http_komship
         .get('v1/partner/order-transaction-balance', {
           params: {
@@ -861,12 +871,14 @@ export default {
             page: this.currentPage,
             limits: this.perPage,
             search: this.searchResi,
+            filter: valueFilter,
           },
         })
         .then(res => {
           const { data } = res.data
           this.totalItems = data.total
           this.loadTable = false
+          this.dropdownFilter = false
           return data.data
         })
         .catch(error => {
@@ -898,6 +910,7 @@ export default {
     copyResi(data) {
       /* Copy the text inside the text field */
       navigator.clipboard.writeText(data)
+
       /* Alert the copied text */
       this.$toast({
         component: ToastificationContent,
@@ -941,7 +954,7 @@ export default {
               data[i] = decodedData.charCodeAt(i)
             }
             let result = null
-            result = `Rincian_Saldo_komship_${this.$moment(this.dateRangeFilter.startDate).format('DD-MM-YYYY')}_${this.$moment(this.dateRangeFilter.endDate).format('DD-MM-YYYY')}`
+            result = `Rincian_Saldo_komship_${this.$moment(this.dateRangeFilter.startDate).format('YYYY-MM-DD')}_${this.$moment(this.dateRangeFilter.endDate).format('YYYY-MM-DD')}`
             this.percentageDownload = 100
             clearInterval(percent)
             const blob = new Blob([data], { type: 'application/vnd.ms-excel' })
@@ -956,8 +969,6 @@ export default {
             setTimeout(() => {
               this.loadingButtonPrintLabel = 0
               this.$bvModal.hide('download-rincian-saldo')
-              this.percentageDownload = 0
-              this.loadingButtonPrintLabel = false
             }, 1000)
           } catch (e) {
             this.percentageDownload = 0
@@ -1014,5 +1025,29 @@ export default {
 }
 .modal-body {
   padding: 0px !important
+}
+.wrapper-notification-count {
+  background: #F95031;
+  height: 24px;
+  min-width: 28px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position:absolute;
+  top: -15px;
+  right: 20px;
+}
+.dropdown-list-menu {
+  right: 5%;
+  display: block;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropdown-list-menu li:hover {
+  background-color: #FCD4BE;
 }
 </style>
