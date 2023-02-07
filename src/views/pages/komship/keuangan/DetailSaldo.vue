@@ -18,7 +18,7 @@
         </b-button>
       </b-col>
     </b-row>
-    <b-row class="mb-1">
+    <b-row class="mb-1 mr-1">
       <b-col
         cols="12"
         md="6"
@@ -39,7 +39,7 @@
         cols="12"
         md="6"
       >
-        <b-row class="justify-content-end mr-2">
+        <b-row class="justify-content-end mr-1">
           <div class="mr-1  my-[8px]">
             <b-input-group class="input-group-merge">
               <b-input-group-prepend is-text>
@@ -85,7 +85,8 @@
                 <b-popover
                   target="popoverTransactionType"
                   triggers="hover focus"
-                  placement="right"
+                  placement="left"
+
                 >
                   <div
                     v-for="item in ListFilterType"
@@ -94,6 +95,7 @@
                     <b-form-checkbox
                       v-model="item.selected"
                       class="my-1 text-black text-[12px]"
+                      @change="getSelectedFilter"
                     >
                       {{ item.label }}
                     </b-form-checkbox>
@@ -497,7 +499,10 @@
               >
                 -Rp {{ formatNumber(data.item.amount_kompoint) }}
               </span>
-              <img style="width: 24px" src="https://storage.googleapis.com/komerce/assets/icons/Kompoints.svg">
+              <img
+                style="width: 24px"
+                src="https://storage.googleapis.com/komerce/assets/icons/Kompoints.svg"
+              >
             </div>
           </div>
         </template>
@@ -508,7 +513,11 @@
             v-if="data.item.kompoint_status === true"
             class="d-flex align-items-center mt-50"
           >
-            <img style="width: 24px" src="https://storage.googleapis.com/komerce/assets/icons/Kompoints.svg">
+
+            <img
+              style="width: 24px"
+              src="https://storage.googleapis.com/komerce/assets/icons/Kompoints.svg"
+            >
             <span
               class="text-[#CC9212] ml-50"
             >
@@ -845,11 +854,15 @@ export default {
         }
       })
       let valueFilter = ''
-      if (this.lengthFilter.length > 0) {
-        valueFilter = this.lengthFilter.join()
-      } else {
+      if (this.ListFilterType[0].selected === true || this.lengthFilter.length < 1) {
         valueFilter = 0
+      } else {
+        valueFilter = this.lengthFilter.join()
       }
+      console.log(this.lengthFilter)
+      console.log(this.ListFilterType)
+      console.log(valueFilter)
+
       this.items = await this.$http_komship
         .get('v1/partner/order-transaction-balance', {
           params: {
@@ -982,9 +995,22 @@ export default {
       this.dropdownFilter = !this.dropdownFilter
     },
     ResetFilter() {
-      this.ListFilterType.forEach(item => item.onCheck === false)
-      this.dateRange = ''
+      // eslint-disable-next-line no-param-reassign
+      this.ListFilterType.forEach(item => { item.selected = false })
+      this.dateRange = {
+        startDate: this.last7,
+        endDate: this.today,
+      }
       this.lengthFilter = ''
+      this.fetchData()
+    },
+    getSelectedFilter() {
+      if (this.ListFilterType[0].selected === true) {
+        this.ListFilterType.forEach(item => {
+          // eslint-disable-next-line no-param-reassign
+          item.selected = true
+        })
+      }
     },
   },
 }
