@@ -208,8 +208,8 @@
         </div>
       </div>
       <b-button
-        :variant="handleDisable('var')"
-        :disabled="handleDisable('dis')"
+        :variant="handleVariantDisable()"
+        :disabled="handleDisable()"
         class="mt-5 float-right"
         @click="confirmAjukan"
       >
@@ -451,12 +451,15 @@ export default {
         ...product,
         variants: product.variants.filter(variant => variant.total > 0),
       }))
+
+      const FinalFilteredVar = filteredVar.filter(product => product.total > 0)
+
       const payload = {
         fulfillment_fee: this.totalPay,
         partner_id: JSON.parse(localStorage.getItem('userData')).partner_detail.id,
         // eslint-disable-next-line radix
         warehouse_id: parseInt(this.warehouse),
-        products: filteredVar,
+        products: FinalFilteredVar,
       }
 
       await this.$http_komship.post('/v1/komship/outbound/store', payload)
@@ -483,12 +486,12 @@ export default {
             }).then(result => {
               if (result.value) {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
                 window.open(`https://wa.me/62${data.data.pic_phone.substring(1)}`, '_blank')
               } else {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
               }
             })
@@ -509,7 +512,7 @@ export default {
             }).then(result => {
               if (result.value) {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
               }
             })
@@ -538,7 +541,7 @@ export default {
                 })
               } else {
                 this.$router.push({
-                  path: `/penarikan-barang/${this.$route.params.id}`,
+                  path: '/penarikan-barang',
                 })
               }
             })
@@ -547,6 +550,7 @@ export default {
         .catch(() => {})
     },
     countTotalPay() {
+      // console.log(this.selected.map(product => product.variant.filter(variant => variant.total !== 0).length > 0).includes(false) === true)
       const result = this.selected.reduce((acc, item) => {
         if (item.is_variant === 1) {
           // eslint-disable-next-line no-shadow
@@ -557,14 +561,27 @@ export default {
       this.totalPay = result
       return result
     },
-    handleDisable(part) {
-      if (part === 'var' && this.totalPay === 0) return 'secondary'
-      if (part === 'var' && this.selected.length === 0) return 'secondary'
-      if (part === 'var' && this.selected.length !== 0) return 'primary'
-      if (part === 'dis' && this.totalPay === 0) return true
-      if (part === 'dis' && this.selected.length === 0) return true
-      if (part === 'dis' && this.selected.length !== 0) return false
-      return ''
+    handleVariantDisable() {
+      const nonVariantFiltered = this.selected.filter(product => (product.is_variant === 0 && product.total > 0))
+      const variantFiltered = this.selected.filter(product => (product.is_variant === 1)).map(product => (product.variant.filter(item => item.total > 0)))
+
+      if (this.selected.length === 0) return 'secondary'
+      if ((nonVariantFiltered?.length + variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return 'primary'
+      if ((variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return 'primary'
+      if (nonVariantFiltered?.length > 0 && (nonVariantFiltered?.length) === this.selected.length) return 'primary'
+
+      return 'secondary'
+    },
+    handleDisable() {
+      const nonVariantFiltered = this.selected.filter(product => (product.is_variant === 0 && product.total > 0))
+      const variantFiltered = this.selected.filter(product => (product.is_variant === 1)).map(product => (product.variant.filter(item => item.total > 0)))
+
+      if (this.selected.length === 0) return true
+      if ((nonVariantFiltered?.length + variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return false
+      if ((variantFiltered?.length) === this.selected.length && variantFiltered.every(data => data.length > 0)) return false
+      if (nonVariantFiltered?.length > 0 && (nonVariantFiltered?.length) === this.selected.length) return false
+
+      return true
     },
   },
 }
@@ -572,7 +589,7 @@ export default {
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
   .vs__dropdown-menu {
-  height: 180px;
+  max-height: 180px;
 }
 </style>
 <style scoped>

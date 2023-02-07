@@ -69,14 +69,6 @@
                     :reduce="gudang => gudang.value"
                     :selectable="gudang => !gudang.disabled"
                   />
-                  <!-- <b-form-select
-                    id="filterGudang"
-                    v-model="gudang"
-                    class="max-5-opt"
-                    :options="gudangList"
-                    label-field="text"
-                    text-field="text"
-                  /> -->
                 </b-form-group>
                 <b-form-group
                   v-if="toggleFilter === 'dataBarang'"
@@ -93,13 +85,6 @@
                     :options="statusList"
                     :reduce="status => status.value"
                   />
-                  <!-- <b-form-select
-                    id="filterStatus"
-                    v-model="status"
-                    :options="statusList"
-                    label-field="text"
-                    text-field="text"
-                  /> -->
                 </b-form-group>
                 <b-form-group
                   id="input-group-3"
@@ -122,50 +107,9 @@
                     >
                       <div class="d-flex justify-content-between align-items-center w-100">
                         <div class="mr-1">
-                          <!-- <span
-                            v-if="
-                              formatDateFilter(picker.startDate) === formatDateFilter(today) && formatDateFilter(picker.endDate) === formatDateFilter(today)
-                            "
-                            style="color: #828282 !important"
-                          >
-                            Hari ini
-                          </span> -->
                           <span
-                            v-if="
-                              formatDateFilter(picker.startDate) === formatDateFilter(last7)
-                            "
                             style="color: #828282 !important"
-                          >
-                            7 hari terakhir
-                          </span>
-                          <span
-                            v-else-if="
-                              formatDateFilter(picker.startDate) === formatDateFilter(last30)
-                            "
-                            style="color: #828282 !important"
-                          >
-                            1 bulan terakhir
-                          </span>
-                          <span
-                            v-else-if="
-                              formatDateFilter(picker.startDate) === formatDateFilter(last90)
-                            "
-                            style="color: #828282 !important"
-                          >
-                            3 bulan terakhir
-                          </span>
-                          <span
-                            v-else-if="
-                              formatDateFilter(picker.startDate) === formatDateFilter(kompackDate) || formatDateFilter(picker.endDate) === formatDateFilter(today)
-                            "
-                            style="color: #828282 !important"
-                          >
-                            Semua Tanggal
-                          </span>
-                          <span
-                            v-else
-                            style="color: #828282 !important"
-                          > Custom </span>
+                          > {{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
                         </div>
                         <div class="padding-arrow border-l">
                           <b-img
@@ -221,17 +165,21 @@
       <b-tab
         title="Barang Dikeluarkan"
         lazy
+        :active="$route.query.tab === 'data-barang-dikeluarkan'"
       >
         <BarangDikeluarkan
           ref="barangDikeluarkan"
           :gudang="gudang"
           :status="status"
           :date-range="dateRange"
+          @callParentMethod="fetchWaitingLength"
           @statusFilter="handleShowStatus"
+          @resetFilter="clearFilter"
         />
       </b-tab>
       <b-tab
         lazy
+        :active="$route.query.tab === 'menunggu-response'"
       >
         <template slot="title">
           <div class="d-flex gap-2">
@@ -251,6 +199,7 @@
           :date-range="dateRange"
           @callParentMethod="fetchWaitingLength"
           @removeStatusFilter="handleRemoveStatus"
+          @resetFilter="clearFilter"
         />
       </b-tab>
     </b-tabs>
@@ -305,10 +254,6 @@ export default {
           value: 'Diajukan',
         },
         {
-          label: 'Disetujui',
-          value: 'Diproses',
-        },
-        {
           label: 'Ditolak',
           value: 'Ditolak',
         },
@@ -342,7 +287,7 @@ export default {
         '7 hari terakhir': [last7, today],
         '1 bulan terakhir': [last30, today],
         '3 bulan terakhir': [last90, today],
-        'Custom tanggal': [null, null],
+        'Custom tanggal': [today, today],
       },
     }
   },
@@ -400,6 +345,9 @@ export default {
     formatDateFilter(value) {
       return moment(value).format('YYYY-MM-DD')
     },
+    formatDate(value) {
+      return moment(value).format('D MMM YYYY')
+    },
     onSubmitFilterBarang() {
       this.$refs.barangDikeluarkan.fetchData()
       this.$refs.myDropdown.hide()
@@ -433,13 +381,22 @@ export default {
     handleShowStatus(value) {
       this.toggleFilter = value
     },
+    clearFilter() {
+      this.gudang = ''
+      this.status = ''
+      this.dateRange = {
+        startDate: kompackDate,
+        endDate: today,
+      }
+      this.$refs.myDropdown.hide()
+    },
   },
 }
 </script>
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
   .vs__dropdown-menu {
-  height: 180px;
+  max-height: 180px;
 }
 </style>
 <style scoped>
