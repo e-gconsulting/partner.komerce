@@ -398,7 +398,7 @@ export default {
       this.customerPhone = `${toInteger(customer.phone)}`
       this.customerName = customer.name
       if (customer.subdistrict_name !== '') {
-        this.destination = await this.$http_komship.get('v1/destination', {
+        this.destination = await this.$http_komship.get('v2/destination', {
           params: { search: customer.subdistrict_name === '-' ? customer.district_name : customer.subdistrict_name },
         }).then(result => {
           const { data } = result.data.data
@@ -430,7 +430,7 @@ export default {
       this.destinationList = []
       if (this.destinationLabel.length > 2) {
         this.$http_komship
-          .get(`/v1/destination?search=${this.destinationLabel}`)
+          .get(`/v2/destination?search=${this.destinationLabel}`)
           .then(res => {
             const { data } = res.data.data
             this.destinationList = data
