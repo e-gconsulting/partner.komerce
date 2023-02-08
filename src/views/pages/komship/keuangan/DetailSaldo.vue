@@ -996,6 +996,7 @@ export default {
         endDate: this.today,
       }
       this.lengthFilter = ''
+      this.isAllChecked = false
       this.fetchData()
     },
     CeklistAll() {
