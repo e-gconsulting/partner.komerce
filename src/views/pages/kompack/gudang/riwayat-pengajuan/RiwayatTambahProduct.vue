@@ -276,6 +276,7 @@ export default {
         this.fetchNextRiwayatAddProduct()
       }
     }
+    this.$router.replace({ query: { tab: 'riwayat-tambah-produk' } })
   },
 
   methods: {
