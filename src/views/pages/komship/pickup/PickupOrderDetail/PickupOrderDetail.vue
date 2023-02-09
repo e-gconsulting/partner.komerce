@@ -691,7 +691,7 @@ export default {
     },
     async downloadPrintLabel() {
       try {
-        const print = await httpKomship.post('/v2/generate/print-label', null, {
+        const print = await httpKomship.post('/v3/generate/print-label', null, {
           params: {
             order_id: this.orderIdPrint,
             page: this.formatPrint,
