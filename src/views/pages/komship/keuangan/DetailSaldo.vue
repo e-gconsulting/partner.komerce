@@ -52,10 +52,10 @@
               />
             </b-input-group>
           </div>
-          <div>
+          <div class="align-self-center">
             <b-button
               variant="primary"
-              style="border-radius: 12px; padding: 1rem"
+              style="border-radius: 12px; padding: 7px"
               @click="setDropdown"
             >
               <b-img
@@ -1043,7 +1043,7 @@ export default {
   align-items: center;
   justify-content: center;
   position:absolute;
-  top: -15px;
+  top: -10px;
   right: 20px;
 }
 .dropdown-list-menu {
