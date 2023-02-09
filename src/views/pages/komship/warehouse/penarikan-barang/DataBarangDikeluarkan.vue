@@ -155,6 +155,7 @@ export default {
     this.fetchDataNoParams()
     this.$emit('statusFilter', 'dataBarang')
     this.$emit('resetFilter')
+    this.$emit('waitingResponse')
   },
   mounted() {
     window.onscroll = () => {

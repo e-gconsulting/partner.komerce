@@ -172,9 +172,9 @@
           :gudang="gudang"
           :status="status"
           :date-range="dateRange"
-          @callParentMethod="fetchWaitingLength"
           @statusFilter="handleShowStatus"
           @resetFilter="clearFilter"
+          @waitingResponse="fetchWaitingLength"
         />
       </b-tab>
       <b-tab
@@ -197,9 +197,9 @@
           ref="menungguRespon"
           :gudang="gudang"
           :date-range="dateRange"
-          @callParentMethod="fetchWaitingLength"
           @removeStatusFilter="handleRemoveStatus"
           @resetFilter="clearFilter"
+          @waitingResponse="waitingResponse"
         />
       </b-tab>
     </b-tabs>
@@ -389,6 +389,9 @@ export default {
         endDate: today,
       }
       this.$refs.myDropdown.hide()
+    },
+    waitingResponse(value) {
+      this.waitingRes = value
     },
   },
 }

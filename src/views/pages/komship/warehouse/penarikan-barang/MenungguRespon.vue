@@ -191,7 +191,7 @@ export default {
           } else {
             this.lastData = false
           }
-          this.$emit('callParentMethod')
+          this.$emit('waitingResponse', data.length)
         }).catch(() => {
           this.loading = false
           this.$toast(
@@ -230,7 +230,7 @@ export default {
           } else {
             this.lastData = false
           }
-          this.$emit('callParentMethod')
+          this.$emit('waitingResponse', data.length)
         }).catch(() => {
           this.loading = false
           this.$toast(
@@ -267,6 +267,7 @@ export default {
             if (data.length < this.limit) {
               this.lastData = true
             }
+            this.$emit('waitingResponse', data.length)
           }).catch(() => {
             this.loading = false
             this.$toast(

@@ -520,7 +520,7 @@ export default {
                 })
               }
             })
-          } else {
+          } else if (data.code === 1006) {
             this.$swal({
               title: 'Pengajuan gagal dikirim',
               text: 'Saldo kamu tidak mencukupi untuk pengajuan penarikan barang, isi saldo kamu yuk...',
@@ -594,7 +594,7 @@ export default {
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
   .vs__dropdown-menu {
-  max-height: 180px;
+  max-height: 130px;
 }
 </style>
 <style scoped>
