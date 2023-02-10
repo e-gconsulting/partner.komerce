@@ -9,7 +9,7 @@ export default [
       name: pageName.singular,
       routeEdit: 'edit-pickup',
       routeAdd: 'add-pickup',
-      resource: 'Gudang Komship',
+      resource: 'Gudangku',
       action: 'manage',
       breadcrumb: [
         {
@@ -24,7 +24,7 @@ export default [
     name: 'detail-gudang-kompack',
     component: () => import('@/views/pages/komship/warehouse/DetailGudangKompack.vue'),
     meta: {
-      resource: 'Gudang Komship',
+      resource: 'Gudangku',
       action: 'manage',
     },
   },
@@ -33,7 +33,7 @@ export default [
     name: 'penarikan-barang',
     component: () => import('@/views/pages/komship/warehouse/penarikan-barang/PenarikanBarang.vue'),
     meta: {
-      resource: 'Gudang Komship',
+      resource: 'Gudangku',
       action: 'manage',
     },
   },
@@ -42,7 +42,7 @@ export default [
     name: 'ajukan-penarikan-barang',
     component: () => import('@/views/pages/komship/warehouse/penarikan-barang/AjukanPenarikan.vue'),
     meta: {
-      resource: 'Gudang Komship',
+      resource: 'Gudangku',
       action: 'manage',
     },
   },
@@ -51,7 +51,7 @@ export default [
     name: 'detail-penarikan-barang',
     component: () => import('@/views/pages/komship/warehouse/penarikan-barang/Detail.vue'),
     meta: {
-      resource: 'Gudang Komship',
+      resource: 'Gudangku',
       action: 'manage',
     },
   },
@@ -60,7 +60,7 @@ export default [
     name: 'tambah-produk-gudang-kompack',
     component: () => import('@/views/pages/komship/warehouse/TambahProdukKompack.vue'),
     meta: {
-      resource: 'Gudang Komship',
+      resource: 'Gudangku',
       action: 'manage',
     },
   },
