@@ -16,7 +16,7 @@
                 <div class="d-flex mb-1 box__content__status__0 box__content__status__mobile" style="
                         background: #FF9845;
                         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                        height: 110px;
+                        height: 160px;
                         width: 100%;
                         border-top-left-radius: 12px;
                         border-bottom-left-radius: 12px;
@@ -41,12 +41,24 @@
                                 {{ perluTindakLanjut }}
                             </p>
                         </div>
+                        <div class="d-flex">
+                            <span class="text-white mr-1">Kecepatan Respon User</span>
+                            <b-img id="popover-response" src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" />
+                            <b-popover target="popover-response" triggers="hover" placement="topright">
+                                <div class="">
+                                    Ini adalah rata-rata kecepatan respons kamu dalam 30 hari terakhir. Kecepatan respons kamu dalam memberikan data pendukung yang direquest ekspedisi sangat berperan juga dalam menurunkan rasio retur.
+                                </div>
+                            </b-popover>
+                        </div>
+                        <div :class="barRespon ? 'green' : 'red'">
+                            {{ timeResponseUser }}
+                        </div>
                     </div>
                 </div>
                 <div class="box__content__status__mobile" style="
                     background: #CF762F;
                     width: 20px;
-                    height: 110px;
+                    height: 160px;
                     border-top-right-radius: 12px;
                     border-bottom-right-radius: 12px;
                 " />

@@ -276,6 +276,9 @@ export default
       placeholderDescriptionTicket: '',
       totalUnread: 0,
       unreadMode: false,
+
+      barRespon: false,
+      timeResponseUser: null,
     }
   },
   watch: {
@@ -314,6 +317,7 @@ export default
     this.fetchDataFirebase()
     this.getProfile()
     this.fetchUnreadTicketAll()
+    this.getResponseUser()
     Notification.requestPermission().then(permission => {
       if (!('permission' in Notification)) {
         Notification.permission = permission
@@ -321,6 +325,36 @@ export default
     })
   },
   methods: {
+    getResponseUser() {
+      this.$http_komship.get(`/v1/ticket-partner/response-speed?partner_id=${this.profile.partner_id}`)
+        .then(response => {
+          const { data } = response.data
+          if (data.format_time_now?.day === 0) {
+            this.timeResponseUser = `${data.format_time_now?.hours} jam ${data.format_time_now?.minutes} menit`
+          } else if (data.format_time_now?.day === 0 && data.format_time_now?.hours === 0) {
+            this.timeResponseUser = `${data.format_time_now?.minutes} menit`
+          }
+          this.timeResponseUser = `${data.format_time_now?.day} hari ${data.format_time_now?.hours} jam ${data.format_time_now?.minutes} menit`
+
+          if (data.format_time_now?.hours < 1) {
+            this.barRespon = true
+          } else {
+            this.barRespon = false
+          }
+        })
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.data.message,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
+    },
     getProfile() {
       if (this.profile.popups[0] !== 'popup_kendala') {
         this.$bvModal.show('ModalComponent')
