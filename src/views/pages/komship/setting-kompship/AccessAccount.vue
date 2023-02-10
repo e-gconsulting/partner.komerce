@@ -316,6 +316,7 @@ import Ripple from 'vue-ripple-directive'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required, email } from '@validations'
+import AddProdukOnboardingVue from '../onboarding/AddProdukOnboarding.vue'
 
 export default {
   components: {
@@ -375,12 +376,32 @@ export default {
         {
           label: 'Gudang',
           resLabel: 'GUDANG',
-          children: [{
-            value: false,
-            label: 'Gudangku',
-            access: [1, 2, 3, 4],
-            isDisable: false,
-          }],
+          children: [
+            {
+              value: false,
+              label: 'Cari Gudang',
+              access: [18],
+              isDisable: false,
+            },
+            {
+              value: false,
+              label: 'Gudangku',
+              access: [16],
+              isDisable: false,
+            },
+            {
+              value: false,
+              label: 'Ajukan Inbound',
+              access: [17],
+              isDisable: false,
+            },
+            {
+              value: false,
+              label: 'Riwayat Pengajuan',
+              access: [19],
+              isDisable: false,
+            },
+          ],
         },
         {
           label: 'Orderan',
@@ -533,6 +554,7 @@ export default {
   mounted() {
     this.fetchAccessList()
     this.fetchMemberData()
+    this.filterListAccess()
   },
   methods: {
     fetchAccessList() {
@@ -556,6 +578,20 @@ export default {
           },
         }, 2000)
       })
+    },
+    filterListAccess() {
+      if (this.partnerId.is_komship === 1 && this.partnerId.is_kompack === 0) {
+        const newListAccess = this.listAccess.map(item => {
+          if (item.label === 'Gudang') {
+            return {
+              ...item,
+              children: item.children.filter(child => child.label === 'Gudangku'),
+            }
+          }
+          return item
+        })
+        this.listAccess = newListAccess
+      }
     },
     showModal() {
       this.editMode = false
