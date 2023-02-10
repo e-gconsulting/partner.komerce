@@ -778,7 +778,6 @@ export default {
       // download
       percentageDownload: 0,
       loadingButtonPrintLabel: false,
-      
       ListFilterType: [
         { value: 1, label: 'Orderan COD Diterima', selected: false },
         { value: 2, label: 'Ongkir Non-COD', selected: false },
