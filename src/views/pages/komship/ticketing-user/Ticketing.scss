@@ -156,6 +156,24 @@
   display: inline-block;
 }
 
+.green {
+  background-color: #B6FBC9;
+  border-radius: 12px;
+  padding-left: 15px;
+  margin-top: 5px;
+  color: #34A770;
+  font-weight: 600;
+  width: 120%;
+}
+.red {
+  background-color: #FCBEBE;
+  border-radius: 12px;
+  padding-left: 15px;
+  margin-top: 5px;
+  color: #E31A1A;
+  font-weight: 600;
+  width: 120%;
+}
 .collapsed > .when-opened,
     :not(.collapsed) > .when-closed {
         display: none;
