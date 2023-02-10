@@ -734,7 +734,9 @@ export default {
       currentPage: 1,
       perPage: 20,
       totalItems: 0,
+
       searchResi: '',
+
       // Date range picker
       locale: {
         format: 'dd/mm/yyyy',
@@ -761,6 +763,7 @@ export default {
       last30,
       firstDateOfMonth,
       lastDateOfMonth,
+
       dateRange: {
         startDate: last7,
         endDate: today,
@@ -769,10 +772,13 @@ export default {
         startDate: last7,
         endDate: today,
       },
+
       titleCustomDate: null,
+
       // download
       percentageDownload: 0,
       loadingButtonPrintLabel: false,
+      
       ListFilterType: [
         { value: 1, label: 'Orderan COD Diterima', selected: false },
         { value: 2, label: 'Ongkir Non-COD', selected: false },
@@ -906,6 +912,7 @@ export default {
     copyResi(data) {
       /* Copy the text inside the text field */
       navigator.clipboard.writeText(data)
+
       /* Alert the copied text */
       this.$toast({
         component: ToastificationContent,
