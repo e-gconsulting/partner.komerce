@@ -52,10 +52,10 @@
               />
             </b-input-group>
           </div>
-          <div>
+          <div class="align-self-center">
             <b-button
               variant="primary"
-              style="border-radius: 12px; padding: 1rem"
+              style="border-radius: 12px; padding: 7px"
               @click="setDropdown"
             >
               <b-img
@@ -778,7 +778,7 @@ export default {
       // download
       percentageDownload: 0,
       loadingButtonPrintLabel: false,
-
+      
       ListFilterType: [
         { value: 1, label: 'Orderan COD Diterima', selected: false },
         { value: 2, label: 'Ongkir Non-COD', selected: false },
@@ -799,6 +799,15 @@ export default {
   },
   computed: {
     ...mapState('saldoDetail', ['totalSaldo']),
+  },
+  watch: {
+    currentPage: {
+      handler(value) {
+        this.fetchData().catch(error => {
+          console.error(error)
+        })
+      },
+    },
   },
   mounted() {
     this.fetchData().catch(error => {
@@ -856,7 +865,6 @@ export default {
       } else {
         valueFilter = this.lengthFilter.join()
       }
-
       this.items = await this.$http_komship
         .get('v1/partner/order-transaction-balance', {
           params: {
@@ -1042,7 +1050,7 @@ export default {
   align-items: center;
   justify-content: center;
   position:absolute;
-  top: -15px;
+  top: -10px;
   right: 20px;
 }
 .dropdown-list-menu {
