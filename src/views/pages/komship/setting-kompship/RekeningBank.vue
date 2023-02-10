@@ -1063,7 +1063,7 @@ export default {
     ...mapState('dashboard', ['profile']),
   },
   mounted() {
-    // this.showModal()
+    this.showModal()
     this.getBank()
     this.loadBanks()
     this.getProfile()
