@@ -75,38 +75,38 @@
               <li class="py-1 px-1 border-b-2">
                 Filter
               </li>
-<!--              <li class="py-1 px-1">-->
-<!--                <div-->
-<!--                  id="popoverTransactionType"-->
-<!--                  type="button"-->
-<!--                >-->
-<!--                  Jenis Transaksi-->
-<!--                </div>-->
-<!--                <b-popover-->
-<!--                  target="popoverTransactionType"-->
-<!--                  triggers="hover focus"-->
-<!--                  placement="left"-->
-<!--                >-->
-<!--                  <div>-->
-<!--                    <b-form-checkbox-->
-<!--                      v-model="isAllChecked"-->
-<!--                      class="my-1 text-black text-[12px]"-->
-<!--                      @change="CeklistAll"-->
-<!--                    >-->
-<!--                      Semua-->
-<!--                    </b-form-checkbox>-->
-<!--                    <b-form-checkbox-->
-<!--                      v-for="item in ListFilterType"-->
-<!--                      :key="item.value"-->
-<!--                      v-model="item.selected"-->
-<!--                      class="my-1 text-black text-[12px]"-->
-<!--                      @change="getSelectedFilter"-->
-<!--                    >-->
-<!--                      {{ item.label }}-->
-<!--                    </b-form-checkbox>-->
-<!--                  </div>-->
-<!--                </b-popover>-->
-<!--              </li>-->
+              <li class="py-1 px-1">
+                <div
+                  id="popoverTransactionType"
+                  type="button"
+                >
+                  Jenis Transaksi
+                </div>
+                <b-popover
+                  target="popoverTransactionType"
+                  triggers="hover focus"
+                  placement="left"
+                >
+                  <div>
+                    <b-form-checkbox
+                      v-model="isAllChecked"
+                      class="my-1 text-black text-[12px]"
+                      @change="CeklistAll"
+                    >
+                      Semua
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                      v-for="item in ListFilterType"
+                      :key="item.value"
+                      v-model="item.selected"
+                      class="my-1 text-black text-[12px]"
+                      @change="getSelectedFilter"
+                    >
+                      {{ item.label }}
+                    </b-form-checkbox>
+                  </div>
+                </b-popover>
+              </li>
               <li
                 type="button"
                 class="py-1 px-1"
@@ -794,11 +794,6 @@ export default {
   computed: {
     ...mapState('saldoDetail', ['totalSaldo']),
   },
-  mounted() {
-    this.fetchData().catch(error => {
-      console.error(error)
-    })
-  },
   watch: {
     currentPage: {
       handler(value) {
@@ -807,6 +802,11 @@ export default {
         })
       },
     },
+  },
+  mounted() {
+    this.fetchData().catch(error => {
+      console.error(error)
+    })
   },
   beforeMount() {
     this.$store.dispatch('saldoDetail/init')
