@@ -194,7 +194,6 @@
                         :filterable="true"
                         :state="errors.length > 0 ? false : null"
                         placeholder="Ketik untuk mencari..."
-                        @keyup="getAccount"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -222,7 +221,6 @@
                       <b-form-input
                         v-model="accountNo"
                         :state="errors.length > 0 ? false:null"
-                        @keyup="getAccount"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -341,6 +339,10 @@
                       placeholder="Ketik untuk mencari..."
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
+                    <small
+                      v-if="validateFieldAddBankName === true"
+                      class="text-danger"
+                    >*Pilih Bank dulu ya</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
@@ -355,15 +357,28 @@
                     name="No rekening"
                     rules="required"
                   >
-                    <b-form-input
-                      v-model="fieldAddAccountNo"
-                      placeholder="Masukkan Nomor Rekening"
-                      :state="errors.length > 5 ? false:null"
-                      maxlength="20"
-                      @keyup="getAccount"
-                      @keypress="isNumber($event)"
-                      @paste.prevent="AccountBankNo"
-                    />
+                    <div class="d-flex">
+                      <b-form-input
+                        v-model="fieldAddAccountNo"
+                        placeholder="Masukkan Nomor Rekening"
+                        :state="errors.length > 5 ? false:null"
+                        maxlength="20"
+                        @keypress="isNumber($event)"
+                        @paste.prevent="AccountBankNo"
+                      />
+                      <b-button
+                        variant="primary"
+                        class="ml-1 w-48 d-flex justify-content-center"
+                        @click="getAccount"
+                      >
+                        <b-spinner
+                          v-if="ValidateAccountName"
+                          variant="light"
+                          style="width: 23px; height: 23px"
+                        />
+                        <span v-else>Cek Rekening</span>
+                      </b-button>
+                    </div>
                     <small class="text-danger">{{ errors[0] }} </small>
                     <small class="text-danger">{{ validateLength }} </small>
                     <small
@@ -371,6 +386,40 @@
                       class="text-danger"
                     >{{ messageSameNoBank }}, </small>
                   </validation-provider>
+                </b-form-group>
+              </b-col>
+
+              <b-col
+                v-if="isValidateAccountName"
+                cols="10"
+              >
+                <b-form-group
+                  label-cols-md="3"
+                >
+                  <div class="d-flex">
+                    <div
+                      v-if="getValidateAccountName"
+                      class="validate-green py-[5px] px-[15px] d-flex"
+                    >
+                      <b-img
+                        rounded="circle"
+                        class="bg-[#34A770] mr-1"
+                        src="https://storage.googleapis.com/komerce/assets/komerce-icon/Putih/Checklist.svg"
+                      />
+                      <span class="align-self-center text-black">Nomor Rekening berhasil ditemukan</span>
+                    </div>
+                    <div
+                      v-else
+                      class="validate-red py-[5px] px-[15px] d-flex"
+                    >
+                      <b-img
+                        rounded="circle"
+                        class="bg-[#FFF2E2] mr-1"
+                        src="https://storage.googleapis.com/komerce/assets/icons/danger-yellow.svg"
+                      />
+                      <span class="align-self-center text-black">Nomor Rekening salah/tidak ditemukan</span>
+                    </div>
+                  </div>
                 </b-form-group>
               </b-col>
 
@@ -384,22 +433,16 @@
                     name="Nama"
                     rules="required"
                   >
-                    <b-form-group class="has-spinner">
-                      <b-spinner
-                        v-if="ValidateAccountName"
-                        size="sm"
-                        variant="secondary"
-                        class="spinner-border spinner-border-sm"
-                      />
+                    <div class="d-flex">
                       <b-form-input
                         v-model="fieldAddAccountName"
+                        placeholder="Nama akan otomatis muncul"
                         class="mr-3 pr-2"
                         :state="errors.length > 0 ? false:null"
                         disabled
-                      >
-                        <b-spinner variant="" />
-                      </b-form-input>
-                    </b-form-group>
+                      />
+                      <div class="w-44" />
+                    </div>
                     <small class="text-danger">{{ errors[0] }}</small>
                     <small
                       v-if="messageSameNameBank !== ''"
@@ -967,7 +1010,7 @@ export default {
       // Create Rekening Bank
       fieldAddBankName: '',
       fieldAddAccountNo: '',
-      fieldAddAccountName: 'Nama akan otomatis muncul',
+      fieldAddAccountName: '',
 
       phoneUser: '',
 
@@ -1011,13 +1054,16 @@ export default {
       accountNameDB: false,
       validateLength: '',
       isNumber,
+      getValidateAccountName: false,
+      isValidateAccountName: false,
+      validateFieldAddBankName: false,
     }
   },
   computed: {
     ...mapState('dashboard', ['profile']),
   },
   mounted() {
-    this.showModal()
+    // this.showModal()
     this.getBank()
     this.loadBanks()
     this.getProfile()
@@ -1349,7 +1395,7 @@ export default {
       this.validateLength = ''
       this.ValidateAccountName = false
       this.fieldAddAccountNo = ''
-      this.fieldAddAccountName = 'Nama akan otomatis muncul'
+      this.fieldAddAccountName = ''
       this.fieldAddBankName = ''
     },
     removeFormRekening(index) {
@@ -1683,9 +1729,13 @@ export default {
         lenghtNoAccount = true
         this.validateLength = ''
       }
+      if (this.fieldAddBankName !== '') {
+        this.validateFieldAddBankName = false
+      } else {
+        this.validateFieldAddBankName = true
+      }
       if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && lenghtNoAccount === true) {
         this.ValidateAccountName = true
-        this.fieldAddAccountName = '    Memeriksa Nama Rekening'
         this.$http.post('/v1/bank/check-bank-owner',
           {
             bank_name: this.fieldAddBankName,
@@ -1693,20 +1743,23 @@ export default {
           }, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
+          this.isValidateAccountName = true
           if (response.data.data.account_name !== undefined) {
             this.ValidateAccountName = false
             this.accountNameDB = true
             this.fieldAddAccountName = response.data.data.account_name
+            this.getValidateAccountName = true
             this.checkBank()
           } else {
             this.ValidateAccountName = false
             this.checkValidBank = true
-            this.fieldAddAccountName = 'Nomor Rekening Tidak Benar'
+            this.getValidateAccountName = false
+            this.fieldAddAccountName = ''
           }
         }).catch(err => {
           this.ValidateAccountName = false
           this.checkValidBank = true
-          this.fieldAddAccountName = 'Nomor Rekening Tidak Benar'
+          this.fieldAddAccountName = ''
         })
       }
     }, 1000),
@@ -1721,6 +1774,21 @@ export default {
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+
+.validate-green {
+  border: 1px solid #DCF3EB;
+  background-color: #DCF3EB;
+  width: 78%;
+  border-radius: 8px;
+}
+
+.validate-red {
+  border: 1px solid #FFF2E2;
+  background-color: #FFF2E2;
+  width: 78%;
+  border-radius: 8px;
+}
+
 [dir] .otp-input {
     width: 40px;
     height: 40px;
