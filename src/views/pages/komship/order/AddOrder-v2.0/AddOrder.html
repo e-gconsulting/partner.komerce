@@ -367,10 +367,10 @@
           </b-col>
           <b-col v-if="returnInsight.percenatge_return_sap" cols="auto" class="d-flex py-[5px] px-1 wrapper__history__retur__mobile" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
             <img src="https://storage.googleapis.com/komship-bucket/shipment/sap-express-logo.png" class="my-auto" style="width: 25px;">
-            <b-badge v-if="returnInsight.percenatge_return_sap.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sap.percentage)">
+            <b-badge v-if="coverageCodSap === true" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sap.percentage)">
               {{ `${returnInsight.percenatge_return_sap.percentage}% | ${returnInsight.percenatge_return_sap.retur}/${returnInsight.percenatge_return_sap.total}`}}
             </b-badge>
-            <b-badge v-if="returnInsight.percenatge_return_sap.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <b-badge v-else class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
               <span>Tidak tercover COD</span>
             </b-badge>
           </b-col>

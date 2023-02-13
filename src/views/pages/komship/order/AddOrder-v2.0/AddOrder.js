@@ -161,6 +161,8 @@ export default {
 
       isKomship: 0,
       isKompack: 0,
+
+      coverageCodSap: true,
     }
   },
   computed: {
@@ -330,6 +332,7 @@ export default {
         })
           .then(result => {
             const { data } = result.data
+            this.coverageCodSap = true
             this.returnInsight = data
             this.showReturnInsight = true
           }).catch(err => {
@@ -971,6 +974,7 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
+          this.coverageCodSap = data.data_shipping.coverage_cod_sap
           const resultReguler = await data.data_regular.map(items => ({
             label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
             value: items.value,
