@@ -628,21 +628,28 @@
           </b-col>
           <b-col>
             <b-row class="justify-content-between">
-              <b-col cols="4"><b-button variant="outline-primary">
-                Batal
-              </b-button></b-col>
-              <b-col><b-button
-                variant="primary"
-                @click="downloadSaldo"
-              >
-                <b-spinner
-                  v-if="loadingButtonPrintLabel === true"
-                  class="mr-1"
-                  small
-                  variant="light"
-                />
-                Download
-              </b-button></b-col>
+              <b-col cols="4">
+                <b-button
+                  variant="outline-primary"
+                  @click="closeDownloadSaldo"
+                >
+                  Batal
+                </b-button>
+              </b-col>
+              <b-col>
+                <b-button
+                  variant="primary"
+                  @click="downloadSaldo"
+                >
+                  <b-spinner
+                    v-if="loadingButtonPrintLabel === true"
+                    class="mr-1"
+                    small
+                    variant="light"
+                  />
+                  Download
+                </b-button>
+              </b-col>
             </b-row>
           </b-col>
         </b-row>
@@ -931,6 +938,11 @@ export default {
     removeCustomDate() {
       this.titleCustomDate = null
     },
+    closeDownloadSaldo() {
+      this.loadingButtonPrintLabel = false
+      this.percentageDownload = 0
+      this.$bvModal.hide('download-rincian-saldo')
+    },
     downloadSaldo() {
       const self = this
       this.loadingButtonPrintLabel = true
@@ -969,6 +981,7 @@ export default {
             this.loadingButtonPrintLabel = false
             setTimeout(() => {
               this.loadingButtonPrintLabel = 0
+              this.percentageDownload = 0
               this.$bvModal.hide('download-rincian-saldo')
             }, 1000)
           } catch (e) {
@@ -991,6 +1004,7 @@ export default {
           this.percentageDownload = 0
           this.isDownloadActive = false
         })
+      this.percentageDownload = 0
     },
     setDropdown() {
       this.dropdownFilter = !this.dropdownFilter

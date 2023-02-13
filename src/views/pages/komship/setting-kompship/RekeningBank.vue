@@ -450,7 +450,7 @@
                       />
                       <div class="w-44" />
                     </div>
-                    <small class="text-danger">{{ errors[0] }}</small>
+                    <!-- <small class="text-danger">{{ errors[0] }}</small> -->
                     <small
                       v-if="messageSameNameBank !== ''"
                       class="text-danger"
@@ -994,48 +994,30 @@ export default {
       dataPin: null,
       errorPin: '',
       addForm: true,
-
       banks: [],
-
       editIdRek: null,
-
       // Validation
       required,
-
       bankName: '',
       accountNo: '',
       accountName: '',
-
       editMode: false,
-
       formRekening: [{ row: '' }],
-
       fieldActionAddRekening: false,
-
       submitAction: false,
-
       // Create Rekening Bank
       fieldAddBankName: '',
       fieldAddAccountNo: '',
       fieldAddAccountName: '',
-
       phoneUser: '',
-
       phoneNumber: '',
-
       countOtp: 60,
-
       errorConfirmOtp: false,
-
       countSubmit: 0,
-
       validateResendOtp: '',
       countCanResendOtp: 0,
-
       visibilityPin: 'password',
-
       validateProfile: [],
-
       messageErrorPhoneUser: false,
       loadingOtpSms: false,
       loadingOtpWa: false,
@@ -1046,13 +1028,11 @@ export default {
       buttonWAOtpIsClick: false,
       buttonSMSOtpIsClick: false,
       otpSubmit: 0,
-
       partnerId: null,
 
       checkValidBank: true,
       messageSameNameBank: '',
       messageSameNoBank: '',
-
       banksDataMinus: [],
       reasonCreateRekening: '',
       buttonSubmitIsDisabled: false,
@@ -1250,7 +1230,6 @@ export default {
           formData.append('bank_name', this.bankName)
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
-
           this.$http_komship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
@@ -1409,6 +1388,8 @@ export default {
       this.isValidateAccountName = false
       this.checkValidBank = true
       this.messageSameNoBank = ''
+      this.validateFieldAddBankName = false
+      this.validateFieldAddAccountNo = false
     },
     changeFieldAddBank() {
       this.fieldAddAccountName = ''
@@ -1491,7 +1472,6 @@ export default {
     },
     async changeAttr() {
       const element = document.getElementsByTagName('body')[0].className
-
       await (element === 'modal-open')
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
@@ -1678,6 +1658,7 @@ export default {
       this.fieldAddAccountNo = ''
       this.fieldAddAccountName = ''
       this.otpConfirmation = ''
+      this.isValidateAccountName = false
       this.getBank()
     },
     closeVerification() {
@@ -1796,28 +1777,23 @@ export default {
   },
 }
 </script>
-
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
-
 .validate-green {
   border: 1px solid #DCF3EB;
   background-color: #DCF3EB;
   width: 78%;
   border-radius: 8px;
 }
-
 .validate-red {
   border: 1px solid #FFF2E2;
   background-color: #FFF2E2;
   width: 78%;
   border-radius: 8px;
 }
-
 .cekRekening {
   width: 13rem;
 }
-
 @media screen and (max-width: 1200px) {
   .cekRekening {
     width: 14rem;
@@ -1828,7 +1804,6 @@ export default {
     width: 18rem;
   }
 }
-
 [dir] .otp-input {
     width: 40px;
     height: 40px;
@@ -1844,14 +1819,12 @@ export default {
     -webkit-appearance: none;
     margin: 0;
   }
-
   [dir] input.vue-pincode-input {
     box-shadow: none!important;
     border-bottom: 2px solid #FF6A3A!important;
     border-radius: 0px!important;
     color: black;
 }
-
     [dir] input.vue-pincode-input:placeholder-shown  {
       box-shadow: none!important;
       border-bottom: 2px solid #828282!important;
@@ -1862,27 +1835,21 @@ export default {
     border-bottom: 2px solid #FF6A3A!important;
     border-radius: 0px!important;
 }
-
   [dir] .wrapper__send__otp:hover {
     background: #FFECE9;
   }
-
   [dir] .wrapper__otp__wa {
     background: #C2C2C2;
   }
-
   [dir] .border__table__check__rek {
     border: 1px solid #E2E2E2;
   }
-
   .has-spinner {
   position: relative;
   }
-
   .spinner-border {
     position: absolute;
     left: 1%;
     top: 40%;
   }
-
 </style>
