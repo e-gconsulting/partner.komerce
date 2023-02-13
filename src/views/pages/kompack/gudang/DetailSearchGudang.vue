@@ -461,7 +461,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ddd;
   border-radius: 8px;
   width: 450px;
   height: 300px;
@@ -475,13 +474,6 @@ export default {
   align-items: center;
   position: relative;
 }
-/*.boxFirst > img {
-    -o-transition: 1s all ease-in-out;
-    -ms-transition: 1s all ease-in-out;
-    -webkit-transition: 1s all ease-in-out;
-    -moz-transition: 1s all ease-in-out;
-    transition: 1s all ease-in-out;
-  }*/
 .container__childBox {
   display: -webkit-box;
   width: 450px;

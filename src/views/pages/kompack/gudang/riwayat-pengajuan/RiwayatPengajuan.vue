@@ -10,18 +10,21 @@
       <b-tab
         title="Riwayat Inbound"
         lazy
+        :active="$route.query.tab === 'riwayat-inbound'"
       >
         <RiwayatInbound />
       </b-tab>
       <b-tab
         title="Riwayat Tambah Produk"
         lazy
+        :active="$route.query.tab === 'riwayat-tambah-produk'"
       >
         <RiwayatTambahProduct />
       </b-tab>
       <b-tab
         title="Riwayat Berlangganan"
         lazy
+        :active="$route.query.tab === 'riwayat-berlangganan'"
       >
         <RiwayatBerlangganan />
       </b-tab>

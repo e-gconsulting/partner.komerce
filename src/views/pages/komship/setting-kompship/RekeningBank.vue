@@ -1029,12 +1029,14 @@ export default {
       buttonSMSOtpIsClick: false,
       otpSubmit: 0,
       partnerId: null,
+
       checkValidBank: true,
       messageSameNameBank: '',
       messageSameNoBank: '',
       banksDataMinus: [],
       reasonCreateRekening: '',
       buttonSubmitIsDisabled: false,
+
       ValidateAccountName: false,
       accountNameDB: false,
       validateLength: '',
@@ -1050,7 +1052,7 @@ export default {
     ...mapState('dashboard', ['profile']),
   },
   mounted() {
-    this.showModal()
+    // this.showModal()
     this.getBank()
     this.loadBanks()
     this.getProfile()
