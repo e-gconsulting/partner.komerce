@@ -329,17 +329,16 @@ export default
       this.$http_komship.get(`/v1/ticket-partner/response-speed?partner_id=${this.profile.partner_id}`)
         .then(response => {
           const { data } = response.data
-          if (data.format_time_now?.day === 0) {
-            this.timeResponseUser = `${data.format_time_now?.hours} jam ${data.format_time_now?.minutes} menit`
-          } else if (data.format_time_now?.day === 0 && data.format_time_now?.hours === 0) {
-            this.timeResponseUser = `${data.format_time_now?.minutes} menit`
-          }
-          this.timeResponseUser = `${data.format_time_now?.day} hari ${data.format_time_now?.hours} jam ${data.format_time_now?.minutes} menit`
 
-          if (data.format_time_now?.hours < 1) {
+          if (data.format_time_now?.day === 0 && data.format_time_now?.hours === 0) {
             this.barRespon = true
+            this.timeResponseUser = `${data.format_time_now?.minutes} menit`
+          } else if (data.format_time_now?.day === 0) {
+            this.barRespon = false
+            this.timeResponseUser = `${data.format_time_now?.hours} jam ${data.format_time_now?.minutes} menit`
           } else {
             this.barRespon = false
+            this.timeResponseUser = `${data.format_time_now?.day} hari ${data.format_time_now?.hours} jam ${data.format_time_now?.minutes} menit`
           }
         })
         .catch(err => {
