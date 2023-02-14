@@ -1657,6 +1657,7 @@ export default {
       this.fieldAddAccountName = ''
       this.otpConfirmation = ''
       this.isValidateAccountName = false
+      this.checkValidBank = true
       this.getBank()
     },
     closeVerification() {
