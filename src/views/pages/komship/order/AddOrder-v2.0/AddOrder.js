@@ -161,6 +161,8 @@ export default {
 
       isKomship: 0,
       isKompack: 0,
+
+      searchProduct: '',
     }
   },
   computed: {
@@ -441,10 +443,16 @@ export default {
           })
       }
     }, 1000),
+    getProductSearch: _.debounce(function (search, loading) {
+      this.searchProduct = search
+      if (this.searchProduct.length > 2) {
+        this.getProduct(this.address)
+      }
+    }, 1000),
     async getProduct(address) {
       if (address.warehouse_type === 'Mitra Kompack') { this.productSelected = [] }
       await this.$http_komship
-        .get(`v2/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}`)
+        .get(`v3/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}&search=${this.searchProduct}`)
         .then(response => {
           const { data } = response.data
           this.productList = data

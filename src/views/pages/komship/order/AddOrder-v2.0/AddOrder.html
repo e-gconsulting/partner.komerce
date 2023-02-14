@@ -452,14 +452,15 @@
           <v-select
             v-model="product"
             label="product_name"
+            placeholder="Ketik Nama Produk"
             :options="productList"
+            @search="getProductSearch"
             @input="addProduct"
           >
             <span
               v-if="productLength === 0"
               slot="no-options"
             >
-
               Belum ada produk, tambahkan dahulu.
             </span>
             <span
