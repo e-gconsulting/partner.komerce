@@ -65,9 +65,9 @@
     <script>
       const data = JSON.parse(localStorage.getItem('userData'))
       var APP_ID = 'df718702'
-      var current_user_email = data.email
-      var current_user_name = data.full_name
-      var current_user_id = data.partner_detail.id
+      var current_user_email = data ? data.email : ''
+      var current_user_name = data ? data.full_name : ''
+      var current_user_id = data ? data.partner_detail.id : ''
 
       window.intercomSettings = {
         api_base: 'https://api-iam.intercom.io',
