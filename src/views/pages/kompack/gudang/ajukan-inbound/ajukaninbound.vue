@@ -3,6 +3,7 @@
     <div v-if="!TambahProduct">
       <b-row class="justify-content-between mt-2 mb-4 mx-1">
         <h4 class="text-black font-bold align-self-center">
+
           Ajukan Inbound
         </h4>
         <b-button

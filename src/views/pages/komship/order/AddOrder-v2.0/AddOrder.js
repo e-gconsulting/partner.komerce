@@ -163,6 +163,7 @@ export default {
       isKompack: 0,
 
       coverageCodSap: true,
+
     }
   },
   computed: {
@@ -1637,6 +1638,8 @@ export default {
     applyDestination(items) {
       this.destination = items
       this.destinationLabel = items.label
+      this.returnInsightCodSap = false
+      this.coverageCodSap = false
       this.getReturnInsight()
       this.destinationList = []
     },
