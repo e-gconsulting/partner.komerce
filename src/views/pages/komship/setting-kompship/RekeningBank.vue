@@ -366,11 +366,11 @@
                         maxlength="20"
                         @keypress="isNumber($event)"
                         @paste.prevent="AccountBankNo"
-                        @change="changeFieldAddBank"
+                        @input="changeFieldAddBank"
                       />
                       <b-button
-                        variant="primary"
-                        :disabled="ValidateAccountName"
+                        :variant="fieldAddAccountName !== '' ? 'secondary' : 'primary'"
+                        :disabled="fieldAddAccountName !== ''"
                         class="ml-1 cekRekening"
                         @click="getAccount"
                       >
@@ -478,7 +478,7 @@
                   :variant="checkValidBank ? 'secondary' : 'primary'"
                   class="mr-1"
                   :disabled="checkValidBank"
-                  @click.prevent="submitVerification"
+                  @click.prevent="checkBank"
                 >
                   <b-spinner
                     v-if="loadingSubmit"
@@ -1686,6 +1686,7 @@ export default {
             this.checkValidBank = false
             this.messageSameNoBank = ''
             this.messageSameNameBank = ''
+            this.submitVerification()
           }).catch(err => {
             if (err.response.data.code === 1001) {
               if (err.response.data.message === 'Nomor Rekening Sudah digunakan') {
@@ -1753,7 +1754,7 @@ export default {
           this.accountNameDB = true
           this.fieldAddAccountName = response.data.data.account_name
           this.getValidateAccountName = true
-          this.checkBank()
+          this.checkValidBank = false
         } else {
           this.ValidateAccountName = false
           this.checkValidBank = true
