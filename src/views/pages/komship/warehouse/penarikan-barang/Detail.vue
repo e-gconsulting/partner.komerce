@@ -219,6 +219,7 @@ export default {
       this.$http_komship.put(`/v1/komship/outbound/${this.$route.params.id}/approve`)
         .then(() => {
           this.$router.go(-1)
+          this.$router.replace({ query: { tab: 'data-barang-dikeluarkan' } })
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -254,6 +255,8 @@ export default {
         cancelButtonText: 'Batal',
         confirmButtonText: 'Konfirmasi',
         reverseButtons: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         customClass: {
           icon: 'border-0 w-50 my-5',
           confirmButton: 'btn btn-primary px-4',

@@ -932,6 +932,7 @@ export default {
       stockTo: '',
       soldFrom: '',
       soldTo: '',
+
       limit: 50,
       offset: 0,
       lastOrderProduct: false,

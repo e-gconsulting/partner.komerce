@@ -1,8 +1,9 @@
 <template>
   <b-card body>
     <div v-if="!TambahProduct">
-      <b-row class="justify-content-between mt-2 mb-4">
-        <h4 class="text-black font-bold mb-1">
+      <b-row class="justify-content-between mt-2 mb-4 mx-1">
+        <h4 class="text-black font-bold align-self-center">
+
           Ajukan Inbound
         </h4>
         <b-button
@@ -426,7 +427,6 @@
                   <b-col cols="1">
                     <b-form-checkbox
                       v-model="item.isActive"
-                      @input="setData(listProdukEdit)"
                     />
                   </b-col>
                   <b-col cols="3">
