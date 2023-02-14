@@ -1011,16 +1011,27 @@ export default {
         }).catch(err => {
           if (err?.response?.data?.message === 'Please Complete Your Address.') {
             this.$refs['modal-check-address-pickup'].show()
+          } else if (err.response.data.message === 'destination address is not available for COD payment method') {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: 'destination address is not available for COD payment method',
+                variant: 'danger',
+              },
+            })
+          } else {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.response.data.message,
+                variant: 'danger',
+              },
+            })
           }
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          })
           this.loadingOptionExpedition = false
         })
       } else {
