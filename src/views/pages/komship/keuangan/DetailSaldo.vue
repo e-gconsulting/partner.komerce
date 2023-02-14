@@ -52,10 +52,10 @@
               />
             </b-input-group>
           </div>
-          <div>
+          <div class="align-self-center">
             <b-button
               variant="primary"
-              style="border-radius: 12px; padding: 1rem"
+              style="border-radius: 12px; padding: 7px"
               @click="setDropdown"
             >
               <b-img
@@ -628,21 +628,28 @@
           </b-col>
           <b-col>
             <b-row class="justify-content-between">
-              <b-col cols="4"><b-button variant="outline-primary">
-                Batal
-              </b-button></b-col>
-              <b-col><b-button
-                variant="primary"
-                @click="downloadSaldo"
-              >
-                <b-spinner
-                  v-if="loadingButtonPrintLabel === true"
-                  class="mr-1"
-                  small
-                  variant="light"
-                />
-                Download
-              </b-button></b-col>
+              <b-col cols="4">
+                <b-button
+                  variant="outline-primary"
+                  @click="closeDownloadSaldo"
+                >
+                  Batal
+                </b-button>
+              </b-col>
+              <b-col>
+                <b-button
+                  variant="primary"
+                  @click="downloadSaldo"
+                >
+                  <b-spinner
+                    v-if="loadingButtonPrintLabel === true"
+                    class="mr-1"
+                    small
+                    variant="light"
+                  />
+                  Download
+                </b-button>
+              </b-col>
             </b-row>
           </b-col>
         </b-row>
@@ -794,6 +801,15 @@ export default {
   computed: {
     ...mapState('saldoDetail', ['totalSaldo']),
   },
+  watch: {
+    currentPage: {
+      handler(value) {
+        this.fetchData().catch(error => {
+          console.error(error)
+        })
+      },
+    },
+  },
   mounted() {
     this.fetchData().catch(error => {
       console.error(error)
@@ -916,6 +932,11 @@ export default {
     removeCustomDate() {
       this.titleCustomDate = null
     },
+    closeDownloadSaldo() {
+      this.loadingButtonPrintLabel = false
+      this.percentageDownload = 0
+      this.$bvModal.hide('download-rincian-saldo')
+    },
     downloadSaldo() {
       const self = this
       this.loadingButtonPrintLabel = true
@@ -954,6 +975,7 @@ export default {
             this.loadingButtonPrintLabel = false
             setTimeout(() => {
               this.loadingButtonPrintLabel = 0
+              this.percentageDownload = 0
               this.$bvModal.hide('download-rincian-saldo')
             }, 1000)
           } catch (e) {
@@ -976,6 +998,7 @@ export default {
           this.percentageDownload = 0
           this.isDownloadActive = false
         })
+      this.percentageDownload = 0
     },
     setDropdown() {
       this.dropdownFilter = !this.dropdownFilter
@@ -1034,7 +1057,7 @@ export default {
   align-items: center;
   justify-content: center;
   position:absolute;
-  top: -15px;
+  top: -10px;
   right: 20px;
 }
 .dropdown-list-menu {

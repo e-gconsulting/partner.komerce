@@ -12,14 +12,9 @@
             border-radius: 16px;
         ">
         <b-row class="mx-50 my-2 justify-content-center w-100">
-            <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__0 box__content__status__mobile" style="
+            <b-col cols="12" lg="3" md="6" class="d-flex">
+                <div class="d-flex mb-1 box__content__status__0 box__content__status__mobile box-content" style="
                         background: #FF9845;
-                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                        height: 110px;
-                        width: 100%;
-                        border-top-left-radius: 12px;
-                        border-bottom-left-radius: 12px;
                     " @click="filterStatusFromBox(0)">
                     <div class="ml-1">
                         <p class="mt-1" style="
@@ -41,25 +36,30 @@
                                 {{ perluTindakLanjut }}
                             </p>
                         </div>
+                        <div v-if="timeResponseUser !== '0 menit'" >
+                            <div class="d-flex">
+                                <span class="text-white pr-[5px]">Kecepatan Respon User</span>
+                                <b-img id="popover-response" src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" />
+                                <b-popover target="popover-response" triggers="hover" placement="topright">
+                                    <div class="">
+                                        Ini adalah rata-rata kecepatan respons kamu dalam 30 hari terakhir. Kecepatan respons kamu dalam memberikan data pendukung yang direquest ekspedisi sangat berperan juga dalam menurunkan rasio retur.
+                                    </div>
+                                </b-popover>
+                            </div>
+                            <div :class="barRespon ? 'green' : 'red'">
+                                {{ timeResponseUser }}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="box__content__status__mobile" style="
+                <div class="box__content__status__mobile box-content-status" style="
                     background: #CF762F;
-                    width: 20px;
-                    height: 110px;
-                    border-top-right-radius: 12px;
-                    border-bottom-right-radius: 12px;
                 " />
             </b-col>
 
-            <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__1 box__content__status__mobile" style="
+            <b-col cols="12" lg="3" md="6" class="d-flex">
+                <div class="d-flex mb-1 box__content__status__1 box__content__status__mobile box-content" style="
                         background: #F65A5C;
-                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                        border-top-left-radius: 12px;
-                        border-bottom-left-radius: 12px;
-                        width: 100%;
-                        height: 110px;
                     " @click="filterStatusFromBox(1)">
                     <div class="ml-1">
                         <p class="mt-1" style="
@@ -83,23 +83,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="box__content__status__mobile" style="
+                <div class="box__content__status__mobile box-content-mobile box-content-status" style="
                     background: #C8484A;
-                    width: 20px;
-                    height: 110px;
-                    border-top-right-radius: 12px;
-                    border-bottom-right-radius: 12px;
                 " />
             </b-col>
 
-            <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__2 box__content__status__mobile" style="
+            <b-col cols="12" lg="3" md="6" class="d-flex">
+                <div class="d-flex mb-1 box__content__status__2 box__content__status__mobile box-content" style="
                         background: #50A0FF;
-                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                        border-top-left-radius: 12px;
-                        border-bottom-left-radius: 12px;
-                        width: 100%;
-                        height: 110px;
                     " @click="filterStatusFromBox(2)">
                     <div class="ml-1">
                         <p class="mt-1" style="
@@ -123,23 +114,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="box__content__status__mobile" style="
+                <div class="box__content__status__mobile box-content-status" style="
                     background: #3E85D9;
-                    width: 20px;
-                    height: 110px;
-                    border-top-right-radius: 12px;
-                    border-bottom-right-radius: 12px;
                 " />
             </b-col>
 
-            <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__3 box__content__status__mobile" style="
+            <b-col cols="12" lg="3" md="6" class="d-flex">
+                <div class="d-flex mb-1 box__content__status__3 box__content__status__mobile box-content" style="
                         background: #2CCA98;
-                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                        border-top-left-radius: 12px;
-                        border-bottom-left-radius: 12px;
-                        width: 100%;
-                        height: 110px;
                     " @click="filterStatusFromBox(3)">
                     <div class="ml-1">
                         <div class="d-flex mt-1">
@@ -174,12 +156,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="box__content__status__mobile" style="
+                <div class="box__content__status__mobile box-content-status" style="
                     background: #28B48B;
-                    width: 20px;
-                    height: 110px;
-                    border-top-right-radius: 12px;
-                    border-bottom-right-radius: 12px;
                 " />
             </b-col>
         </b-row>
