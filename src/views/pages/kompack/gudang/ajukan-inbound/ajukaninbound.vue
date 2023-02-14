@@ -698,7 +698,6 @@
   @import '@core/scss/vue/libs/vue-select.scss';
 </style>
 <style lang="scss" scoped>
-
 .minus-button, .plus-button {
     justify-content: center;
     font-size: 20px;
@@ -731,7 +730,6 @@
   [dir] .when-opened {
     display: inline-block;
   }
-
   @media screen and (max-width: 767px) {
   .table-container {
   overflow-x: scroll;
