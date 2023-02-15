@@ -34,6 +34,7 @@ export default {
       destinationList: [],
       product: [],
       productList: [],
+      productListDB: [],
       productSelected: [],
       productLength: null,
       productStock: null,
@@ -449,6 +450,8 @@ export default {
       this.searchProduct = search
       if (this.searchProduct.length > 2) {
         this.getProduct(this.address)
+      } else {
+        this.productList = this.productListDB
       }
     }, 1000),
     async getProduct(address) {
@@ -457,8 +460,12 @@ export default {
         .get(`v3/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}&search=${this.searchProduct}`)
         .then(response => {
           const { data } = response.data
-          this.productList = data
-          this.productLength = data.length
+          if (this.searchProduct === '') {
+            this.productListDB = data.slice(0, 5)
+          }
+          if (this.productList.length === 0 || this.searchProduct !== '') {
+            this.productList = data.slice(0, 5)
+          }
           // if (this.productLength === 0) this.$refs['modal-validate-product'].show()
         })
     },
@@ -513,6 +520,7 @@ export default {
             stock: itemSelected.stock - 1,
             stockAvailable: itemSelected.stock,
           })
+          // this.productList = this.productListDB
           this.productHistory = false
           if (itemSelected.is_variant !== '1') {
             await this.addToCart()

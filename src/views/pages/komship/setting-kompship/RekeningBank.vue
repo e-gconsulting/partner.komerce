@@ -1656,7 +1656,6 @@ export default {
       this.otpConfirmation = ''
       this.isValidateAccountName = false
       this.checkValidBank = true
-      this.getBank()
     },
     closeVerification() {
       this.$refs['modal-verification-submit'].hide()
