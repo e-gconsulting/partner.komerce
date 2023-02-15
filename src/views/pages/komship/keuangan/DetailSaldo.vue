@@ -75,38 +75,38 @@
               <li class="py-1 px-1 border-b-2">
                 Filter
               </li>
-<!--              <li class="py-1 px-1">-->
-<!--                <div-->
-<!--                  id="popoverTransactionType"-->
-<!--                  type="button"-->
-<!--                >-->
-<!--                  Jenis Transaksi-->
-<!--                </div>-->
-<!--                <b-popover-->
-<!--                  target="popoverTransactionType"-->
-<!--                  triggers="hover focus"-->
-<!--                  placement="left"-->
-<!--                >-->
-<!--                  <div>-->
-<!--                    <b-form-checkbox-->
-<!--                      v-model="isAllChecked"-->
-<!--                      class="my-1 text-black text-[12px]"-->
-<!--                      @change="CeklistAll"-->
-<!--                    >-->
-<!--                      Semua-->
-<!--                    </b-form-checkbox>-->
-<!--                    <b-form-checkbox-->
-<!--                      v-for="item in ListFilterType"-->
-<!--                      :key="item.value"-->
-<!--                      v-model="item.selected"-->
-<!--                      class="my-1 text-black text-[12px]"-->
-<!--                      @change="getSelectedFilter"-->
-<!--                    >-->
-<!--                      {{ item.label }}-->
-<!--                    </b-form-checkbox>-->
-<!--                  </div>-->
-<!--                </b-popover>-->
-<!--              </li>-->
+              <li class="py-1 px-1">
+                <div
+                  id="popoverTransactionType"
+                  type="button"
+                >
+                  Jenis Transaksi
+                </div>
+                <b-popover
+                  target="popoverTransactionType"
+                  triggers="hover focus"
+                  placement="left"
+                >
+                  <div>
+                    <b-form-checkbox
+                      v-model="isAllChecked"
+                      class="my-1 text-black text-[12px]"
+                      @change="CeklistAll"
+                    >
+                      Semua
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                      v-for="item in ListFilterType"
+                      :key="item.value"
+                      v-model="item.selected"
+                      class="my-1 text-black text-[12px]"
+                      @change="getSelectedFilter"
+                    >
+                      {{ item.label }}
+                    </b-form-checkbox>
+                  </div>
+                </b-popover>
+              </li>
               <li
                 type="button"
                 class="py-1 px-1"
@@ -562,6 +562,8 @@
         />
       </div>
     </b-overlay>
+
+    <!-- Modal Download Rincian Saldo -->
     <b-modal
       id="download-rincian-saldo"
       size="lg"
@@ -628,21 +630,28 @@
           </b-col>
           <b-col>
             <b-row class="justify-content-between">
-              <b-col cols="4"><b-button variant="outline-primary">
-                Batal
-              </b-button></b-col>
-              <b-col><b-button
-                variant="primary"
-                @click="downloadSaldo"
-              >
-                <b-spinner
-                  v-if="loadingButtonPrintLabel === true"
-                  class="mr-1"
-                  small
-                  variant="light"
-                />
-                Download
-              </b-button></b-col>
+              <b-col cols="4">
+                <b-button
+                  variant="outline-primary"
+                  @click="closeDownloadSaldo"
+                >
+                  Batal
+                </b-button>
+              </b-col>
+              <b-col>
+                <b-button
+                  variant="primary"
+                  @click="downloadSaldo"
+                >
+                  <b-spinner
+                    v-if="loadingButtonPrintLabel === true"
+                    class="mr-1"
+                    small
+                    variant="light"
+                  />
+                  Download
+                </b-button>
+              </b-col>
             </b-row>
           </b-col>
         </b-row>
@@ -794,11 +803,6 @@ export default {
   computed: {
     ...mapState('saldoDetail', ['totalSaldo']),
   },
-  mounted() {
-    this.fetchData().catch(error => {
-      console.error(error)
-    })
-  },
   watch: {
     currentPage: {
       handler(value) {
@@ -807,6 +811,11 @@ export default {
         })
       },
     },
+  },
+  mounted() {
+    this.fetchData().catch(error => {
+      console.error(error)
+    })
   },
   beforeMount() {
     this.$store.dispatch('saldoDetail/init')
@@ -881,9 +890,13 @@ export default {
           // handle error
         })
     },
-    setPage(totalPage) {
+    async setPage(totalPage) {
       this.perPage = totalPage
-      this.fetchData()
+      if (this.currentPage === 1) {
+        this.fetchData()
+      } else {
+        this.currentPage = 1
+      }
     },
     handleSearchResi: _.debounce(async function () {
       this.loadTable = true
@@ -925,6 +938,11 @@ export default {
     removeCustomDate() {
       this.titleCustomDate = null
     },
+    closeDownloadSaldo() {
+      this.loadingButtonPrintLabel = false
+      this.percentageDownload = 0
+      this.$bvModal.hide('download-rincian-saldo')
+    },
     downloadSaldo() {
       const self = this
       this.loadingButtonPrintLabel = true
@@ -963,6 +981,7 @@ export default {
             this.loadingButtonPrintLabel = false
             setTimeout(() => {
               this.loadingButtonPrintLabel = 0
+              this.percentageDownload = 0
               this.$bvModal.hide('download-rincian-saldo')
             }, 1000)
           } catch (e) {
@@ -985,6 +1004,7 @@ export default {
           this.percentageDownload = 0
           this.isDownloadActive = false
         })
+      this.percentageDownload = 0
     },
     setDropdown() {
       this.dropdownFilter = !this.dropdownFilter

@@ -925,48 +925,30 @@ export default {
       dataPin: null,
       errorPin: '',
       addForm: true,
-
       banks: [],
-
       editIdRek: null,
-
       // Validation
       required,
-
       bankName: '',
       accountNo: '',
       accountName: '',
-
       editMode: false,
-
       formRekening: [{ row: '' }],
-
       fieldActionAddRekening: false,
-
       submitAction: false,
-
       // Create Rekening Bank
       fieldAddBankName: '',
       fieldAddAccountNo: '',
       fieldAddAccountName: '',
-
       phoneUser: '',
-
       phoneNumber: '',
-
       countOtp: 60,
-
       errorConfirmOtp: false,
-
       countSubmit: 0,
-
       validateResendOtp: '',
       countCanResendOtp: 0,
-
       visibilityPin: 'password',
-
       validateProfile: [],
-
       messageErrorPhoneUser: false,
       loadingOtpSms: false,
       loadingOtpWa: false,
@@ -977,13 +959,10 @@ export default {
       buttonWAOtpIsClick: false,
       buttonSMSOtpIsClick: false,
       otpSubmit: 0,
-
       partnerId: null,
-
       checkValidBank: false,
       messageSameNameBank: '',
       messageSameNoBank: '',
-
       banksDataMinus: [],
       reasonCreateRekening: '',
       buttonSubmitIsDisabled: false,
@@ -1171,7 +1150,6 @@ export default {
           formData.append('bank_name', this.bankName)
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
-
           this.$http_komship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
@@ -1398,7 +1376,6 @@ export default {
     },
     async changeAttr() {
       const element = document.getElementsByTagName('body')[0].className
-
       await (element === 'modal-open')
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
@@ -1648,7 +1625,6 @@ export default {
   },
 }
 </script>
-
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
 [dir] .otp-input {
@@ -1666,14 +1642,12 @@ export default {
     -webkit-appearance: none;
     margin: 0;
   }
-
   [dir] input.vue-pincode-input {
     box-shadow: none!important;
     border-bottom: 2px solid #FF6A3A!important;
     border-radius: 0px!important;
     color: black;
 }
-
     [dir] input.vue-pincode-input:placeholder-shown  {
       box-shadow: none!important;
       border-bottom: 2px solid #828282!important;
@@ -1684,17 +1658,13 @@ export default {
     border-bottom: 2px solid #FF6A3A!important;
     border-radius: 0px!important;
 }
-
   [dir] .wrapper__send__otp:hover {
     background: #FFECE9;
   }
-
   [dir] .wrapper__otp__wa {
     background: #C2C2C2;
   }
-
   [dir] .border__table__check__rek {
     border: 1px solid #E2E2E2;
   }
-
 </style>
