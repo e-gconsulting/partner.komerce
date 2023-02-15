@@ -1,418 +1,676 @@
 <b-card>
-    <b-row class="d-flex justify-between align-items-center px-1 mb-2 font-bold">
-      <h3 class="font-bold">
-        Tambah Order
-      </h3>
-      <span class="d-flex my-auto">
-        Pengiriman via <b-img
-          src="https://storage.googleapis.com/komerce/assets/svg/komship-logo-yellow.svg"
-          style="margin-left:7px;"
-          alt="Komship"
-          width="100"
-        />
-      </span>
-    </b-row>
-    <b-row
-      class="text-lg"
-      style="margin-bottom:8px"
-    >
-      <b-col md="3">
-        Tanggal
-      </b-col>
-      <b-col md="4">
-        {{ formatDate(dateOrder) }}
-        <b-form-datepicker
-          v-model="dateOrder"
-          :min="new Date()"
-          size="sm"
-          locale="id"
-          button-only
-          button-variant="none"
-          label-help=""
-        >
-          <template v-slot:button-content>
-            <b-img src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg" />
-          </template>
-        </b-form-datepicker>
-      </b-col>
-    </b-row>
-    <b-row v-if="profile.partner_is_tracking_sales" class="mb-1">
-      <b-col
-        md="3"
-        class="my-auto"
+  <b-row class="d-flex justify-between align-items-center px-1 mb-2 font-bold">
+    <h3 class="font-bold">
+      Tambah Order
+    </h3>
+    <span class="d-flex my-auto">
+      Pengiriman via <b-img
+        src="https://storage.googleapis.com/komerce/assets/svg/komship-logo-yellow.svg"
+        style="margin-left:7px;"
+        alt="Komship"
+        width="100"
+      />
+    </span>
+  </b-row>
+  <b-row
+    class="text-lg"
+    style="margin-bottom:8px"
+  >
+    <b-col md="3">
+      Tanggal
+    </b-col>
+    <b-col md="4">
+      {{ formatDate(dateOrder) }}
+      <b-form-datepicker
+        v-model="dateOrder"
+        :min="new Date()"
+        size="sm"
+        locale="id"
+        button-only
+        button-variant="none"
+        label-help=""
       >
-        <span class="text-lg">Terjual Oleh</span>
-      </b-col>
-      <b-col md="4">
-        <v-select
-          v-model="soldBy"
-          label="name"
-          :options="soldByList"
-        >
-          <span
-            v-if="soldByList.length === 0"
-            slot="no-options"
-          >
-            Belum ada admin, tambahkan dahulu.
-          </span>
-          <span
-            v-else
-            slot="no-options"
-          >
-            Sedang Memuat ...
-          </span>
-        </v-select>
-      </b-col>
-    </b-row>
-    <b-row class="mb-1">
-      <b-col
-        md="3"
-        class="my-auto"
-      >
-        <span class="text-lg">Kirim Dari</span>
-      </b-col>
-      <b-col md="4">
-        <v-select
-          v-model="address"
-          label="warehouse_name"
-          :options="addressList"
-          @input="getProduct(address)"
-        >
-        <template v-slot:option="option">
-          <div v-if="option.warehouse_type === 'Mitra Kompack'" class="d-flex">
-            <img class="mr-1" :src="option.flag" />
-            {{ option.warehouse_name }}
-          </div>
+        <template v-slot:button-content>
+          <b-img src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg" />
         </template>
-          <span
-            v-if="addressLength === 0"
-            slot="no-options"
-          >
-            Belum ada alamat pickup, tambahkan dahulu.
-          </span>
-          <span
-            v-else
-            slot="no-options"
-          >
-            Sedang Memuat ...
-          </span>
-        </v-select>
-      </b-col>
-    </b-row>
-    <b-row
-      v-if="profile.partner_is_custom_label"
-      class="mb-1 align-items-center"
+      </b-form-datepicker>
+    </b-col>
+  </b-row>
+  <b-row v-if="profile.partner_is_tracking_sales" class="mb-1">
+    <b-col
+      md="3"
+      class="my-auto"
     >
-      <b-col
-        md="3"
-        class="my-auto"
+      <span class="text-lg">Terjual Oleh</span>
+    </b-col>
+    <b-col md="4">
+      <v-select
+        v-model="soldBy"
+        label="name"
+        :options="soldByList"
       >
-        <b-row>
-          <span class="text-lg ml-1">Kirim Sebagai</span>
-        </b-row>
-        <small>*nama Pengirim akan muncul di Label Resi</small>
-      </b-col>
-      <b-col md="4">
-        <v-select
-          v-model="customLabel"
-          :options="itemsCustomLabel"
-          label="name_label"
-          :reduce="items => items.id"
-          @input="handleCustomLabel"
-        />
-      </b-col>
-    </b-row>
-    <b-row class="mb-1">
-      <b-col
-        md="3"
-        class="my-auto"
+        <span
+          v-if="soldByList.length === 0"
+          slot="no-options"
+        >
+          Belum ada admin, tambahkan dahulu.
+        </span>
+        <span
+          v-else
+          slot="no-options"
+        >
+          Sedang Memuat ...
+        </span>
+      </v-select>
+    </b-col>
+  </b-row>
+  <b-row class="mb-1">
+    <b-col
+      md="3"
+      class="my-auto"
+    >
+      <span class="text-lg">Kirim Dari</span>
+    </b-col>
+    <b-col md="4">
+      <v-select
+        v-model="address"
+        label="warehouse_name"
+        :options="addressList"
+        @input="getProduct(address)"
       >
-        <span class="text-lg">Nama Pelanggan</span>
-      </b-col>
-      <b-col id="inputCustomer" md="4">
-        <input
-          id="customerName"
-          v-model="customerName"
-          type="text"
-          maxlength="30"
-          autocomplete="off"
-          placeholder="Masukkan Nama atau Cari Data Pelanggan"
-          class="form-control"
-          @keyup="searchCustomer"
-          @focus="searchCustomer"
-          :style="minimalCustomerName || requireCustomerName ? 'background-color: #FFEDED; border: 1px solid #E31A1A' : 'background-color: white;'"
-          @blur="checkValidationCustomerName">
-          <ul v-if="customerList.length > 0" class="autocomplete-list">
-            <li v-for="items in customerList" class="autocomplete-item" role="button" @click="autofillByCustomer(items)">
-              {{`${items.name}, ${items.phone}, ${items.city_name}`}}
-            </li>
-          </ul>
-          <b-row class="ml-50">
-            <small class="mt-50">
-              <small
-                v-if="minimalCustomerName"
-                class="text-primary"
-              >
-                *minimal 3 karakter
-              </small>
-            </small>
-          </b-row>
-          <b-row class="ml-50">
-            <small class="mt-50">
-              <small
-                v-if="requireCustomerName"
-                class="text-primary"
-              >
-                *wajib diisi ya
-              </small>
-            </small>
-          </b-row>
-        <b-row class="justify-content-end">
-          <small class="mr-1 mt-50">
+      <template v-slot:option="option">
+        <div v-if="option.warehouse_type === 'Mitra Kompack'" class="d-flex">
+          <img class="mr-1" :src="option.flag" />
+          {{ option.warehouse_name }}
+        </div>
+      </template>
+        <span
+          v-if="addressLength === 0"
+          slot="no-options"
+        >
+          Belum ada alamat pickup, tambahkan dahulu.
+        </span>
+        <span
+          v-else
+          slot="no-options"
+        >
+          Sedang Memuat ...
+        </span>
+      </v-select>
+    </b-col>
+  </b-row>
+  <b-row
+    v-if="profile.partner_is_custom_label"
+    class="mb-1 align-items-center"
+  >
+    <b-col
+      md="3"
+      class="my-auto"
+    >
+      <b-row>
+        <span class="text-lg ml-1">Kirim Sebagai</span>
+      </b-row>
+      <small>*nama Pengirim akan muncul di Label Resi</small>
+    </b-col>
+    <b-col md="4">
+      <v-select
+        v-model="customLabel"
+        :options="itemsCustomLabel"
+        label="name_label"
+        :reduce="items => items.id"
+        @input="handleCustomLabel"
+      />
+    </b-col>
+  </b-row>
+  <b-row class="mb-1">
+    <b-col
+      md="3"
+      class="my-auto"
+    >
+      <span class="text-lg">Nama Pelanggan</span>
+    </b-col>
+    <b-col id="inputCustomer" md="4">
+      <input
+        id="customerName"
+        v-model="customerName"
+        type="text"
+        maxlength="30"
+        autocomplete="off"
+        placeholder="Masukkan Nama atau Cari Data Pelanggan"
+        class="form-control"
+        @keyup="searchCustomer"
+        @focus="searchCustomer"
+        :style="minimalCustomerName || requireCustomerName ? 'background-color: #FFEDED; border: 1px solid #E31A1A' : 'background-color: white;'"
+        @blur="checkValidationCustomerName">
+        <ul v-if="customerList.length > 0" class="autocomplete-list">
+          <li v-for="items in customerList" class="autocomplete-item" role="button" @click="autofillByCustomer(items)">
+            {{`${items.name}, ${items.phone}, ${items.city_name}`}}
+          </li>
+        </ul>
+        <b-row class="ml-50">
+          <small class="mt-50">
             <small
-              v-if="messageErrorLengthCustomerName"
+              v-if="minimalCustomerName"
               class="text-primary"
             >
-              *hindari menggunakan simbol (/) (=) (:) (;)
+              *minimal 3 karakter
             </small>
-            {{ customerName.length }}/30
           </small>
         </b-row>
-      </b-col>
-    </b-row>
-    <b-row class="mb-1">
-      <b-col
-        md="3"
-        class="my-auto"
-      >
-        <span class="text-lg">No HP.</span>
-      </b-col>
-      <b-col
-        md="4"
-      >
-        <b-input-group>
-          <template #prepend>
-            <b-form-select
-              :options="phoneCodeList"
-              :value="phoneCode"
-            />
-          </template>
-          <b-form-input
-            id="inputBox"
-            v-model="customerPhone"
-            type="number"
-            :style="requireCustomerPhone ? 'background-color: #FFEDED; border: 1px solid #E31A1A' : 'background-color: white;'"
-            @keypress="validateInputPhoneCustomer"
-            @paste="formatterPhone"
-            @input="formatPhoneCustomer"
-            @keyup="valueFormatPhone"
-            @blur="checkValidationCustomerPhone"
-            />
-          </b-input-group>
-          <b-row class="justify-content-start m-0">
-            <div v-if="requireCustomerPhone">
-              <small class="mr-1 text-primary">
-                *wajib diisi ya
-              </small>
-            </div>
-          </b-row>
-          <b-row class="justify-content-start m-0">
-            <div v-if="requireCustomerPhone">
-              <small class="mr-1 text-primary">
-                *minimal 9 digit berupa angka & wajib diawali dengan angka 8
-              </small>
-            </div>
-            <div v-if="this.isWhatsapp === 'valid'" class="d-flex text-success" style="margin-top: 5px;">
-              <img src="https://storage.googleapis.com/komerce/assets/icons/whatsapp.svg" class="my-auto">
-              <span class="my-auto" style="margin-left: 0.2vw;font-size:12px">Nomor ini terhubung ke Whatsapp</span>
-              <img id="whatsapp-info" src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" class="my-auto" style="margin-left: 1vw">
-              <b-popover
-                triggers="hover"
-                target="whatsapp-info"
-                placement="topright"
-                content="Kurir akan lebih mudah berkoordinasi"
-                custom-class="info-wa"
-                variant="info"
-              />
-            </div>
-            <div v-if="this.isWhatsapp === 'invalid'" class="d-flex text-danger" style="margin-top: 5px;">
-              <img src="https://storage.googleapis.com/komerce/assets/icons/danger-red.svg" class="my-auto">
-              <span class="my-auto" style="margin-left: 0.2vw;font-size:12px">Nomor ini tidak terhubung ke Whatsapp</span>
-              <img id="whatsapp-info" src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" class="my-auto" style="margin-left: 1vw">
-              <b-popover
-                triggers="hover"
-                target="whatsapp-info"
-                placement="topright"
-                content="Kurir akan kesulitan dalam berkoordinasi"
-                custom-class="info-wa"
-                variant="info"
-              />
-            </div>
-          </b-row>
-        <b-row v-if="isCustomerReputation" class="ml-50 mt-1 align-items-center">
-          <span class="d-flex align-items-center">
-            Reputasi Customer
-            <img
-              id="infoCustomerInsight"
-              src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
-              class="icon-info ml-[5px] mr-1"
+        <b-row class="ml-50">
+          <small class="mt-50">
+            <small
+              v-if="requireCustomerName"
+              class="text-primary"
             >
-            <div :class="customerReputationClass">
-              <span class="d-flex align-items-center justify-content-center">{{ customerReputation }}% <div :style="customerReputationStyle" class="mx-50 my-[5px]" /> ({{ customerReputationRetur }}/{{ customerReputationOrder }})</span>
-            </div>
-          </span>
-          <b-spinner v-if="loadingCustomerReputation" small variant="primary" class="ml-50" />
-          <b-popover
-            triggers="hover"
-            target="infoCustomerInsight"
-            placement="bottomleft"
-          >
-          Tingkat kegagalan transaksi user tersebut selama ini. Hitungannya adalah transaksi yang gagal dibandingkan dengan semua transaksi yang pernah dilakukan (identifikasi No.HP)
-          </b-popover>
+              *wajib diisi ya
+            </small>
+          </small>
         </b-row>
-      </b-col>
-    </b-row>
-    <b-row class="mb-2">
-      <b-col md="3">
-        <span class="text-lg">Alamat Tujuan</span>
-      </b-col>
-      <b-col id="inputDestination" md="4">
-        <input
-          v-model="destinationLabel"
-          type="text"
-          autocomplete="off"
-          placeholder="Masukkan Kelurahan/Kecamatan"
-          class="form-control"
-          @focus="getDestination"
-          @keyup="getDestination"
-          @input="getShippingList()">
-          <ul v-if="destinationList[0] !== undefined" class="autocomplete-list">
-            <li v-for="items in destinationList" class="autocomplete-item" role="button" @click="applyDestination(items)">
-              {{`${items.label}`}}
-            </li>
-          </ul>
-        <!-- <v-select
-          ref="selectDestination"
-          v-model="destination"
-          :options="destinationList"
-          class="style-chooser"
-          placeholder="Masukkan Kelurahan/Kecamatan"
-          :loading="loadingSearchDestination"
-          @search="onSearchDestination"
-          @input="getShippingList(), getReturnInsight()"
-        >
-          <span
-            slot="no-options"
-            @click="$refs.selectDestination.open = false"
+      <b-row class="justify-content-end">
+        <small class="mr-1 mt-50">
+          <small
+            v-if="messageErrorLengthCustomerName"
+            class="text-primary"
           >
-            Tidak ada data untuk ditampilkan.
-          </span>
-          <template #spinner="{ loading }">
-            <div
-              v-if="loadingSearchDestination"
-              style="border-left-color: #F95031"
-              class="vs__spinner"
-            >
-              The .vs__spinner class will hide the text for me.
-            </div>
-          </template>
-        </v-select> -->
-      </b-col>
-    </b-row>
-    <b-row v-if="showReturnInsight" class="mb-2">
-      <b-col md="3" />
-      <b-col md="9">
-        <span class="d-flex">
-          History rasio retur
+            *hindari menggunakan simbol (/) (=) (:) (;)
+          </small>
+          {{ customerName.length }}/30
+        </small>
+      </b-row>
+    </b-col>
+  </b-row>
+  <b-row class="mb-1">
+    <b-col
+      md="3"
+      class="my-auto"
+    >
+      <span class="text-lg">No HP.</span>
+    </b-col>
+    <b-col
+      md="4"
+    >
+      <b-input-group>
+        <template #prepend>
+          <b-form-select
+            :options="phoneCodeList"
+            :value="phoneCode"
+          />
+        </template>
+        <b-form-input
+          id="inputBox"
+          v-model="customerPhone"
+          type="number"
+          :style="requireCustomerPhone ? 'background-color: #FFEDED; border: 1px solid #E31A1A' : 'background-color: white;'"
+          @keypress="validateInputPhoneCustomer"
+          @paste="formatterPhone"
+          @input="formatPhoneCustomer"
+          @keyup="valueFormatPhone"
+          @blur="checkValidationCustomerPhone"
+          />
+        </b-input-group>
+        <b-row class="justify-content-start m-0">
+          <div v-if="requireCustomerPhone">
+            <small class="mr-1 text-primary">
+              *wajib diisi ya
+            </small>
+          </div>
+        </b-row>
+        <b-row class="justify-content-start m-0">
+          <div v-if="requireCustomerPhone">
+            <small class="mr-1 text-primary">
+              *minimal 9 digit berupa angka & wajib diawali dengan angka 8
+            </small>
+          </div>
+          <div v-if="this.isWhatsapp === 'valid'" class="d-flex text-success" style="margin-top: 5px;">
+            <img src="https://storage.googleapis.com/komerce/assets/icons/whatsapp.svg" class="my-auto">
+            <span class="my-auto" style="margin-left: 0.2vw;font-size:12px">Nomor ini terhubung ke Whatsapp</span>
+            <img id="whatsapp-info" src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" class="my-auto" style="margin-left: 1vw">
+            <b-popover
+              triggers="hover"
+              target="whatsapp-info"
+              placement="topright"
+              content="Kurir akan lebih mudah berkoordinasi"
+              custom-class="info-wa"
+              variant="info"
+            />
+          </div>
+          <div v-if="this.isWhatsapp === 'invalid'" class="d-flex text-danger" style="margin-top: 5px;">
+            <img src="https://storage.googleapis.com/komerce/assets/icons/danger-red.svg" class="my-auto">
+            <span class="my-auto" style="margin-left: 0.2vw;font-size:12px">Nomor ini tidak terhubung ke Whatsapp</span>
+            <img id="whatsapp-info" src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg" class="my-auto" style="margin-left: 1vw">
+            <b-popover
+              triggers="hover"
+              target="whatsapp-info"
+              placement="topright"
+              content="Kurir akan kesulitan dalam berkoordinasi"
+              custom-class="info-wa"
+              variant="info"
+            />
+          </div>
+        </b-row>
+      <b-row v-if="isCustomerReputation" class="ml-50 mt-1 align-items-center">
+        <span class="d-flex align-items-center">
+          Reputasi Customer
           <img
-            id="infoReturnInsight"
+            id="infoCustomerInsight"
             src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
-            class="icon-info ml-[5px]"
+            class="icon-info ml-[5px] mr-1"
           >
+          <div :class="customerReputationClass">
+            <span class="d-flex align-items-center justify-content-center">{{ customerReputation }}% <div :style="customerReputationStyle" class="mx-50 my-[5px]" /> ({{ customerReputationRetur }}/{{ customerReputationOrder }})</span>
+          </div>
         </span>
+        <b-spinner v-if="loadingCustomerReputation" small variant="primary" class="ml-50" />
         <b-popover
           triggers="hover"
-          target="infoReturnInsight"
+          target="infoCustomerInsight"
           placement="bottomleft"
         >
-        Tingkat retur di daerah tersebut berdasarkan data yang terkumpul di Komship, Hitungannya dari jumlah retur dibanding jumlah pengiriman ke daerah tersebut dalam 5 bulan terakhir.
-        </b-popover><br>
-        <b-row class="md:-mt-4">
-          <b-col v-if="returnInsight.percenatge_return_jne" cols="auto" class="d-flex py-[5px] px-1 mb-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
-            <img src="https://storage.googleapis.com/komship-bucket/shipment/jne-logo.png" class="my-auto" style="width: 40px;">
-            <b-badge v-if="returnInsight.percenatge_return_jne.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_jne.percentage)">
-              {{ `${returnInsight.percenatge_return_jne.percentage}% | ${returnInsight.percenatge_return_jne.retur}/${returnInsight.percenatge_return_jne.total}`}}
-            </b-badge>
-            <b-badge v-if="returnInsight.percenatge_return_jne.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
-              <span>Tidak tercover COD</span>
-            </b-badge>
-          </b-col>
-          <b-col v-if="returnInsight.percenatge_return_sicepat" cols="auto" class="d-flex py-[5px] px-1 mb-1 wrapper__history__retur__mobile" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
-            <img src="https://storage.googleapis.com/komship-bucket/shipment/sicepat-logo.png" class="my-auto" style="width: 50px;">
-            <b-badge v-if="returnInsight.percenatge_return_sicepat.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sicepat.percentage)">
-              {{ `${returnInsight.percenatge_return_sicepat.percentage}% | ${returnInsight.percenatge_return_sicepat.retur}/${returnInsight.percenatge_return_sicepat.total}`}}
-            </b-badge>
-            <b-badge v-if="returnInsight.percenatge_return_sicepat.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
-              <span>Tidak tercover COD</span>
-            </b-badge>
-          </b-col>
-          <b-col v-if="returnInsight.percenatge_return_idexpress" cols="auto" class="d-flex py-[5px] px-1 wrapper__history__retur__mobile" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
-            <img src="https://storage.googleapis.com/komship-bucket/shipment/idexpress-logo.png" class="my-auto" style="width: 30px;">
-            <b-badge v-if="returnInsight.percenatge_return_idexpress.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_idexpress.percentage)">
-              {{ `${returnInsight.percenatge_return_idexpress.percentage}% | ${returnInsight.percenatge_return_idexpress.retur}/${returnInsight.percenatge_return_idexpress.total}`}}
-            </b-badge>
-            <b-badge v-if="returnInsight.percenatge_return_idexpress.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
-              <span>Tidak tercover COD</span>
-            </b-badge>
-          </b-col>
-          <b-col v-if="returnInsight.percenatge_return_sap" cols="auto" class="d-flex py-[5px] px-1 wrapper__history__retur__mobile" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
-            <img src="https://storage.googleapis.com/komship-bucket/shipment/sap-express-logo.png" class="my-auto" style="width: 25px;">
-            <b-badge v-if="returnInsight.percenatge_return_sap.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sap.percentage)">
-              {{ `${returnInsight.percenatge_return_sap.percentage}% | ${returnInsight.percenatge_return_sap.retur}/${returnInsight.percenatge_return_sap.total}`}}
-            </b-badge>
-            <b-badge v-if="returnInsight.percenatge_return_sap.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
-              <span>Tidak tercover COD</span>
-            </b-badge>
-          </b-col>
-        </b-row>
-      </b-col>
-    </b-row>
+        Tingkat kegagalan transaksi user tersebut selama ini. Hitungannya adalah transaksi yang gagal dibandingkan dengan semua transaksi yang pernah dilakukan (identifikasi No.HP)
+        </b-popover>
+      </b-row>
+    </b-col>
+  </b-row>
+  <b-row class="mb-2">
+    <b-col md="3">
+      <span class="text-lg">Alamat Tujuan</span>
+    </b-col>
+    <b-col id="inputDestination" md="4">
+      <input
+        v-model="destinationLabel"
+        type="text"
+        autocomplete="off"
+        placeholder="Masukkan Kelurahan/Kecamatan"
+        class="form-control"
+        @focus="getDestination"
+        @keyup="getDestination"
+        @input="getShippingList()">
+        <ul v-if="destinationList[0] !== undefined" class="autocomplete-list">
+          <li v-for="items in destinationList" class="autocomplete-item" role="button" @click="applyDestination(items)">
+            {{`${items.label}`}}
+          </li>
+        </ul>
+      <!-- <v-select
+        ref="selectDestination"
+        v-model="destination"
+        :options="destinationList"
+        class="style-chooser"
+        placeholder="Masukkan Kelurahan/Kecamatan"
+        :loading="loadingSearchDestination"
+        @search="onSearchDestination"
+        @input="getShippingList(), getReturnInsight()"
+      >
+        <span
+          slot="no-options"
+          @click="$refs.selectDestination.open = false"
+        >
+          Tidak ada data untuk ditampilkan.
+        </span>
+        <template #spinner="{ loading }">
+          <div
+            v-if="loadingSearchDestination"
+            style="border-left-color: #F95031"
+            class="vs__spinner"
+          >
+            The .vs__spinner class will hide the text for me.
+          </div>
+        </template>
+      </v-select> -->
+    </b-col>
+  </b-row>
+  <b-row v-if="showReturnInsight" class="mb-2">
+    <b-col md="3" />
+    <b-col md="9">
+      <span class="d-flex">
+        History rasio retur
+        <img
+          id="infoReturnInsight"
+          src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
+          class="icon-info ml-[5px]"
+        >
+      </span>
+      <b-popover
+        triggers="hover"
+        target="infoReturnInsight"
+        placement="bottomleft"
+      >
+      Tingkat retur di daerah tersebut berdasarkan data yang terkumpul di Komship, Hitungannya dari jumlah retur dibanding jumlah pengiriman ke daerah tersebut dalam 5 bulan terakhir.
+      </b-popover><br>
+      <b-row class="md:-mt-4">
+        <b-col v-if="returnInsight.percenatge_return_jne" cols="auto" class="d-flex py-[5px] px-1 mb-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+          <img src="https://storage.googleapis.com/komship-bucket/shipment/jne-logo.png" class="my-auto" style="width: 40px;">
+          <b-badge v-if="returnInsight.percenatge_return_jne.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_jne.percentage)">
+            {{ `${returnInsight.percenatge_return_jne.percentage}% | ${returnInsight.percenatge_return_jne.retur}/${returnInsight.percenatge_return_jne.total}`}}
+          </b-badge>
+          <b-badge v-if="returnInsight.percenatge_return_jne.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <span>Tidak tercover COD</span>
+          </b-badge>
+        </b-col>
+        <b-col v-if="returnInsight.percenatge_return_sicepat" cols="auto" class="d-flex py-[5px] px-1 mb-1 wrapper__history__retur__mobile" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+          <img src="https://storage.googleapis.com/komship-bucket/shipment/sicepat-logo.png" class="my-auto" style="width: 50px;">
+          <b-badge v-if="returnInsight.percenatge_return_sicepat.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sicepat.percentage)">
+            {{ `${returnInsight.percenatge_return_sicepat.percentage}% | ${returnInsight.percenatge_return_sicepat.retur}/${returnInsight.percenatge_return_sicepat.total}`}}
+          </b-badge>
+          <b-badge v-if="returnInsight.percenatge_return_sicepat.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <span>Tidak tercover COD</span>
+          </b-badge>
+        </b-col>
+        <b-col v-if="returnInsight.percenatge_return_idexpress" cols="auto" class="d-flex py-[5px] px-1 wrapper__history__retur__mobile" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+          <img src="https://storage.googleapis.com/komship-bucket/shipment/idexpress-logo.png" class="my-auto" style="width: 30px;">
+          <b-badge v-if="returnInsight.percenatge_return_idexpress.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_idexpress.percentage)">
+            {{ `${returnInsight.percenatge_return_idexpress.percentage}% | ${returnInsight.percenatge_return_idexpress.retur}/${returnInsight.percenatge_return_idexpress.total}`}}
+          </b-badge>
+          <b-badge v-if="returnInsight.percenatge_return_idexpress.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <span>Tidak tercover COD</span>
+          </b-badge>
+        </b-col>
+        <b-col v-if="returnInsight.percenatge_return_sap" cols="auto" class="d-flex py-[5px] px-1 wrapper__history__retur__mobile" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+          <img src="https://storage.googleapis.com/komship-bucket/shipment/sap-express-logo.png" class="my-auto" style="width: 25px;">
+          <b-badge v-if="coverageCodSap === true" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sap.percentage)">
+            {{ `${returnInsight.percenatge_return_sap.percentage}% | ${returnInsight.percenatge_return_sap.retur}/${returnInsight.percenatge_return_sap.total}`}}
+          </b-badge>
+          <b-badge v-else class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <span>Tidak tercover COD</span>
+          </b-badge>
+        </b-col>
+      </b-row>
+    </b-col>
+  </b-row>
+  <b-row class="mb-1">
+    <b-col
+      md="3"
+      class="my-auto"
+    >
+      <span class="text-lg">Alamat Detail</span>
+    </b-col>
+    <b-col md="4">
+      <b-form-textarea
+        v-model="customerAddress"
+        placeholder="Agar kurir mudah menemukan lokasi, masukan nama jalan, RT/RW atau patokan bangunan dengan lengkap ya"
+        :formatter="formatAddressDetail"
+        @keypress="validateInputAddressDetail"
+        rows="4"
+        @keyup="formatText"
+      />
+      <b-row class="justify-content-end">
+        <small class="mr-1 mt-50">
+          <small
+            v-if="messageErrorAddressDetail"
+            class="text-primary"
+          >
+            *Hindari menggunakan simbol (=) (;) (") (&) (+) (:) dan teks non-regular. 
+          </small>
+          {{ customerAddress.length }}/185
+        </small>
+      </b-row>
+    </b-col>
+  </b-row>
+  <section
+    class="p-2"
+    style="border:1px solid #E2E2E2;border-radius:18px"
+  >
+  <b-row class="mb-1">
+    <b-col md="7" />
+
+    <b-col
+      md="5"
+      class="d-flex justify-end"
+    >
+      <span
+        class="w-48 text-sm"
+        style="color:#828282;"
+      >*Simpan setting ini untuk Orderan Selanjutnya</span>
+      <b-img
+        v-if="productSelected.length === 0"
+        src="@/assets/images/icons/archive-tick.png"
+        class="my-auto cursor-pointer"
+        title="Tambahkan Produk Terlebih Dahulu"
+      />
+      <b-img
+        v-if="productSelected.length >= 1 && !productHistory"
+        src="@/assets/images/icons/archive-tick-ready.png"
+        class="my-auto cursor-pointer"
+        @click="saveProductHistory"
+      />
+      <b-img
+        v-if="productSelected.length >= 1 && productHistory"
+        src="@/assets/images/icons/archive-tick-active.png"
+        class="my-auto cursor-pointer"
+        @click="removeProductHistory"
+      />
+    </b-col>
+  </b-row>
     <b-row class="mb-1">
       <b-col
         md="3"
         class="my-auto"
       >
-        <span class="text-lg">Alamat Detail</span>
+        <span class="text-lg">Pilih Produk</span>
       </b-col>
       <b-col md="4">
-        <b-form-textarea
-          v-model="customerAddress"
-          placeholder="Agar kurir mudah menemukan lokasi, masukan nama jalan, RT/RW atau patokan bangunan dengan lengkap ya"
-          :formatter="formatAddressDetail"
-          @keypress="validateInputAddressDetail"
-          rows="4"
-          @keyup="formatText"
-        />
-        <b-row class="justify-content-end">
-          <small class="mr-1 mt-50">
-            <small
-              v-if="messageErrorAddressDetail"
-              class="text-primary"
-            >
-              *Hindari menggunakan simbol (=) (;) (") (&) (+) (:) dan teks non-regular. 
-            </small>
-            {{ customerAddress.length }}/185
-          </small>
-        </b-row>
+        <v-select
+          v-model="product"
+          label="product_name"
+          placeholder="Ketik Nama Produk"
+          :options="productList"
+          @search="getProductSearch"
+          @input="addProduct"
+        >
+          <span
+            v-if="productLength === 0"
+            slot="no-options"
+          >
+            Belum ada produk, tambahkan dahulu.
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+        </v-select>
       </b-col>
     </b-row>
-    <section
-      class="p-2"
-      style="border:1px solid #E2E2E2;border-radius:18px"
+    <b-table
+      v-if="productSelected.length >= 1"
+      ref="tableProduct"
+      :fields="productFields"
+      :items="productSelected"
+      responsive
     >
+      <template #cell(no)="data">
+        {{ data.index+1 }}
+      </template>
+      <template #cell(product_name)="data">
+        <div class="d-flex w-60">
+          <b-img
+            v-if="data.item.product_image === ''"
+            :src="require('@/assets/images/avatars/image-null.png')"
+            class="my-auto"
+            style="width:50px!important;height:50px!important;"
+          />
+          <b-img
+            v-else
+            :src="data.item.product_image"
+            class="my-auto"
+            style="width:50px!important;height:50px!important;"
+          />
+          <span
+            class="my-auto text-lg font-bold w-44"
+            style="margin-left:5px;line-height:20px;"
+          >{{ data.item.product_name }}</span>
+        </div>
+      </template>
+      <template #cell(variant)="data">
+        <div
+          v-if="data.item.is_variant >= 1"
+          class="justify-center"
+        >
+          <span
+            v-if="data.item.variantSubmit"
+            class="d-flex text-primary justify-center font-bold"
+          >{{ data.item.variant_name }}</span>
+          <div
+            v-if="!data.item.variantSubmit"
+            class="d-flex justify-center"
+          >
+            <b-button
+              variant="outline-primary"
+              size="sm"
+              @click="getVariation(data.index)"
+            >
+              Pilih
+            </b-button>
+          </div>
+        </div>
+        <p
+          v-else
+          class="text-center"
+        >-</p>
+        <b-modal
+          :id="`modalVariation${data.index}`"
+          hide-footer
+          class="p-5"
+          centered
+        >
+          <section v-if="data.item.variantSelected[0]">
+            <h4 class="font-bold mb-1">
+              {{ data.item.variantSelected[0].variant_name }}
+            </h4>
+            <b-button
+              v-for="item in data.item.variantSelected[0].variant_option"
+              :key="item.id"
+              style="font-weight:500;margin-right:5px;padding:8px"
+              :variant="item.is_active ? 'primary':'outline-primary'"
+              @click="selectVariant(data.index, 0, item.option_id)"
+            >{{ item.option_name }}</b-button>
+          </section>
+          <section
+            v-if="data.item.variantSelected[1]"
+            class="mt-2"
+          >
+            <h4 class="font-bold mb-1">
+              {{ data.item.variantSelected[1].variant_name }}
+            </h4>
+            <b-button
+              v-for="item in data.item.variantSelected[1].variant_option"
+              :key="item.id"
+              style="font-weight:500;margin-right:5px;padding:8px"
+              :variant="item.is_active ? 'primary':'outline-primary'"
+              @click="selectVariant(data.index, 1, item.option_id)"
+            >{{ item.option_name }}</b-button>
+          </section>
+          <section
+            v-if="data.item.variantSelected[2]"
+            class="mt-2"
+          >
+            <h4 class="font-bold mb-1">
+              {{ data.item.variantSelected[2].variant_name }}
+            </h4>
+            <b-button
+              v-for="item in data.item.variantSelected[2].variant_option"
+              :key="item.id"
+              style="font-weight:500;margin-right:5px;padding:8px"
+              :variant="item.is_active ? 'primary':'outline-primary'"
+              @click="selectVariant(data.index, 2, item.option_id)"
+            >{{ item.option_name }}</b-button>
+          </section>
+          <section class="mt-2 d-flex justify-end">
+            <b-button
+              variant="primary"
+              :disabled="!data.item.variantButton"
+              @click="submitVariant(data.index, data.item.product_id)"
+            >
+              Pilih
+            </b-button>
+          </section>
+        </b-modal>
+      </template>
+      <template #cell(price)="data">
+        <span
+          v-if="data.item.is_variant < 1 || data.item.variantSubmit"
+          class="text-lg"
+        >Rp {{ formatNumber(data.item.price) }}</span>
+      </template>
+      <template #cell(amount)="data">
+        <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
+          <div class="d-flex justify-center">
+            <b-button
+              variant="outline-primary"
+              class="p-0"
+              style="border-radius:50%;width:25px;height:25px"
+              size="sm"
+              :disabled="data.item.quantity <= 1"
+              @click="setQuantity('minus',data.index)"
+            >
+              <span class="font-bold text-lg">-</span>
+            </b-button>
+            <span
+              class="text-lg"
+              style="margin: 0 10px"
+            >{{ data.item.quantity }}</span>
+            <b-button
+              variant="outline-primary"
+              class="p-0"
+              style="border-radius:50%;width:25px;height:25px"
+              size="sm"
+              :disabled="data.item.quantity >= 150 || data.item.stock === 0"
+              @click="setQuantity('plus',data.index)"
+            >
+              <span class="font-bold text-lg">+</span>
+            </b-button>
+          </div>
+          <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
+        </div>
+        <div
+          v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
+          class="d-flex justify-center text-primary text-lg"
+        >Stok Habis</div>
+      </template>
+      <template #cell(subtotal)="data">
+        <span
+          v-if="data.item.is_variant < 1 || data.item.variantSubmit"
+          class="text-lg d-flex justify-center"
+        >Rp {{ formatNumber(data.item.subtotal) }}</span>
+      </template>
+      <template #cell(action)="data">
+        <div class="d-flex justify-center">
+          <b-button
+            variant="none"
+            class="p-0"
+            @click="removeProduct(data, data.index)"
+          >
+            <b-icon-trash />
+          </b-button>
+        </div>
+      </template>
+    </b-table>
+  </section>
+  <b-row v-if="profile.partner_is_order_notes" class="my-2">
+    <b-col cols="12">
+      <span class="d-flex mb-1 text-lg">
+        <img
+          src="@/assets/images/icons/edit.svg"
+          style="max-height:20px;"
+          class="mr-[4px] my-auto"
+        />Catatan Order
+      </span>
+      <b-form-textarea
+        v-model="orderNotes"
+        rows="2"
+        placeholder="Celana Panjang 60cm warna putih letter U"
+        style="border-radius:12px;"
+        no-resize
+      />
+    </b-col>
+  </b-row>
+  <section
+    class="p-2 mt-1"
+    style="border:1px solid #E2E2E2;border-radius:18px"
+  >
     <b-row class="mb-1">
       <b-col md="7" />
-
       <b-col
         md="5"
         class="d-flex justify-end"
@@ -422,731 +680,437 @@
           style="color:#828282;"
         >*Simpan setting ini untuk Orderan Selanjutnya</span>
         <b-img
-          v-if="productSelected.length === 0"
+          v-if="paymentMethod === null"
           src="@/assets/images/icons/archive-tick.png"
           class="my-auto cursor-pointer"
-          title="Tambahkan Produk Terlebih Dahulu"
         />
         <b-img
-          v-if="productSelected.length >= 1 && !productHistory"
+          v-if="paymentMethod !== null && !paymentHistory"
           src="@/assets/images/icons/archive-tick-ready.png"
           class="my-auto cursor-pointer"
-          @click="saveProductHistory"
+          @click="savePaymentHistory"
         />
         <b-img
-          v-if="productSelected.length >= 1 && productHistory"
+          v-if="paymentMethod !== null && paymentHistory"
           src="@/assets/images/icons/archive-tick-active.png"
           class="my-auto cursor-pointer"
-          @click="removeProductHistory"
+          @click="removePaymentHistory"
         />
       </b-col>
     </b-row>
-      <b-row class="mb-1">
-        <b-col
-          md="3"
-          class="my-auto"
-        >
-          <span class="text-lg">Pilih Produk</span>
-        </b-col>
-        <b-col md="4">
-          <v-select
-            v-model="product"
-            label="product_name"
-            :options="productList"
-            @input="addProduct"
-          >
-            <span
-              v-if="productLength === 0"
-              slot="no-options"
-            >
-
-              Belum ada produk, tambahkan dahulu.
-            </span>
-            <span
-              v-else
-              slot="no-options"
-            >
-              Sedang Memuat ...
-            </span>
-          </v-select>
-        </b-col>
-      </b-row>
-      <b-table
-        v-if="productSelected.length >= 1"
-        ref="tableProduct"
-        :fields="productFields"
-        :items="productSelected"
-        responsive
+    <b-row class="mb-1">
+      <b-col
+        md="3"
+        class="my-auto"
       >
-        <template #cell(no)="data">
-          {{ data.index+1 }}
-        </template>
-        <template #cell(product_name)="data">
-          <div class="d-flex w-60">
-            <b-img
-              v-if="data.item.product_image === ''"
-              :src="require('@/assets/images/avatars/image-null.png')"
-              class="my-auto"
-              style="width:50px!important;height:50px!important;"
-            />
-            <b-img
-              v-else
-              :src="data.item.product_image"
-              class="my-auto"
-              style="width:50px!important;height:50px!important;"
-            />
-            <span
-              class="my-auto text-lg font-bold w-44"
-              style="margin-left:5px;line-height:20px;"
-            >{{ data.item.product_name }}</span>
-          </div>
-        </template>
-        <template #cell(variant)="data">
-          <div
-            v-if="data.item.is_variant >= 1"
-            class="justify-center"
-          >
-            <span
-              v-if="data.item.variantSubmit"
-              class="d-flex text-primary justify-center font-bold"
-            >{{ data.item.variant_name }}</span>
-            <div
-              v-if="!data.item.variantSubmit"
-              class="d-flex justify-center"
-            >
-              <b-button
-                variant="outline-primary"
-                size="sm"
-                @click="getVariation(data.index)"
-              >
-                Pilih
-              </b-button>
-            </div>
-          </div>
-          <p
-            v-else
-            class="text-center"
-          >-</p>
-          <b-modal
-            :id="`modalVariation${data.index}`"
-            hide-footer
-            class="p-5"
-            centered
-          >
-            <section v-if="data.item.variantSelected[0]">
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[0].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[0].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 0, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section
-              v-if="data.item.variantSelected[1]"
-              class="mt-2"
-            >
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[1].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[1].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 1, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section
-              v-if="data.item.variantSelected[2]"
-              class="mt-2"
-            >
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[2].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[2].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 2, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section class="mt-2 d-flex justify-end">
-              <b-button
-                variant="primary"
-                :disabled="!data.item.variantButton"
-                @click="submitVariant(data.index, data.item.product_id)"
-              >
-                Pilih
-              </b-button>
-            </section>
-          </b-modal>
-        </template>
-        <template #cell(price)="data">
-          <span
-            v-if="data.item.is_variant < 1 || data.item.variantSubmit"
-            class="text-lg"
-          >Rp {{ formatNumber(data.item.price) }}</span>
-        </template>
-        <template #cell(amount)="data">
-          <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
-            <div class="d-flex justify-center">
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity <= 1"
-                @click="setQuantity('minus',data.index)"
-              >
-                <span class="font-bold text-lg">-</span>
-              </b-button>
-              <span
-                class="text-lg"
-                style="margin: 0 10px"
-              >{{ data.item.quantity }}</span>
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity >= 150 || data.item.stock === 0"
-                @click="setQuantity('plus',data.index)"
-              >
-                <span class="font-bold text-lg">+</span>
-              </b-button>
-            </div>
-            <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
-          </div>
-          <div
-            v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
-            class="d-flex justify-center text-primary text-lg"
-          >Stok Habis</div>
-        </template>
-        <template #cell(subtotal)="data">
-          <span
-            v-if="data.item.is_variant < 1 || data.item.variantSubmit"
-            class="text-lg d-flex justify-center"
-          >Rp {{ formatNumber(data.item.subtotal) }}</span>
-        </template>
-        <template #cell(action)="data">
-          <div class="d-flex justify-center">
-            <b-button
-              variant="none"
-              class="p-0"
-              @click="removeProduct(data, data.index)"
-            >
-              <b-icon-trash />
-            </b-button>
-          </div>
-        </template>
-      </b-table>
-    </section>
-    <b-row v-if="profile.partner_is_order_notes" class="my-2">
-      <b-col cols="12">
-        <span class="d-flex mb-1 text-lg">
-          <img
-            src="@/assets/images/icons/edit.svg"
-            style="max-height:20px;"
-            class="mr-[4px] my-auto"
-          />Catatan Order
-        </span>
-        <b-form-textarea
-          v-model="orderNotes"
-          rows="2"
-          placeholder="Celana Panjang 60cm warna putih letter U"
-          style="border-radius:12px;"
-          no-resize
+        <label class="text-lg">Metode Pembayaran</label>
+      </b-col>
+      <b-col md="4">
+        <v-select
+          v-model="paymentMethod"
+          :options="listPayment"
+          @input="getShippingList(), validateRekening(), paymentHistory = false"
         />
       </b-col>
-    </b-row>
-    <section
-      class="p-2 mt-1"
-      style="border:1px solid #E2E2E2;border-radius:18px"
-    >
-      <b-row class="mb-1">
-        <b-col md="7" />
-        <b-col
-          md="5"
-          class="d-flex justify-end"
+      <b-col
+        v-if="paymentMethod === 'BANK TRANSFER' && profile.partner_is_mutation_bank"
+        md="4"
+      >
+        <v-select
+          v-model="rekening"
+          :options="listRekening"
+          label="account_name"
+          placeholder="Pilih Rekening"
+          @input="paymentHistory = false"
         >
+          <template #option="{ account_name, bank_name, account_no }">
+            <span class="font-bold text-lg">{{ account_name }}</span><br>
+            <em>{{ bank_name }} - {{ account_no }}</em>
+          </template>
           <span
-            class="w-48 text-sm"
-            style="color:#828282;"
-          >*Simpan setting ini untuk Orderan Selanjutnya</span>
-          <b-img
-            v-if="paymentMethod === null"
-            src="@/assets/images/icons/archive-tick.png"
-            class="my-auto cursor-pointer"
-          />
-          <b-img
-            v-if="paymentMethod !== null && !paymentHistory"
-            src="@/assets/images/icons/archive-tick-ready.png"
-            class="my-auto cursor-pointer"
-            @click="savePaymentHistory"
-          />
-          <b-img
-            v-if="paymentMethod !== null && paymentHistory"
-            src="@/assets/images/icons/archive-tick-active.png"
-            class="my-auto cursor-pointer"
-            @click="removePaymentHistory"
-          />
-        </b-col>
-      </b-row>
-      <b-row class="mb-1">
-        <b-col
-          md="3"
-          class="my-auto"
-        >
-          <label class="text-lg">Metode Pembayaran</label>
-        </b-col>
-        <b-col md="4">
-          <v-select
-            v-model="paymentMethod"
-            :options="listPayment"
-            @input="getShippingList(), validateRekening(), paymentHistory = false"
-          />
-        </b-col>
-        <b-col
-          v-if="paymentMethod === 'BANK TRANSFER' && profile.partner_is_mutation_bank"
-          md="4"
-        >
-          <v-select
-            v-model="rekening"
-            :options="listRekening"
-            label="account_name"
-            placeholder="Pilih Rekening"
-            @input="paymentHistory = false"
+            v-if="totalRekening === 0"
+            slot="no-options"
           >
-            <template #option="{ account_name, bank_name, account_no }">
-              <span class="font-bold text-lg">{{ account_name }}</span><br>
-              <em>{{ bank_name }} - {{ account_no }}</em>
-            </template>
-            <span
-              v-if="totalRekening === 0"
-              slot="no-options"
-            >
 
-              Kamu belum menambahkan Rekening.
-            </span>
-            <span
-              v-else
-              slot="no-options"
+            Kamu belum menambahkan Rekening.
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+        </v-select>
+      </b-col>
+    </b-row>
+    <b-row class="mb-1 align-items-center">
+      <b-col md="3">
+        <label class="text-lg">Ekspedisi</label>
+      </b-col>
+      <b-col
+        md="4"
+        class="font-bold"
+      >
+      <b-button
+        :class="!isShipping ? 'cursor-not-allowed w-full text-left d-flex justify-content-between' : 'w-full text-left d-flex justify-content-between'"
+        :style="!isShipping ? 'background: white!important;border: 1px solid #d8d6de!important;' : 'border: 1px solid #d8d6de!important; background: white!important;'"
+        v-b-toggle.collapse-calculate
+        :disabled="!isShipping"
+      >
+        <span class="text-black">{{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}</span> <b-spinner v-if="loadingOptionExpedition" class="ml-50" small variant="primary" />
+      </b-button>
+      <b-collapse id="collapse-calculate" v-model="collapseCalculate">
+        <ul v-if="listShipping" class="mt-2 border" style="border-top-left-radius: 8px; border-top-right-radius: 8px;">
+          <li
+          v-for="(option, index) in listShipping"
+          :key="index+1"
+          :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
+          :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
+          @click="option.label !== 'Reguler' && option.label !== 'Cargo' ? calculateOnExpedition(true, option) : ''"
+          >
+          <h4
+          v-if="option.label === 'Reguler' && option.label !== 'Cargo'"
+          class="ml-50"
             >
-              Sedang Memuat ...
+              <strong>{{ option.label }}</strong>
+            </h4>
+            <h4
+            v-if="option.label === 'Cargo' && option.label !== 'Reguler'"
+            class="ml-50"
+            >
+            <strong>{{ option.label }}</strong>
+          </h4>
+          <img
+          v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+          :src="option.image_path" style="height: 30px!important;"
+          />
+          <span
+          v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+          class="my-auto text-black"
+          style="margin-left:5px;"
+          >
+          {{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}
             </span>
-          </v-select>
+          </li>
+        </ul>
+      </b-collapse>
+      </b-col>
+    </b-row>
+  </section>
+
+    <div
+      v-if="loadingWrapperOtherCost"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row>
+        <b-col
+          cols="3"
+        >
+          <div
+            class="mb-50"
+            style="
+            width: 180px;
+            height: 30px;
+            background: linear-gradient(270deg, #FFECE9 -71.11%, #F4F4F4 91.57%);
+          " />
+          <div style="
+            width:    220px;
+            height: 30px;
+            background: linear-gradient(270deg, #FFECE9 8.71%, #F4F4F4 91.57%);
+          "
+          />
+        </b-col>
+        <b-col
+          cols="9"
+        >
+        <div style="
+          width: 340px;
+          height: 60px;
+          background: #FFECE9;
+        " />
         </b-col>
       </b-row>
-      <b-row class="mb-1 align-items-center">
+    </div>
+    <div
+      v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row
+        class="mb-1"
+      >
         <b-col md="3">
-          <label class="text-lg">Ekspedisi</label>
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Gunakan Potongan Saldo</label><br>
+          <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
         </b-col>
         <b-col
           md="4"
           class="font-bold"
         >
-        <b-button
-          :class="!isShipping ? 'cursor-not-allowed w-full text-left d-flex justify-content-between' : 'w-full text-left d-flex justify-content-between'"
-          :style="!isShipping ? 'background: white!important;border: 1px solid #d8d6de!important;' : 'border: 1px solid #d8d6de!important; background: white!important;'"
-          v-b-toggle.collapse-calculate
-          :disabled="!isShipping"
-        >
-          <span class="text-black">{{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}</span> <b-spinner v-if="loadingOptionExpedition" class="ml-50" small variant="primary" />
-        </b-button>
-        <b-collapse id="collapse-calculate" v-model="collapseCalculate">
-          <ul v-if="listShipping" class="mt-2 border" style="border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            <li
-            v-for="(option, index) in listShipping"
-            :key="index+1"
-            :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
-            :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
-            @click="option.label !== 'Reguler' && option.label !== 'Cargo' ? calculateOnExpedition(true, option) : ''"
-            >
-            <h4
-            v-if="option.label === 'Reguler' && option.label !== 'Cargo'"
-            class="ml-50"
-              >
-                <strong>{{ option.label }}</strong>
-              </h4>
-              <h4
-              v-if="option.label === 'Cargo' && option.label !== 'Reguler'"
-              class="ml-50"
-              >
-              <strong>{{ option.label }}</strong>
-            </h4>
-            <img
-            v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
-            :src="option.image_path" style="height: 30px!important;"
-            />
-            <span
-            v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
-            class="my-auto text-black"
-            style="margin-left:5px;"
-            >
-            {{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}
-              </span>
-            </li>
-          </ul>
-        </b-collapse>
+          <b-form-checkbox
+            v-model="potonganSaldo"
+            :value="true"
+            :unchecked-value="false"
+            @change="calculate(true)"
+          />
         </b-col>
       </b-row>
-    </section>
-
-      <div
-        v-if="loadingWrapperOtherCost"
-        class="p-1 mt-2"
-        style="border: 1px solid #E2E2E2;border-radius:16px;"
+      <b-collapse
+        v-model="potonganSaldo"
+        class="mt-2"
       >
-        <b-row>
-          <b-col
-            cols="3"
-          >
-            <div
-              class="mb-50"
-              style="
-              width: 180px;
-              height: 30px;
-              background: linear-gradient(270deg, #FFECE9 -71.11%, #F4F4F4 91.57%);
-            " />
-            <div style="
-              width:    220px;
-              height: 30px;
-              background: linear-gradient(270deg, #FFECE9 8.71%, #F4F4F4 91.57%);
-            "
-            />
-          </b-col>
-          <b-col
-            cols="9"
-          >
-          <div style="
-            width: 340px;
-            height: 60px;
-            background: #FFECE9;
-          " />
-          </b-col>
-        </b-row>
-      </div>
-      <div
-        v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
-        class="p-1 mt-2"
-        style="border: 1px solid #E2E2E2;border-radius:16px;"
-      >
-        <b-row
-          class="mb-1"
-        >
+        <b-row class="mb-1">
           <b-col md="3">
             <label
               class="text-lg"
               style="color:#828282;"
-            >Gunakan Potongan Saldo</label><br>
-            <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
+            >Nominal Potongan</label>
           </b-col>
           <b-col
-            md="4"
-            class="font-bold"
-          >
-            <b-form-checkbox
-              v-model="potonganSaldo"
-              :value="true"
-              :unchecked-value="false"
-              @change="calculate(true)"
-            />
-          </b-col>
-        </b-row>
-        <b-collapse
-          v-model="potonganSaldo"
-          class="mt-2"
-        >
-          <b-row class="mb-1">
-            <b-col md="3">
-              <label
-                class="text-lg"
-                style="color:#828282;"
-              >Nominal Potongan</label>
-            </b-col>
-            <b-col
-              md="4"
-              class="font-bold"
-            >
-              <b-form-input
-                v-model="discount"
-                type="number"
-                @keyup="formatDiscount(discount),calculate(true), checkDiscount()"
-              />
-            </b-col>
-          </b-row>
-        </b-collapse>
-      </div>
-      <div
-        v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
-        class="p-1 mt-2"
-        style="border: 1px solid #E2E2E2;border-radius:16px;"
-      >
-        <b-row
-          class="mb-1"
-        >
-          <b-col md="3">
-            <label
-              class="text-lg"
-              style="color:#828282;"
-            >Biaya Tambahan Lain</label><br>
-            <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
-          </b-col>
-          <b-col
-            md="4"
-            class="font-bold"
-          >
-            <b-form-checkbox
-              v-model="biayaLain"
-              :value="true"
-              :unchecked-value="false"
-              @change="calculate(false)"
-            />
-          </b-col>
-        </b-row>
-        <b-collapse
-          v-model="biayaLain"
-          class="mt-2"
-        >
-          <b-row class="mb-1">
-            <b-col md="3">
-              <label
-                class="text-lg"
-                style="color:#828282;"
-              >Jenis Biaya Lain</label>
-            </b-col>
-            <b-col md="8">
-              <div
-                v-if="paymentMethod === 'COD'"
-                class="d-flex"
-              >
-                <b-form-radio
-                  v-model="jenisBiayaLain"
-                  value="0"
-                  @change="calculate(false)"
-                >
-                  Bebankan biaya COD ke customer
-                </b-form-radio>
-                <b-form-input
-                  v-if="jenisBiayaLain === '0'"
-                  v-model="bebankanCustomer"
-                  type="number"
-                  class="ml-1"
-                  style="width:80px;height:20px;"
-                  disabled
-                />
-              </div>
-              <b-form-radio
-                v-model="jenisBiayaLain"
-                class="mt-1"
-                value="1"
-                @change="calculate(false)"
-              >
-                Sesuai Nominal
-              </b-form-radio>
-              <b-form-input
-                v-if="jenisBiayaLain === '1'"
-                v-model="sesuaiNominal"
-                type="number"
-                class="mt-1"
-                style="width:250px;"
-                @keyup="formatAdditional(sesuaiNominal), calculate(false)"
-              />
-            </b-col>
-          </b-row>
-        </b-collapse>
-      </div>
-    <div
-      v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
-      class="p-1 mt-2"
-      style="border: 1px solid #E2E2E2;border-radius:16px;"
-    >
-      <b-row class="mb-1">
-        <b-col md="3">
-          <label
-            class="text-lg"
-            style="color:#828282;"
-          >Nilai Pembayaran</label><br>
-          <span class="text-muted text-sm">Total Pembayaran yang akan dibayarkan oleh Customer kamu.</span>
-        </b-col>
-        <b-col
             md="4"
             class="font-bold"
           >
             <b-form-input
-              v-model="newGrandTotal"
+              v-model="discount"
               type="number"
-              :formatter="formatterNewGrandTotal"
-              @keyup="checkTotal"
-              @keypress="handleInputTotal"
-              @paste="handlePasteCheckTotal"
+              @keyup="formatDiscount(discount),calculate(true), checkDiscount()"
             />
-          </b-col>
-      </b-row>
-    </div>
-    <div
-      v-if="isCalculateOnExpedition"
-      class="mb-3 mt-2"
-    >
-      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
-        <b-col md="5" />
-        <b-col md="5">
-          Total Harga Produk
-        </b-col>
-        <b-col
-          md="2"
-          class="detail-value text-primary"
-        >
-          Rp {{ formatNumber(subTotal) }}
-        </b-col>
-      </b-row>
-      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
-        <b-col md="5" />
-        <b-col md="5">
-          Ongkos Kirim ({{ weight }} kg)
-        </b-col>
-        <b-col
-          md="2"
-          class="detail-value text-primary"
-        >
-          Rp {{ formatNumber(shippingCost) }}
-        </b-col>
-      </b-row>
-      <b-row
-        v-if="potonganSaldo"
-        class="mb-1 text-lg"
-      >
-        <b-col md="5" />
-        <b-col md="5">
-          Potongan Harga
-        </b-col>
-        <b-col
-          md="2"
-          class="detail-value text-primary"
-        >
-          <b-spinner
-            v-if="loadingCalculate"
-            class="mr-1 my-auto"
-            small
-            variant="primary"
-          />
-          <span v-else>- Rp {{ formatNumber(discount) }}</span>
-        </b-col>
-      </b-row>
-      <b-row
-        v-if="biayaLain"
-        class="mb-1 text-lg"
-      >
-        <b-col md="5" />
-        <b-col md="5">
-          Biaya Lain
-        </b-col>
-        <b-col
-          md="2"
-          class="detail-value text-primary"
-        >
-          Rp {{ formatNumber(additionalCost) }}
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col md="5" />
-        <b-col md="7">
-          <hr style="border-top: 1px solid #C2C2C2;"><span />
-        </b-col>
-      </b-row>
-      <b-row class="text-xl font-bold mb-1">
-        <b-col md="5" />
-        <b-col md="5">
-          Total Pembayaran ({{ paymentMethod }})
-        </b-col>
-        <b-col
-          md="2"
-          class="text-primary detail-value"
-        >
-          <b-spinner
-            v-if="loadingCalculate"
-            class="mr-1 my-auto"
-            small
-            variant="primary"
-          />
-          <span v-else>Rp {{ formatNumber(grandTotal) }}</span>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col md="5" />
-        <b-col md="6">
-          <hr style="border-top: 1px solid #C2C2C2;"><span />
-        </b-col>
-        <b-col
-          md="1"
-          class="d-flex justify-content-end pl-0"
-        >
-          <b-button
-            v-b-toggle="'collapse-1'"
-            class="buttonCollapse px-0"
-            style="margin-bottom: 8px;"
-            variant="none"
-            size="sm"
-          >
-            <span class="when-open">Tutup <b-icon-chevron-up /></span>
-            <span class="when-closed">Buka <b-icon-chevron-down /></span>
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-collapse id="collapse-1">
-        <b-row
-          v-if="paymentMethod === 'COD'"
-          class="mb-1 text-lg"
-        >
-          <b-col md="5" />
-          <b-col md="5">
-            Biaya COD ({{ serviceFeePercentage }}% sudah termasuk PPN)
-          </b-col>
-          <b-col
-            md="2"
-            class="detail-value text-primary"
-          >
-            <b-spinner
-              v-if="loadingCalculate"
-              class="mr-1 my-auto"
-              small
-              variant="primary"
-            />
-            <span v-else>- Rp {{ formatNumber(serviceFee) }}</span>
-          </b-col>
-        </b-row>
-        <b-row class="mb-1 text-lg">
-          <b-col md="5" />
-          <b-col md="5">
-            Ongkos Kirim {{ weight }} kg (dipotong cashback {{ cashbackPercentage }}%)
-          </b-col>
-          <b-col
-            md="2"
-            class="detail-value text-primary"
-          >
-            <b-spinner
-              v-if="loadingCalculate"
-              class="mr-1 my-auto"
-              small
-              variant="primary"
-            />
-            <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
           </b-col>
         </b-row>
       </b-collapse>
-      <b-row class="mb-1 text-lg font-bold">
+    </div>
+    <div
+      v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row
+        class="mb-1"
+      >
+        <b-col md="3">
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Biaya Tambahan Lain</label><br>
+          <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
+        </b-col>
+        <b-col
+          md="4"
+          class="font-bold"
+        >
+          <b-form-checkbox
+            v-model="biayaLain"
+            :value="true"
+            :unchecked-value="false"
+            @change="calculate(false)"
+          />
+        </b-col>
+      </b-row>
+      <b-collapse
+        v-model="biayaLain"
+        class="mt-2"
+      >
+        <b-row class="mb-1">
+          <b-col md="3">
+            <label
+              class="text-lg"
+              style="color:#828282;"
+            >Jenis Biaya Lain</label>
+          </b-col>
+          <b-col md="8">
+            <div
+              v-if="paymentMethod === 'COD'"
+              class="d-flex"
+            >
+              <b-form-radio
+                v-model="jenisBiayaLain"
+                value="0"
+                @change="calculate(false)"
+              >
+                Bebankan biaya COD ke customer
+              </b-form-radio>
+              <b-form-input
+                v-if="jenisBiayaLain === '0'"
+                v-model="bebankanCustomer"
+                type="number"
+                class="ml-1"
+                style="width:80px;height:20px;"
+                disabled
+              />
+            </div>
+            <b-form-radio
+              v-model="jenisBiayaLain"
+              class="mt-1"
+              value="1"
+              @change="calculate(false)"
+            >
+              Sesuai Nominal
+            </b-form-radio>
+            <b-form-input
+              v-if="jenisBiayaLain === '1'"
+              v-model="sesuaiNominal"
+              type="number"
+              class="mt-1"
+              style="width:250px;"
+              @keyup="formatAdditional(sesuaiNominal), calculate(false)"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+    </div>
+  <div
+    v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
+    class="p-1 mt-2"
+    style="border: 1px solid #E2E2E2;border-radius:16px;"
+  >
+    <b-row class="mb-1">
+      <b-col md="3">
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Nilai Pembayaran</label><br>
+        <span class="text-muted text-sm">Total Pembayaran yang akan dibayarkan oleh Customer kamu.</span>
+      </b-col>
+      <b-col
+          md="4"
+          class="font-bold"
+        >
+          <b-form-input
+            v-model="newGrandTotal"
+            type="number"
+            :formatter="formatterNewGrandTotal"
+            @keyup="checkTotal"
+            @keypress="handleInputTotal"
+            @paste="handlePasteCheckTotal"
+          />
+        </b-col>
+    </b-row>
+  </div>
+  <div
+    v-if="isCalculateOnExpedition"
+    class="mb-3 mt-2"
+  >
+    <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
+      <b-col md="5" />
+      <b-col md="5">
+        Total Harga Produk
+      </b-col>
+      <b-col
+        md="2"
+        class="detail-value text-primary"
+      >
+        Rp {{ formatNumber(subTotal) }}
+      </b-col>
+    </b-row>
+    <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
+      <b-col md="5" />
+      <b-col md="5">
+        Ongkos Kirim ({{ weight }} kg)
+      </b-col>
+      <b-col
+        md="2"
+        class="detail-value text-primary"
+      >
+        Rp {{ formatNumber(shippingCost) }}
+      </b-col>
+    </b-row>
+    <b-row
+      v-if="potonganSaldo"
+      class="mb-1 text-lg"
+    >
+      <b-col md="5" />
+      <b-col md="5">
+        Potongan Harga
+      </b-col>
+      <b-col
+        md="2"
+        class="detail-value text-primary"
+      >
+        <b-spinner
+          v-if="loadingCalculate"
+          class="mr-1 my-auto"
+          small
+          variant="primary"
+        />
+        <span v-else>- Rp {{ formatNumber(discount) }}</span>
+      </b-col>
+    </b-row>
+    <b-row
+      v-if="biayaLain"
+      class="mb-1 text-lg"
+    >
+      <b-col md="5" />
+      <b-col md="5">
+        Biaya Lain
+      </b-col>
+      <b-col
+        md="2"
+        class="detail-value text-primary"
+      >
+        Rp {{ formatNumber(additionalCost) }}
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col md="5" />
+      <b-col md="7">
+        <hr style="border-top: 1px solid #C2C2C2;"><span />
+      </b-col>
+    </b-row>
+    <b-row class="text-xl font-bold mb-1">
+      <b-col md="5" />
+      <b-col md="5">
+        Total Pembayaran ({{ paymentMethod }})
+      </b-col>
+      <b-col
+        md="2"
+        class="text-primary detail-value"
+      >
+        <b-spinner
+          v-if="loadingCalculate"
+          class="mr-1 my-auto"
+          small
+          variant="primary"
+        />
+        <span v-else>Rp {{ formatNumber(grandTotal) }}</span>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col md="5" />
+      <b-col md="6">
+        <hr style="border-top: 1px solid #C2C2C2;"><span />
+      </b-col>
+      <b-col
+        md="1"
+        class="d-flex justify-content-end pl-0"
+      >
+        <b-button
+          v-b-toggle="'collapse-1'"
+          class="buttonCollapse px-0"
+          style="margin-bottom: 8px;"
+          variant="none"
+          size="sm"
+        >
+          <span class="when-open">Tutup <b-icon-chevron-up /></span>
+          <span class="when-closed">Buka <b-icon-chevron-down /></span>
+        </b-button>
+      </b-col>
+    </b-row>
+    <b-collapse id="collapse-1">
+      <b-row
+        v-if="paymentMethod === 'COD'"
+        class="mb-1 text-lg"
+      >
         <b-col md="5" />
         <b-col md="5">
-          Penghasilan bersih yang kamu dapatkan
+          Biaya COD ({{ serviceFeePercentage }}% sudah termasuk PPN)
         </b-col>
         <b-col
           md="2"
-          class="detail-value text-success"
+          class="detail-value text-primary"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -1154,110 +1118,147 @@
             small
             variant="primary"
           />
-          <span
-            v-else
-          >Rp {{ formatNumber(netProfit) }}</span>
+          <span v-else>- Rp {{ formatNumber(serviceFee) }}</span>
         </b-col>
       </b-row>
-    </div>
-    <hr style="border-top: 1px solid #C2C2C2;">
-    <b-row>
-      <b-col
-        md="6"
-        class="font-bold text-2xl text-center my-auto"
-      >
-        <span v-if="isCalculateOnExpedition">Total Pembayaran:
+      <b-row class="mb-1 text-lg">
+        <b-col md="5" />
+        <b-col md="5">
+          Ongkos Kirim {{ weight }} kg (dipotong cashback {{ cashbackPercentage }}%)
+        </b-col>
+        <b-col
+          md="2"
+          class="detail-value text-primary"
+        >
           <b-spinner
             v-if="loadingCalculate"
-            class="ml-1"
+            class="mr-1 my-auto"
+            small
             variant="primary"
           />
-          <span
-            v-else
-            class="text-primary"
-          > Rp {{ formatNumber(grandTotal) }}</span>
-        </span>
+          <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
+        </b-col>
+      </b-row>
+    </b-collapse>
+    <b-row class="mb-1 text-lg font-bold">
+      <b-col md="5" />
+      <b-col md="5">
+        Penghasilan bersih yang kamu dapatkan
       </b-col>
-      <b-col md="6" class="d-flex justify-center mt-1">
-        <b-button
-          variant="outline-primary"
-          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
-          @click="submit(true)"
-        >
-          Submit & Tambah Order Lagi
-        </b-button>
-        <b-button
-          v-if="isSubmitOrder === false && messageErrorAddressDetail === false"
+      <b-col
+        md="2"
+        class="detail-value text-success"
+      >
+        <b-spinner
+          v-if="loadingCalculate"
+          class="mr-1 my-auto"
+          small
           variant="primary"
-          class="ml-1"
-          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
-          @click="submit(false)"
-        >
-          Submit
-        </b-button>
-        <b-button
-          v-if="isSubmitOrder === true || messageErrorAddressDetail === true"
-          variant="primary"
-          class="ml-1"
-          :disabled="true"
-        >
-          Submit
-        </b-button>
+        />
+        <span
+          v-else
+        >Rp {{ formatNumber(netProfit) }}</span>
       </b-col>
     </b-row>
-
-    <!-- Modal cek address pickup -->
-    <b-modal
-      ref="modal-check-address-pickup"
-      hide-footer
-      hide-header
-      centered
+  </div>
+  <hr style="border-top: 1px solid #C2C2C2;">
+  <b-row>
+    <b-col
+      md="6"
+      class="font-bold text-2xl text-center my-auto"
     >
-      <b-row class="justify-content-center mb-1 pt-1">
-        <img src="@/assets/images/icons/warning.svg">
-      </b-row>
-      <b-row class="justify-content-center text-center mb-1">
-        <h4 class="text-black px-4">
-          <strong>
-          Mohon maaf, alamat pickup kamu belum lengkap. Silahkan periksa alamat Pickup
-          </strong>
-        </h4>
-      </b-row>
-      <b-row class="justify-content-center pb-1">
-        <b-button
-          class="btn-icon"
+      <span v-if="isCalculateOnExpedition">Total Pembayaran:
+        <b-spinner
+          v-if="loadingCalculate"
+          class="ml-1"
           variant="primary"
-          tag="router-link"
-          :to="{ name: $route.meta.routeToAddressSetting }"
-        >
-          Ke Alamat Pickup
-        </b-button>
-      </b-row>
-    </b-modal>
+        />
+        <span
+          v-else
+          class="text-primary"
+        > Rp {{ formatNumber(grandTotal) }}</span>
+      </span>
+    </b-col>
+    <b-col md="6" class="d-flex justify-center mt-1">
+      <b-button
+        variant="outline-primary"
+        :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
+        @click="submit(true)"
+      >
+        Submit & Tambah Order Lagi
+      </b-button>
+      <b-button
+        v-if="isSubmitOrder === false && messageErrorAddressDetail === false"
+        variant="primary"
+        class="ml-1"
+        :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
+        @click="submit(false)"
+      >
+        Submit
+      </b-button>
+      <b-button
+        v-if="isSubmitOrder === true || messageErrorAddressDetail === true"
+        variant="primary"
+        class="ml-1"
+        :disabled="true"
+      >
+        Submit
+      </b-button>
+    </b-col>
+  </b-row>
 
-    <!-- popup error store -->
-    <b-modal
-      ref="modal-error-store-order"
-      hide-footer
-      hide-header
-      centered
-    >
-      <b-row class="justify-content-center mb-1 pt-1">
-        <img src="@/assets/images/icons/warning.svg">
-      </b-row>
-      <b-row class="justify-content-center text-center mb-1">
-        <span class="text-black px-4">
-          Maaf ada sedikit kendala koneksi. Silahkan untuk refresh halaman
-        </span>
-      </b-row>
-      <b-row class="justify-content-center pb-1">
-        <b-button
-          class="btn-icon"
-          variant="primary"
-          @click="refreshPage"
-        >
-          Refresh
-        </b-button>
-      </b-row>
-    </b-modal>
+  <!-- Modal cek address pickup -->
+  <b-modal
+    ref="modal-check-address-pickup"
+    hide-footer
+    hide-header
+    centered
+  >
+    <b-row class="justify-content-center mb-1 pt-1">
+      <img src="@/assets/images/icons/warning.svg">
+    </b-row>
+    <b-row class="justify-content-center text-center mb-1">
+      <h4 class="text-black px-4">
+        <strong>
+        Mohon maaf, alamat pickup kamu belum lengkap. Silahkan periksa alamat Pickup
+        </strong>
+      </h4>
+    </b-row>
+    <b-row class="justify-content-center pb-1">
+      <b-button
+        class="btn-icon"
+        variant="primary"
+        tag="router-link"
+        :to="{ name: $route.meta.routeToAddressSetting }"
+      >
+        Ke Alamat Pickup
+      </b-button>
+    </b-row>
+  </b-modal>
+
+  <!-- popup error store -->
+  <b-modal
+    ref="modal-error-store-order"
+    hide-footer
+    hide-header
+    centered
+  >
+    <b-row class="justify-content-center mb-1 pt-1">
+      <img src="@/assets/images/icons/warning.svg">
+    </b-row>
+    <b-row class="justify-content-center text-center mb-1">
+      <span class="text-black px-4">
+        Maaf ada sedikit kendala koneksi. Silahkan untuk refresh halaman
+      </span>
+    </b-row>
+    <b-row class="justify-content-center pb-1">
+      <b-button
+        class="btn-icon"
+        variant="primary"
+        @click="refreshPage"
+      >
+        Refresh
+      </b-button>
+    </b-row>
+  </b-modal>
 </b-card>
