@@ -897,7 +897,11 @@ export default {
     },
     async setPage(totalPage) {
       this.perPage = totalPage
-      this.currentPage = 1
+      if (this.currentPage === 1) {
+        this.fetchData()
+      } else {
+        this.currentPage = 1
+      }
     },
     handleSearchResi: _.debounce(async function () {
       this.loadTable = true
