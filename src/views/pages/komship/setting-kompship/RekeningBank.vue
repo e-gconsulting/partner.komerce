@@ -474,11 +474,10 @@
                 </b-button>
                 <b-button
                   v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                  type="reset"
                   :variant="checkValidBank ? 'secondary' : 'primary'"
                   class="mr-1"
                   :disabled="checkValidBank"
-                  @click.once="checkBank"
+                  @click="checkBank"
                 >
                   <b-spinner
                     v-if="loadingSubmit"
@@ -1659,6 +1658,7 @@ export default {
     },
     closeVerification() {
       this.$refs['modal-verification-submit'].hide()
+      this.checkValidBank = false
     },
     closeCheckVerification() {
       this.otpMode = ''
@@ -1672,6 +1672,9 @@ export default {
       if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && this.fieldAddAccountName !== '' && this.accountNameDB === true) {
         this.checkValidBank = false
         this.loadingSubmit = true
+        if (this.loadingSubmit === true) {
+          this.checkValidBank = true
+        }
         const formData = new FormData()
         formData.append('bank_name', this.fieldAddBankName)
         formData.append('account_name', this.fieldAddAccountName)
@@ -1680,7 +1683,7 @@ export default {
         this.$http.post('/v1/bank/check', formData)
           .then(response => {
             this.loadingSubmit = false
-            this.checkValidBank = false
+            this.checkValidBank = true
             this.messageSameNoBank = ''
             this.messageSameNameBank = ''
             this.submitVerification()
@@ -1689,12 +1692,10 @@ export default {
               if (err.response.data.message === 'Nomor Rekening Sudah digunakan') {
                 this.messageSameNoBank = err.response.data.message
                 this.messageSameNameBank = ''
-                this.isValidateAccountName = false
                 this.checkValidBank = true
               }
               if (err.response.data.message === 'Nama telah digunakan sebelumnya') {
                 this.messageSameNameBank = err.response.data.message
-                this.isValidateAccountName = false
                 this.messageSameNoBank = ''
                 this.checkValidBank = true
               }
@@ -1703,11 +1704,14 @@ export default {
               this.messageSameNoBank = ''
               this.messageSameNameBank = ''
               this.checkValidBank = true
-              this.isValidateAccountName = false
               this.banksDataMinus = err.response.data.data
               this.$refs['popup-check-rekening'].show()
+            } else {
+              this.loadingSubmit = false
+              this.checkValidBank = false
             }
             this.loadingSubmit = false
+            this.checkValidBank = false
           })
       }
     }),
