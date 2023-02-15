@@ -896,40 +896,8 @@ export default {
         })
     },
     async setPage(totalPage) {
-      this.loadTable = true
-      this.lengthFilter = []
-      this.ListFilterType.forEach(item => {
-        if (item.selected === true) {
-          this.lengthFilter.push(item.value)
-        }
-      })
-      let valueFilter = ''
-      if (this.isAllChecked === true || this.lengthFilter.length < 1 || this.lengthFilter.length > 10) {
-        valueFilter = 0
-      } else {
-        valueFilter = this.lengthFilter.join()
-      }
-      this.items = await this.$http_komship
-        .get('v1/partner/order-transaction-balance', {
-          params: {
-            start_date: moment(this.dateRange.startDate).format('YYYY-MM-DD'),
-            end_date: moment(this.dateRange.endDate).format('YYYY-MM-DD'),
-            page: 1,
-            limits: totalPage,
-            search: this.searchResi,
-            filter: valueFilter,
-          },
-        })
-        .then(res => {
-          const { data } = res.data
-          this.totalItems = data.total
-          this.loadTable = false
-          this.dropdownFilter = false
-          return data.data
-        })
-        .catch(error => {
-          // handle error
-        })
+      this.perPage = totalPage
+      this.currentPage = 1
     },
     handleSearchResi: _.debounce(async function () {
       this.loadTable = true
