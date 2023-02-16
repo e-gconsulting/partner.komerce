@@ -34,7 +34,6 @@ export default {
       destinationList: [],
       product: [],
       productList: [],
-      productListDB: [],
       productSelected: [],
       productLength: null,
       productStock: null,
@@ -451,26 +450,22 @@ export default {
     }, 1000),
     getProductSearch: _.debounce(function (search, loading) {
       this.searchProduct = search
-      if (this.productList.length === 0) {
+      if (this.searchProduct === undefined || this.searchProduct === '') {
+        this.searchProduct = ''
         this.getProduct(this.address)
-      }
-      if (this.searchProduct.length > 2) {
+      } else if (this.searchProduct.length > 2) {
         this.getProduct(this.address)
-      } else {
-        this.productList = this.productListDB
       }
     }, 1000),
     getProduct(address) {
       if (address.warehouse_type === 'Mitra Kompack' && this.warehouseId !== address.warehouse_id) {
         this.warehouseId = address.warehouse_id
         this.warehouseType = address.warehouse_type
-        this.productListDB = []
         this.productList = []
         this.productSelected = []
         this.getProductList(address)
       } else if (this.warehouseType !== address.warehouse_type) {
         this.warehouseType = address.warehouse_type
-        this.productListDB = []
         this.productList = []
         this.productSelected = []
         this.getProductList(address)
@@ -485,12 +480,7 @@ export default {
         .get(`v3/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}&search=${this.searchProduct}`)
         .then(response => {
           const { data } = response.data
-          if (this.searchProduct === '') {
-            this.productListDB = data.slice(0, 5)
-          }
-          if (this.productList.length === 0 || this.searchProduct !== '') {
-            this.productList = data.slice(0, 5)
-          }
+          this.productList = data.slice(0, 5)
         })
     },
     async addProduct(itemSelected) {
