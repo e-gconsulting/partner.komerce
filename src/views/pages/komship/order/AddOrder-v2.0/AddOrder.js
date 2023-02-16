@@ -450,10 +450,10 @@ export default {
       }
     }, 1000),
     getProductSearch: _.debounce(function (search, loading) {
+      this.searchProduct = search
       if (this.productList.length === 0) {
         this.getProduct(this.address)
       }
-      this.searchProduct = search
       if (this.searchProduct.length > 2) {
         this.getProduct(this.address)
       } else {
