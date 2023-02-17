@@ -25,6 +25,7 @@ export default {
       sourceShipment: null,
       sourceShipmentReguler: null,
       sourceShipmentTruck: null,
+      sourceCustomLabel: null,
       ProductWeight: null,
       allVariant: null,
       filterVariant: null,
@@ -116,40 +117,23 @@ export default {
       await this.$http_komship.get('/v1/order/sheet/data')
         .then(result => {
           const { data } = result.data
-          if (this.profile.partner_is_order_notes) {
-            this.dataSheets = data.map(items => ({
-              order_date: items.order_date,
-              tracking_sales_name: items.tracking_sales_name,
-              address: items.address,
-              customer_name: items.customer_name,
-              customer_phone_number: items.customer_phone_number,
-              zip_code: `${items.zip_code}`,
-              customer_address: items.customer_address,
-              product: items.product,
-              variant: items.variant,
-              order_notes: items.order_notes,
-              qty: `${items.qty}`,
-              payment_method: items.payment_method,
-              expedition: items.expedition,
-              grandtotal: `${items.grandtotal}`,
-            }))
-          } else {
-            this.dataSheets = data.map(items => ({
-              order_date: items.order_date,
-              tracking_sales_name: items.tracking_sales_name,
-              address: items.address,
-              customer_name: items.customer_name,
-              customer_phone_number: items.customer_phone_number,
-              zip_code: `${items.zip_code}`,
-              customer_address: items.customer_address,
-              product: items.product,
-              variant: items.variant,
-              qty: `${items.qty}`,
-              payment_method: items.payment_method,
-              expedition: items.expedition,
-              grandtotal: `${items.grandtotal}`,
-            }))
-          }
+          this.dataSheets = data.map(items => ({
+            order_date: items.order_date,
+            custom_label: items.custom_label,
+            tracking_sales_name: items.tracking_sales_name,
+            address: items.address,
+            customer_name: items.customer_name,
+            customer_phone_number: items.customer_phone_number,
+            zip_code: `${items.zip_code}`,
+            customer_address: items.customer_address,
+            product: items.product,
+            variant: items.variant,
+            order_notes: items.order_notes,
+            qty: `${items.qty}`,
+            payment_method: items.payment_method,
+            expedition: items.expedition,
+            grandtotal: `${items.grandtotal}`,
+          }))
           this.getDropdownSheet()
           this.getLastUpdated()
         })
@@ -166,6 +150,7 @@ export default {
           this.sourceShipment = data.shipments.shipment_reguler.concat(data.shipments.shipment_truck)
           this.adminList = data.tracking_sales
           this.allVariant = data.variant
+          this.sourceCustomLabel = data.custom_label
           const { variant } = data
           this.sourceVariant = ['-']
           if (data.addresses.length === 0) {
@@ -210,7 +195,7 @@ export default {
           }
           this.filterShipment = (instance, cell, c, r, source) => {
             const qty = instance.jexcel.getValueFromCoords(c - 2, r)
-            const columnName = jspreadsheet.getColumnNameFromId([7, r])
+            const columnName = jspreadsheet.getColumnNameFromId([8, r])
             const weightValue = instance.jexcel.getValue(columnName, r)
             const weight = this.ProductWeight.find(item => item.product_name === weightValue)
             this.totalWeight = (qty * weight.product_weight) / 1000
@@ -229,7 +214,7 @@ export default {
       const { profile } = this
       const { saldo } = this
       const { allVariant } = this
-      let columnTable
+      let columnTable = []
       const getSelectedTable = data => {
         this.selectedTable = data
       }
@@ -244,109 +229,68 @@ export default {
       })
       this.columnNumber = ({
         order_date: 0,
-        sales_tracking: 1,
-        address: 2,
-        customer_name: 3,
-        customer_phone_number: 4,
-        zip_code: 5,
-        customer_address: 6,
-        product: 7,
-        variant: 8,
-        order_notes: profile.partner_is_order_notes ? 9 : null,
-        qty: profile.partner_is_order_notes ? 10 : 9,
-        payment_method: profile.partner_is_order_notes ? 11 : 10,
-        expedition: profile.partner_is_order_notes ? 12 : 11,
-        grandtotal: profile.partner_is_order_notes ? 13 : 12,
+        custom_label: 1,
+        sales_tracking: 2,
+        address: 3,
+        customer_name: 4,
+        customer_phone_number: 5,
+        zip_code: 6,
+        customer_address: 7,
+        product: 8,
+        variant: 9,
+        order_notes: 10,
+        qty: 11,
+        payment_method: 12,
+        expedition: 13,
+        grandtotal: 14,
       })
       const { columnNumber } = this
-      if (profile.partner_is_order_notes) {
-        columnTable = [
-          {
-            type: 'calendar',
-            title: 'Tanggal Order',
-            options: {
-              validRange: [moment().format('YYYY-MM-DD'), moment().add(7, 'days').format('YYYY-MM-DD')],
-              format: 'YYYY-MM-DD',
-              months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
-              weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
-              weekdays_short: ['M', 'S', 'S', 'R', 'K', 'J', 'S'],
-              textDone: 'SELESAI',
-              textReset: 'HAPUS',
-              textUpdate: 'OK',
-            },
+      columnTable = [
+        {
+          type: 'calendar',
+          title: 'Tanggal Order',
+          options: {
+            validRange: [moment().format('YYYY-MM-DD'), moment().add(7, 'days').format('YYYY-MM-DD')],
+            format: 'YYYY-MM-DD',
+            months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
+            weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+            weekdays_short: ['M', 'S', 'S', 'R', 'K', 'J', 'S'],
+            textDone: 'SELESAI',
+            textReset: 'HAPUS',
+            textUpdate: 'OK',
           },
-          {
-            type: 'dropdown', title: 'Terjual Oleh', source: this.adminList,
-          },
-          {
-            type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
-          },
-          { type: 'text', title: 'Nama Pembeli' },
-          { type: 'text', title: 'Nomor HP' },
-          { type: 'text', title: 'Kode Pos' },
-          { type: 'text', title: 'Alamat Detail', width: 250 },
-          {
-            type: 'dropdown', title: 'Produk', width: 200, source: this.sourceProduct,
-          },
-          {
-            type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
-          },
-          { type: 'text', title: 'Catatan Order' },
-          { type: 'text', title: 'Kuantitas' },
-          {
-            type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
-          },
-          {
-            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment, filter: this.filterShipment, readOnly: true,
-          },
-          {
-            type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
-          },
-        ]
-      } else {
-        columnTable = [
-          {
-            type: 'calendar',
-            title: 'Tanggal Order',
-            options: {
-              validRange: [moment().format('YYYY-MM-DD'), moment().add(7, 'days').format('YYYY-MM-DD')],
-              format: 'YYYY-MM-DD',
-              months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
-              weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
-              weekdays_short: ['M', 'S', 'S', 'R', 'K', 'J', 'S'],
-              textDone: 'SELESAI',
-              textReset: 'HAPUS',
-              textUpdate: 'OK',
-            },
-          },
-          {
-            type: 'dropdown', title: 'Terjual Oleh', source: this.adminList,
-          },
-          {
-            type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
-          },
-          { type: 'text', title: 'Nama Pembeli' },
-          { type: 'text', title: 'Nomor HP' },
-          { type: 'text', title: 'Kode Pos' },
-          { type: 'text', title: 'Alamat Detail', width: 250 },
-          {
-            type: 'dropdown', title: 'Produk', width: 200, source: this.sourceProduct,
-          },
-          {
-            type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
-          },
-          { type: 'text', title: 'Kuantitas' },
-          {
-            type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
-          },
-          {
-            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment, filter: this.filterShipment, readOnly: true,
-          },
-          {
-            type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
-          },
-        ]
-      }
+        },
+        {
+          type: 'dropdown', title: 'Kirim Sebagai', source: this.sourceCustomLabel,
+        },
+        {
+          type: 'dropdown', title: 'Terjual Oleh', source: this.adminList,
+        },
+        {
+          type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
+        },
+        { type: 'text', title: 'Nama Pembeli' },
+        { type: 'text', title: 'Nomor HP' },
+        { type: 'text', title: 'Kode Pos' },
+        { type: 'text', title: 'Alamat Detail', width: 250 },
+        {
+          type: 'dropdown', title: 'Produk', width: 200, source: this.sourceProduct,
+        },
+        {
+          type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
+        },
+        { type: 'text', title: 'Catatan Order' },
+        { type: 'text', title: 'Kuantitas' },
+        {
+          type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
+        },
+        {
+          type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment, filter: this.filterShipment, readOnly: true,
+        },
+        {
+          type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
+        },
+      ]
       const popupSaldo = () => this.$swal({
         html: '<span style="font-size:22px;font-weight:800">Saldo Belum Mencukupi</span><br><span style="font-size:16px">Kamu harus mengisi saldo dulu ya, sebelum membuat order dengan metode Transfer Bank</span>',
         imageUrl: iconWarning,
@@ -583,7 +527,9 @@ export default {
           return pasteData
         },
       })
-      if (!profile.partner_is_tracking_sales) this.table.hideColumn(1)
+      if (!profile.partner_is_tracking_sales) this.table.hideColumn(2)
+      if (!profile.partner_is_custom_label) this.table.hideColumn(1)
+      if (!profile.partner_is_order_notes) this.table.hideColumn(10)
       this.$refs.loadingPage.hide()
     },
     addRows() {
@@ -631,6 +577,7 @@ export default {
       let rowNumber = 1
       this.dataSheets = sheets.map(items => ({
         order_date: items[columnNumber.order_date] || items.order_date || '',
+        custom_label: items[columnNumber.custom_label] || items.custom_label || '',
         tracking_sales_name: items[columnNumber.tracking_sales_name] || items.tracking_sales_name || '',
         address: items[columnNumber.address] || items.address || '',
         customer_name: items[columnNumber.customer_name] || items.customer_name || '',
@@ -727,6 +674,7 @@ export default {
     getDataSubmit() {
       const dataFilter = this.dataSheets.filter(
         items => items.order_date
+          || items.custom_label
           || items.sales_tracking
           || items.address
           || items.customer_name
@@ -742,6 +690,7 @@ export default {
       )
       this.dataSubmit = dataFilter.map(items => ({
         order_date: items.order_date !== '' ? moment(items.order_date).format('YYYY-MM-DD') : '',
+        custom_label_name: items.custom_label,
         tracking_sales_name: items.tracking_sales_name,
         address: items.address,
         customer_name: items.customer_name,
