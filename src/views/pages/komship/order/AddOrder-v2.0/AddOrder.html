@@ -710,6 +710,7 @@
         <v-select
           v-model="paymentMethod"
           :options="listPayment"
+          placeholder="Pilih Metode Pembayaran"
           @input="getShippingList(), validateRekening(), paymentHistory = false"
         />
       </b-col>

@@ -435,6 +435,11 @@ export default {
     }, 1000),
     getDestination: _.debounce(function () {
       this.destinationList = []
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
       if (this.destinationLabel.length > 2) {
         this.$http_komship
           .get(`/v2/destination?search=${this.destinationLabel}`)
@@ -458,6 +463,15 @@ export default {
       }
     }, 1000),
     getProduct(address) {
+      if (this.warehouseId !== address.warehouse_id) {
+        this.warehouseId = address.warehouse_id
+        this.isCalculateOnExpedition = false
+        this.paymentMethod = null
+        this.shipping = null
+        this.isShipping = false
+        this.listShipping = []
+      }
+
       if (address.warehouse_type === 'Mitra Kompack' && this.warehouseId !== address.warehouse_id) {
         this.warehouseId = address.warehouse_id
         this.warehouseType = address.warehouse_type
@@ -534,6 +548,11 @@ export default {
             stock: itemSelected.stock - 1,
             stockAvailable: itemSelected.stock,
           })
+          this.isCalculateOnExpedition = false
+          this.paymentMethod = null
+          this.shipping = null
+          this.isShipping = false
+          this.listShipping = []
           this.productHistory = false
           if (itemSelected.is_variant !== '1') {
             await this.addToCart()
@@ -793,6 +812,12 @@ export default {
       this.$root.$emit('bv::hide::modal', `modalVariation${index}`)
     },
     setQuantity(status, index) {
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
+      this.productHistory = false
       if (status === 'plus') {
         this.productSelected[index].quantity += 1
         this.productSelected[index].stock -= 1
@@ -989,6 +1014,9 @@ export default {
         })
     },
     getShippingList() {
+      this.isCalculateOnExpedition = false
+      this.shipping = null
+      this.listShipping = []
       this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         this.$http_komship.get('v3/calculate', {
