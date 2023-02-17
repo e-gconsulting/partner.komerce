@@ -164,12 +164,11 @@ export default {
     handleStatus(part, status) {
       if (part === 'class') {
         if (status === 'Diajukan') return 'status status-waiting'
-        if (status === 'Selesai') return 'status status-done'
+        if (status === 'Selesai') return 'status status-acc'
         if (status === 'Ditolak') return 'status status-reject'
-        if (status === 'Diproses') return 'status status-acc'
       }
       if (status === 'Diajukan') return 'Perlu Persetujuan'
-      if (status === 'Diproses') return 'Disetujui'
+      if (status === 'Selesai') return 'Disetujui'
       return status
     },
     confirmReject(id) {
@@ -184,6 +183,8 @@ export default {
         cancelButtonText: 'Batal',
         confirmButtonText: 'Tolak',
         reverseButtons: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         customClass: {
           icon: 'border-0 w-50 my-5',
           confirmButton: 'btn btn-primary px-4',
@@ -245,6 +246,8 @@ export default {
         cancelButtonText: 'Batal',
         confirmButtonText: 'Setujui',
         reverseButtons: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
         customClass: {
           icon: 'border-0 w-50 my-5',
           confirmButton: 'btn btn-primary px-4',
@@ -271,6 +274,8 @@ export default {
             width: '50%',
             iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-success.png">',
             confirmButtonText: 'Oke',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
             customClass: {
               icon: 'border-0 w-50 my-5',
               confirmButton: 'btn btn-primary px-4',
@@ -280,11 +285,17 @@ export default {
           }).then(result => {
             if (result.value) {
               this.$router.push({
-                path: `/penarikan-barang/${this.$route.params.id}`,
+                path: '/penarikan-barang',
+                query: {
+                  tab: 'menunggu-response',
+                },
               })
             } else {
               this.$router.push({
-                path: `/penarikan-barang/${this.$route.params.id}`,
+                path: '/penarikan-barang',
+                query: {
+                  tab: 'menunggu-response',
+                },
               })
             }
           })

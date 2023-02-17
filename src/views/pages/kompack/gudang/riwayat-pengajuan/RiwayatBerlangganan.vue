@@ -145,6 +145,7 @@ export default {
         this.fetchNextRiwayatBerlangganan()
       }
     }
+    this.$router.replace({ query: { tab: 'riwayat-berlangganan' } })
   },
 
   methods: {
