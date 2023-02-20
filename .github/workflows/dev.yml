@@ -9,6 +9,9 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: Checkout repository
         uses: actions/checkout@v2
       - uses: actions/cache@v1 # this allows for re-using node_modules caching, making builds a bit faster.
