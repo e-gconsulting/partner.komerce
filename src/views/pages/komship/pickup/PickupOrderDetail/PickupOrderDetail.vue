@@ -725,7 +725,7 @@ export default {
       formData.append('order_id', this.orderIdPrint)
       formData.append('page', this.formatPrint)
       if (this.printDateItem) formData.append('print_date', 1)
-      axios.post(`${process.env.VUE_APP_BASE_URL_KOMSHIP}/v2/generate/print-label`, formData).then(response => {
+      axios.post(`${process.env.VUE_APP_PRINT_LABEL}/v2/generate/print-label`, formData).then(response => {
         try {
           let result = null
           const date = `${this.dateToPrint.pickupDate}T${this.dateToPrint.pickupTime}`
