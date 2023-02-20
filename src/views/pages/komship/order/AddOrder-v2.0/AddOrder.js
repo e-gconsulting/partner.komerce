@@ -34,7 +34,6 @@ export default {
       destinationList: [],
       product: [],
       productList: [],
-      productListDB: [],
       productSelected: [],
       productLength: null,
       productStock: null,
@@ -165,6 +164,9 @@ export default {
 
       searchProduct: '',
       coverageCodSap: true,
+
+      warehouseID: 0,
+      warehouseType: '',
     }
   },
   computed: {
@@ -433,6 +435,11 @@ export default {
     }, 1000),
     getDestination: _.debounce(function () {
       this.destinationList = []
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
       if (this.destinationLabel.length > 2) {
         this.$http_komship
           .get(`/v2/destination?search=${this.destinationLabel}`)
@@ -448,25 +455,46 @@ export default {
     }, 1000),
     getProductSearch: _.debounce(function (search, loading) {
       this.searchProduct = search
-      if (this.searchProduct.length > 2) {
+      if (this.searchProduct === undefined || this.searchProduct === '') {
+        this.searchProduct = ''
         this.getProduct(this.address)
-      } else {
-        this.productList = this.productListDB
+      } else if (this.searchProduct.length > 2) {
+        this.getProduct(this.address)
       }
     }, 1000),
-    async getProduct(address) {
-      if (address.warehouse_type === 'Mitra Kompack') { this.productSelected = [] }
+    getProduct(address) {
+      if (this.warehouseId !== address.warehouse_id) {
+        this.warehouseId = address.warehouse_id
+        this.isCalculateOnExpedition = false
+        this.paymentMethod = null
+        this.shipping = null
+        this.isShipping = false
+        this.listShipping = []
+      }
+
+      if (address.warehouse_type === 'Mitra Kompack' && this.warehouseId !== address.warehouse_id) {
+        this.warehouseId = address.warehouse_id
+        this.warehouseType = address.warehouse_type
+        this.productList = []
+        this.productSelected = []
+        this.getProductList(address)
+      } else if (this.warehouseType !== address.warehouse_type) {
+        this.warehouseType = address.warehouse_type
+        this.productList = []
+        this.productSelected = []
+        this.getProductList(address)
+      } else {
+        (
+          this.getProductList(address)
+        )
+      }
+    },
+    async getProductList(address) {
       await this.$http_komship
         .get(`v3/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}&search=${this.searchProduct}`)
         .then(response => {
           const { data } = response.data
-          if (this.searchProduct === '') {
-            this.productListDB = data.slice(0, 5)
-          }
-          if (this.productList.length === 0 || this.searchProduct !== '') {
-            this.productList = data.slice(0, 5)
-          }
-          // if (this.productLength === 0) this.$refs['modal-validate-product'].show()
+          this.productList = data.slice(0, 5)
         })
     },
     async addProduct(itemSelected) {
@@ -520,7 +548,11 @@ export default {
             stock: itemSelected.stock - 1,
             stockAvailable: itemSelected.stock,
           })
-          // this.productList = this.productListDB
+          this.isCalculateOnExpedition = false
+          this.paymentMethod = null
+          this.shipping = null
+          this.isShipping = false
+          this.listShipping = []
           this.productHistory = false
           if (itemSelected.is_variant !== '1') {
             await this.addToCart()
@@ -780,6 +812,12 @@ export default {
       this.$root.$emit('bv::hide::modal', `modalVariation${index}`)
     },
     setQuantity(status, index) {
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
+      this.productHistory = false
       if (status === 'plus') {
         this.productSelected[index].quantity += 1
         this.productSelected[index].stock -= 1
@@ -976,6 +1014,9 @@ export default {
         })
     },
     getShippingList() {
+      this.isCalculateOnExpedition = false
+      this.shipping = null
+      this.listShipping = []
       this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         this.$http_komship.get('v3/calculate', {

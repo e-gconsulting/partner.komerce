@@ -454,11 +454,12 @@
           label="product_name"
           placeholder="Ketik Nama Produk"
           :options="productList"
+          @search:focus="getProductSearch"
           @search="getProductSearch"
           @input="addProduct"
         >
           <span
-            v-if="productLength === 0"
+            v-if="productList.length === 0"
             slot="no-options"
           >
             Belum ada produk, tambahkan dahulu.
@@ -709,6 +710,7 @@
         <v-select
           v-model="paymentMethod"
           :options="listPayment"
+          placeholder="Pilih Metode Pembayaran"
           @input="getShippingList(), validateRekening(), paymentHistory = false"
         />
       </b-col>

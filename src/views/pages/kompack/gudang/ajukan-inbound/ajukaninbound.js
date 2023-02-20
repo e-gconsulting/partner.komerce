@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {
   BCol,
   BRow,
@@ -50,6 +49,7 @@ export default {
       },
       selectAllOrder: false,
       selectedOrder: [],
+      selectedDummyOrder: [],
       noResi: '',
       DisabledSubmit: true,
       disabledAddProduct: true,
@@ -238,7 +238,7 @@ export default {
     },
     addStockNow() {
       this.TambahProduct = !this.TambahProduct
-      this.selectedOrder = this.listProdukDB.filter(item => item.isActive === true)
+      this.selectedOrder = this.selectedDummyOrder
       if (this.selectedOrder.length > 0) {
         this.TableProduct = !this.TambahProduct
         this.StatusSelectOrder = true
@@ -246,6 +246,9 @@ export default {
       } else {
         this.DisabledSubmit = true
       }
+    },
+    setData(data) {
+      this.selectedDummyOrder = data.filter(item => item.isActive === true)
     },
   },
 }
