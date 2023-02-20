@@ -10,7 +10,7 @@ export default [
     },
   },
   {
-    path: '/opsional-feature/dashboard-whatsapp',
+    path: '/opsional-feature/order-notification',
     name: 'dashboard-whatsapp',
     component: () => import('@/views/pages/komship/opsional/wa-notif/dashboard/dashboard.vue'),
     meta: {

@@ -24,6 +24,7 @@
         <b-button
           variant="primary"
           class="rounded-16 mt-1"
+          @click="modalSubscribe"
         >
           Perpanjang
         </b-button>
@@ -32,7 +33,7 @@
     <row class="d-flex mt-2">
       <div class="d-flex border-2 p-1 rounded-2xl">
         <b-img
-          src="https://storage.googleapis.com/komerce/assets/avatars/image-null.png"
+          src="https://storage.googleapis.com/komerce/assets/illustration/profile-illus-wa.svg"
           style="width: 100%;"
         />
         <div class="ml-1">
@@ -44,6 +45,7 @@
               variant="outline-primary"
               size="sm"
               class="d-flex"
+              @click="shohLogout"
             >
               <b-img
                 src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/logout.svg"
@@ -62,33 +64,33 @@
         <h4 class="text-black font-[600]">
           Total Notifikasi
         </h4>
-        <div class="d-flex">
+        <div class="d-flex mt-2">
           <b-img
-            src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/notification-1.svg"
+            src="https://storage.googleapis.com/komerce/assets/icons/notif-blue.svg"
           />
-          <span class="ml-1">{{ Notification.count }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.count }}</span>
         </div>
       </div>
       <div class="border-2 p-1 w-[40%] h-[200px] mr-2 rounded-2xl">
         <h4 class="text-black font-[600]">
           Notifikasi Terkirim
         </h4>
-        <div class="d-flex">
+        <div class="d-flex mt-2">
           <b-img
-            src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/notification-1.svg"
+            src="https://storage.googleapis.com/komerce/assets/icons/send-green.svg"
           />
-          <span class="ml-1">{{ Notification.sender }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.sender }}</span>
         </div>
       </div>
       <div class="border-2 p-1 w-[40%] h-[200px] rounded-2xl">
         <h4 class="text-black font-[600]">
           Notifikasi Gagal
         </h4>
-        <div class="d-flex">
+        <div class="d-flex mt-2">
           <b-img
-            src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/notification-1.svg"
+            src="https://storage.googleapis.com/komerce/assets/icons/cross-red.svg"
           />
-          <span class="ml-1">{{ Notification.failed }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.failed }}</span>
         </div>
       </div>
     </row>
@@ -98,12 +100,18 @@
         <h4 class="text-black font-[600]">
           Template Notifikasi
         </h4>
-        <div class="text-black ">
-          Fitur Notifikasi WhatsApp dapat diaktifkan dengan cara klik toggle ( <span><b-img
-            style="widht: 10px;"
-            src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/toggle-on-circle.svg"
-          /></span> ) di bawah.
-          Sesuaikan dan buat template notifikasimu sendiri untuk menunjukkan identitas bisnismu.
+        <div class="text-black">
+          <div class="d-flex w-50">
+            <span class="mr-1">Fitur Notifikasi WhatsApp dapat diaktifkan dengan cara klik toggle </span>(<b-check
+              aria-label="icon"
+              size="sm"
+              class="ml-[5px] w-1"
+              disabled
+              checked="true"
+              switch
+            />)<span class="ml-1">di bawah.</span>
+          </div>
+          <span> Sesuaikan dan buat template notifikasimu sendiri untuk menunjukkan identitas bisnismu.</span>
         </div>
       </div>
 
@@ -130,10 +138,14 @@
               Notifikasi COD
             </h4>
             <div class="d-flex">
-              <b-button style="background-color: unset !important; border: 0px !important;">
-                <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/toggle-off-circle.svg" />
-              </b-button>
-              <b-button style="background-color: unset !important; border: 0px !important;">
+              <b-form-checkbox
+                v-model="codNotification"
+                v-b-popover.hover.topleft="`${codTooltip}`"
+                switch
+                class="align-self-center"
+                @change="templateCod"
+              />
+              <b-button class="custom-button">
                 <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg" />
               </b-button>
             </div>
@@ -143,23 +155,86 @@
               Notifikasi Pickup
             </h4>
             <div class="d-flex">
-              <b-button style="background-color: unset !important; border: 0px !important;">
-                <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/toggle-off-circle.svg" />
-              </b-button>
-              <b-button style="background-color: unset !important; border: 0px !important;">
+              <b-form-checkbox
+                v-model="pickupNotification"
+                v-b-popover.hover.topleft="`${notificationTooltip}`"
+                switch
+                class="align-self-center"
+                @change="templatePickup"
+              />
+              <b-button class="custom-button">
                 <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg" />
               </b-button>
             </div>
           </div>
         </b-col>
-        <b-col lg="6">
-          <div
-            class="bg-blue-500"
-            style="height: 500px;"
-          />
+        <b-col
+          class="text-end"
+          lg="6"
+        >
+          <div id="template-notification">
+            <div class="mx-5 pt-2">
+              <div class="d-flex">
+                <b-img src="https://storage.googleapis.com/komerce/assets/icons/profile-placehold.svg" />
+                <div class=" custom-template tri-right left-top" />
+              </div>
+            </div>
+          </div>
         </b-col>
       </b-row>
     </div>
+
+    <!-- Modal Logout -->
+    <b-modal
+      id="modal-logout"
+      hide-header-close
+      hide-header
+      hide-footer
+      size="lg"
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3 mb-2"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mb-3">
+        <h3 class="text-black font-bold">
+          Kamu yakin untuk memutuskan WhatsApp ini ?
+        </h3>
+      </b-col>
+      <b-col class="text-center">
+        <h4 class="text-black text-[16px]">
+          Notifikasi WhatsApp untuk sementara akan disesuaikan secara otomatis ke nomor WhatsApp Komship
+        </h4>
+      </b-col>
+      <b-col
+        md="12"
+        class="text-center pb-2 mt-3"
+      >
+        <b-button
+          variant="outline-primary"
+          class="mr-3"
+          @click="$bvModal.hide('modal-logout')"
+        >
+          Batal
+        </b-button>
+        <b-button
+          variant="primary"
+          @click="logout()"
+        >
+          Logout
+        </b-button>
+      </b-col>
+    </b-modal>
+
   </b-card>
 </template>
 <script>
@@ -173,7 +248,88 @@ export default {
         sender: 10,
         failed: 14,
       },
+      iconToggle: true,
+      pickupNotification: false,
+      codNotification: false,
+      codTooltip: 'Aktifkan Notifikasi',
+      notificationTooltip: 'Aktifkan Notifikasi',
     }
+  },
+
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData() {
+      //
+    },
+    showLogout() {
+      this.$bvModal.show('modal-logout')
+    },
+    logout() {
+      //
+    },
+    modalSubscribe() {
+      //
+    },
+    templateCod() {
+      if (this.codNotification === true) {
+        this.codTooltip = 'Matikan Notifikasi'
+      } else {
+        this.codTooltip = 'Aktifkan Notifikasi'
+      }
+      console.log(this.codNotification)
+    },
+    templatePickup() {
+      if (this.pickupNotification === true) {
+        this.notificationTooltip = 'Matikan Notifikasi'
+      } else {
+        this.notificationTooltip = 'Aktifkan Notifikasi'
+      }
+      console.log(this.pickupNotification)
+    },
   },
 }
 </script>
+<style lang="scss" scoped>
+.custom-button {
+  background-color: transparent !important;
+  border: 0px;
+  cursor: pointer !important;
+  box-shadow: none !important;;
+}
+#template-notification {
+  height: 500px;
+  background-image: url(https://storage.googleapis.com/komerce/assets/elements/backgroundwa.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position-x: right;
+}
+</style>
+<style lang="css" scoped>
+.custom-template {
+  border-radius: 12px;
+  border-top-left-radius: 0px;
+  align-self: center;
+  margin-left: 2rem;
+  background-color: white;
+  position: relative;
+  margin-top: 20px;
+  display: inline-block;
+  position: relative;
+  width: 80%;
+  height: 5rem;
+}
+.left-top::after {
+  content: ' ';
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: -20px !important;
+  right: auto;
+  top: 0px;
+  bottom: auto;
+  border: 22px solid;
+  border-color: white transparent transparent transparent;
+}
+</style>
