@@ -841,6 +841,12 @@ export default {
       await this.getShippingList()
     }, 1000),
     async removeProduct(data, index) {
+      this.destinationList = []
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
       this.idCartDelete = this.cartProductId
       const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       const findIndexCartProduct = this.idCartDelete.findIndex(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
