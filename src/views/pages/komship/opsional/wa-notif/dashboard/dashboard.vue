@@ -33,6 +33,7 @@
     <row class="d-flex mt-2">
       <div class="d-flex border-2 p-1 rounded-2xl">
         <b-img
+          class="d-none d-lg-block"
           src="https://storage.googleapis.com/komerce/assets/illustration/profile-illus-wa.svg"
           style="width: 100%;"
         />
@@ -45,7 +46,7 @@
               variant="outline-primary"
               size="sm"
               class="d-flex"
-              @click="shohLogout"
+              @click="$bvModal.show('modal-logout')"
             >
               <b-img
                 src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/logout.svg"
@@ -68,7 +69,7 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/notif-blue.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.count }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification }}</span>
         </div>
       </div>
       <div class="border-2 p-1 w-[40%] h-[200px] mr-2 rounded-2xl">
@@ -79,7 +80,7 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/send-green.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.sender }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification_success }}</span>
         </div>
       </div>
       <div class="border-2 p-1 w-[40%] h-[200px] rounded-2xl">
@@ -90,7 +91,7 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/cross-red.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.failed }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification_failed }}</span>
         </div>
       </div>
     </row>
@@ -176,7 +177,12 @@
             <div class="mx-5 pt-2">
               <div class="d-flex">
                 <b-img src="https://storage.googleapis.com/komerce/assets/icons/profile-placehold.svg" />
-                <div class=" custom-template tri-right left-top" />
+                <div class=" custom-template tri-right left-top">
+                  <div class="text-left px-2 py-1">
+                    <div>{{ messageTemplateCod }}</div>
+                    <div>{{ messageTemplatePickup }}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -241,18 +247,16 @@
 export default {
   data() {
     return {
-      expiredDate: 34,
+      expiredDate: 0,
       statusWhatsapp: 'Terhubung',
-      Notification: {
-        count: 12,
-        sender: 10,
-        failed: 14,
-      },
+      Notification: {},
       iconToggle: true,
       pickupNotification: false,
       codNotification: false,
       codTooltip: 'Aktifkan Notifikasi',
       notificationTooltip: 'Aktifkan Notifikasi',
+      messageTemplateCod: '',
+      messageTemplatePickup: 'lorem ipsum dolor sit amet, consectetur',
     }
   },
 
@@ -261,16 +265,30 @@ export default {
   },
   methods: {
     fetchData() {
-      //
-    },
-    showLogout() {
-      this.$bvModal.show('modal-logout')
+      this.$http_komship.get('/v1/setting/notification-whatsapp-dashboard')
+        .then(response => {
+          console.log(response)
+          const { data } = response.data
+          this.Notification = data
+          this.expiredDate = data.whatsapp_expired_at
+          this.codNotification = data.notification_cod.status
+          this.pickupNotification = data.notification_pickup.status
+          // this.messageTemplateCod = data.notification_cod.message
+          // this.messageTemplatePickup = data.notification_pickup.message
+          console.log(data)
+        })
     },
     logout() {
-      //
+      this.$http_komship.post('/v1/setting/whatsapp-logout')
+        .then(response => {
+          console.log(response)
+        })
     },
     modalSubscribe() {
-      //
+      this.$http_komship.post('/v1/setting/renew-whatsapp-subscription')
+        .then(response => {
+          console.log(response)
+        })
     },
     templateCod() {
       if (this.codNotification === true) {
@@ -305,8 +323,6 @@ export default {
   background-size: contain;
   background-position-x: right;
 }
-</style>
-<style lang="css" scoped>
 .custom-template {
   border-radius: 12px;
   border-top-left-radius: 0px;
@@ -318,7 +334,7 @@ export default {
   display: inline-block;
   position: relative;
   width: 80%;
-  height: 5rem;
+  min-height: 5rem;
 }
 .left-top::after {
   content: ' ';
