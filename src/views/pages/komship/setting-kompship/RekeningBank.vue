@@ -1775,6 +1775,10 @@ export default {
     },
     AccountBankNo(e) {
       this.fieldAddAccountNo = ''
+      this.fieldAddAccountName = ''
+      this.ValidateAccountName = false
+      this.checkValidBank = true
+      this.isValidateAccountName = false
       const dummyAccountBank = e.clipboardData.getData('text').replace(/\D/g, '')
       this.fieldAddAccountNo = dummyAccountBank
     },

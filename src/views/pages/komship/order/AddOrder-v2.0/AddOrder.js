@@ -436,12 +436,6 @@ export default {
       that.getDestination(search)
     }, 1000),
     getDestination: _.debounce(function () {
-      this.destinationList = []
-      this.isCalculateOnExpedition = false
-      this.paymentMethod = null
-      this.shipping = null
-      this.isShipping = false
-      this.listShipping = []
       if (this.destinationLabel.length > 2) {
         this.$http_komship
           .get(`/v2/destination?search=${this.destinationLabel}`)
@@ -1691,6 +1685,12 @@ export default {
         })
     },
     applyDestination(items) {
+      this.destinationList = []
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
       this.destination = items
       this.destinationLabel = items.label
       this.coverageCodSap = false
