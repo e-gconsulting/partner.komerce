@@ -51,6 +51,15 @@ const affiliateAxiosIns = axios.create({
   timeout: 12000,
 })
 
+const printService = axios.create({
+  // You can add your headers here
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  baseURL: process.env.VUE_APP_PRINT_LABEL,
+  timeout: 12000,
+})
+
 axiosIns.interceptors.response.use(
   response => response,
   error => {
@@ -116,6 +125,7 @@ Vue.prototype.$http_kompack = axiosAuthKompack
 Vue.prototype.$http_kompack_kompship = kompackkomshipAxiosIns
 Vue.prototype.$http_komship = komshipAxiosIns
 Vue.prototype.$http_komship_affiliate = affiliateAxiosIns
+Vue.prototype.$http_print = printService
 
 export { axiosAuthKompack }
 export default axiosIns
