@@ -11,10 +11,10 @@ export default [
   },
   {
     path: '/opsional-feature/koneksi-wa',
-    name: 'opsional-feature',
+    name: 'koneksi-wa',
     component: () => import('@/views/pages/komship/opsional/wa-notif/koneksi.vue'),
     meta: {
-      name: 'opsional-feature',
+      name: 'koneksi-wa',
       resource: 'Fitur Pendukung',
       action: 'manage',
     },
