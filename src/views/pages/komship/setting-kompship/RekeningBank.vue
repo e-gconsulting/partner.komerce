@@ -358,7 +358,7 @@
                     name="No Rekening"
                     rules="required"
                   >
-                    <div class="d-flex">
+                    <div class="d-block d-sm-flex">
                       <b-form-input
                         v-model="fieldAddAccountNo"
                         placeholder="Masukkan Nomor Rekening"
@@ -410,10 +410,10 @@
                     >
                       <b-img
                         rounded="circle"
-                        class="bg-[#34A770] mr-1"
+                        class="bg-[#34A770] mr-1 icon-validate"
                         src="https://storage.googleapis.com/komerce/assets/komerce-icon/Putih/Checklist.svg"
                       />
-                      <span class="align-self-center text-black">Nomor Rekening berhasil ditemukan</span>
+                      <span class="align-self-center text-black message-account-name">Nomor Rekening berhasil ditemukan</span>
                     </div>
                     <div
                       v-else
@@ -421,10 +421,10 @@
                     >
                       <b-img
                         rounded="circle"
-                        class="bg-[#FFF2E2] mr-1"
+                        class="bg-[#FFF2E2] mr-1 icon-validate"
                         src="https://storage.googleapis.com/komerce/assets/icons/danger-yellow.svg"
                       />
-                      <span class="align-self-center text-black">Nomor Rekening salah/tidak ditemukan</span>
+                      <span class="align-self-center text-black message-account-name">Nomor Rekening salah/tidak ditemukan</span>
                     </div>
                   </div>
                 </b-form-group>
@@ -444,11 +444,10 @@
                       <b-form-input
                         v-model="fieldAddAccountName"
                         placeholder="Nama akan otomatis muncul"
-                        class="mr-3 pr-2"
+                        class="pr-2"
                         :state="errors.length > 0 ? false:null"
                         disabled
                       />
-                      <div class="w-44" />
                     </div>
                     <!-- <small class="text-danger">{{ errors[0] }}</small> -->
                     <small
@@ -1790,14 +1789,17 @@ export default {
 .validate-green {
   border: 1px solid #DCF3EB;
   background-color: #DCF3EB;
-  width: 78%;
+  width: 100%;
   border-radius: 8px;
 }
 .validate-red {
   border: 1px solid #FFF2E2;
   background-color: #FFF2E2;
-  width: 78%;
+  width: 100%;
   border-radius: 8px;
+}
+.message-account-name {
+  font-size: 14px;
 }
 .cekRekening {
   width: 13rem;
@@ -1810,6 +1812,24 @@ export default {
 @media screen and (max-width: 780px) {
   .cekRekening {
     width: 18rem;
+  }
+  .message-account-name {
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 520px) {
+  .message-account-name {
+    font-size: 10px;
+  }
+  .cekRekening {
+    width: 100%;
+    margin-top: 1rem;
+    margin-left: 0px !important;
+  }
+  .icon-validate {
+    width: 20px;
+    height: 20px;
+    align-self: center;
   }
 }
 [dir] .otp-input {
