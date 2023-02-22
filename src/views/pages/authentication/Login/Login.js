@@ -326,7 +326,6 @@ export default {
                 const findAccessGudangku = item.access.find(accessItem => accessItem.access_id === 16)
                 const findAccessAjukanInbound = item.access.find(accessItem => accessItem.access_id === 17)
                 const findAccessRiwayatPengajuan = item.access.find(accessItem => accessItem.access_id === 19)
-                ability.push({ action: 'manage', subject: 'Gudang' })
                 if (findAccessGudangku !== undefined) {
                   ability.push({ action: 'manage', subject: 'Gudangku', path: '/gudangku' })
                 }
