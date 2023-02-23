@@ -1016,10 +1016,12 @@ export default {
         })
     },
     getShippingList() {
-      this.isCalculateOnExpedition = false
       this.shipping = null
       this.listShipping = []
-      this.loadingOptionExpedition = true
+      this.isShipping = false
+      this.isCalculate = false
+      this.isCalculateOnExpedition = false
+      this.loadingOptionExpedition = false
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         this.$http_komship.get('v3/calculate', {
           params: {
