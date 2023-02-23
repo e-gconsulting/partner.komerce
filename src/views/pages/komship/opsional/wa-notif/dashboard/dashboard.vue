@@ -31,16 +31,14 @@
       </div>
     </div>
     <row class="d-sm-flex d-block mt-2">
-      <div
-        class="d-flex border-2 p-1 rounded-2xl card1-mobile"
-      >
+      <div class="d-flex border-2 p-1 rounded-2xl card1-mobile">
         <b-img
           class="d-none d-lg-block"
           src="https://storage.googleapis.com/komerce/assets/illustration/profile-illus-wa.svg"
-          style="width: 100%;"
+          style="width: 100%"
         />
-        <div class="ml-1">
-          <div class="d-block d-sm-flex justify-content-between mb-1">
+        <div class="p-1">
+          <div class="d-flex justify-content-between mb-1">
             <div class="text-black font-[600] align-self-center">
               {{ statusWhatsapp }}
             </div>
@@ -54,7 +52,9 @@
                 src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/logout.svg"
                 style="width: 20px"
               />
-              <span class="text-primary ml-1 align-self-center logout-mobile">Logout</span>
+              <span
+                class="text-primary ml-1 align-self-center logout-mobile"
+              >Logout</span>
             </b-button>
           </div>
           <div class="text-black">
@@ -63,7 +63,9 @@
           </div>
         </div>
       </div>
-      <div class="border-2 p-1 w-[40%] h-[200px] mx-2 rounded-2xl">
+      <div
+        class="border-2 p-1 w-[40%] h-[200px] mx-2 rounded-2xl d-none d-sm-block"
+      >
         <h4 class="text-black font-[600]">
           Total Notifikasi
         </h4>
@@ -71,10 +73,14 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/notif-blue.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{
+            Notification.total_notification
+          }}</span>
         </div>
       </div>
-      <div class="border-2 p-1 w-[40%] h-[200px] mr-2 rounded-2xl">
+      <div
+        class="border-2 p-1 w-[40%] h-[200px] mr-2 rounded-2xl d-none d-sm-block"
+      >
         <h4 class="text-black font-[600]">
           Notifikasi Terkirim
         </h4>
@@ -82,10 +88,12 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/send-green.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification_success }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{
+            Notification.total_notification_success
+          }}</span>
         </div>
       </div>
-      <div class="border-2 p-1 w-[40%] h-[200px] rounded-2xl">
+      <div class="border-2 p-1 w-[40%] h-[200px] rounded-2xl d-none d-sm-block">
         <h4 class="text-black font-[600]">
           Notifikasi Gagal
         </h4>
@@ -93,7 +101,52 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/cross-red.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification_failed }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{
+            Notification.total_notification_failed
+          }}</span>
+        </div>
+      </div>
+
+      <!-- card mobile -->
+      <div class="d-block d-sm-none mt-2">
+        <div class="border-2 p-1 w-[100%] h-[100px] mr-2 mt-2 rounded-2xl">
+          <h4 class="text-black font-[600]">
+            Total Notifikasi
+          </h4>
+          <div class="d-flex mt-2">
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/notif-blue.svg"
+            />
+            <span class="ml-1 text-[16px] pt-[5px]">{{
+              Notification.total_notification
+            }}</span>
+          </div>
+        </div>
+        <div class="border-2 p-1 w-[100%] h-[100px] mr-2 mt-2 rounded-2xl">
+          <h4 class="text-black font-[600]">
+            Notifikasi Terkirim
+          </h4>
+          <div class="d-flex mt-2">
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/send-green.svg"
+            />
+            <span class="ml-1 text-[16px] pt-[5px]">{{
+              Notification.total_notification_success
+            }}</span>
+          </div>
+        </div>
+        <div class="border-2 p-1 w-[100%] h-[100px] mt-2 rounded-2xl">
+          <h4 class="text-black font-[600]">
+            Notifikasi Gagal
+          </h4>
+          <div class="d-flex mt-2">
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/cross-red.svg"
+            />
+            <span class="ml-1 text-[16px] pt-[5px]">{{
+              Notification.total_notification_failed
+            }}</span>
+          </div>
         </div>
       </div>
     </row>
@@ -105,7 +158,10 @@
         </h4>
         <div class="text-black">
           <div class="d-flex w-50">
-            <span class="mr-1">Fitur Notifikasi WhatsApp dapat diaktifkan dengan cara klik toggle </span>(<b-check
+            <span
+              class="mr-1"
+            >Fitur Notifikasi WhatsApp dapat diaktifkan dengan cara klik
+              toggle </span>(<b-check
               aria-label="icon"
               size="sm"
               class="ml-[5px] w-1"
@@ -114,7 +170,9 @@
               switch
             />)<span class="ml-1">di bawah.</span>
           </div>
-          <span> Sesuaikan dan buat template notifikasimu sendiri untuk menunjukkan identitas bisnismu.</span>
+          <span>
+            Sesuaikan dan buat template notifikasimu sendiri untuk menunjukkan
+            identitas bisnismu.</span>
         </div>
       </div>
 
@@ -142,9 +200,7 @@
               class="w-[80%] align-self-center"
               @click="hoverTemplate('cod')"
             >
-              <h4
-                class="text-black font-[500]"
-              >
+              <h4 class="text-black font-[500]">
                 Notifikasi COD
               </h4>
             </div>
@@ -157,7 +213,10 @@
                 @change="templateCod"
               />
               <b-button class="custom-button">
-                <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg" />
+                <img
+                  class="icon-edit"
+                  src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg"
+                >
               </b-button>
             </div>
           </div>
@@ -167,9 +226,7 @@
               class="w-[80%] align-self-center"
               @click="hoverTemplate('pickup')"
             >
-              <h4
-                class="text-black font-[500]"
-              >
+              <h4 class="text-black font-[500]">
                 Notifikasi Pickup
               </h4>
             </div>
@@ -182,16 +239,19 @@
                 @change="templatePickup"
               />
               <b-button class="custom-button">
-                <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg" />
+                <img
+                  class="icon-edit"
+                  src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg"
+                >
               </b-button>
             </div>
           </div>
         </b-col>
         <b-col
           lg="6"
-          class="mt-2 pb-2"
+          class="mt-2 pb-2 d-block d-lg-none"
         >
-          <h4 class="text-black font-[600] d-block d-lg-none">
+          <h4 class="text-black font-[600]">
             Preview Notifikasi
           </h4>
         </b-col>
@@ -200,20 +260,26 @@
           lg="6"
         >
           <div id="template-notification">
-            <div class="mx-5 mx-md-2 mx-xs-0 pt-2">
+            <div class="mx-1 mx-md-2 mx-lg-5 pt-2">
               <div class="d-flex">
                 <b-img
-                  class="align-self-start mt-2"
+                  class="align-self-start mt-2 custom-profile"
                   src="https://storage.googleapis.com/komerce/assets/icons/profile-placehold.svg"
                 />
-                <div class=" custom-template tri-right left-top">
+                <div class="custom-template tri-right left-top">
                   <div class="text-left px-2 py-1">
                     <div v-if="isTemplate">
                       <!-- {{ messageTemplateCod }} -->
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos excepturi tempora magnam quam quo eveniet esse saepe, quaerat illo reprehenderit dignissimos quisquam eos ullam veniam praesentium accusantium unde iste assumenda, nisi rerum molestiae officiis! Commodi velit ex odio quis quam?
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Quos excepturi tempora magnam quam quo eveniet esse saepe,
+                      quaerat illo reprehenderit dignissimos quisquam eos ullam
+                      veniam praesentium accusantium unde iste assumenda, nisi
+                      rerum molestiae officiis! Commodi velit ex odio quis quam?
                     </div>
                     <div v-else>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis tempore, molestiae incidunt libero reiciendis tempora ea cumque eos dolor eum.
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Perferendis tempore, molestiae incidunt libero reiciendis
+                      tempora ea cumque eos dolor eum.
                       <!-- {{ messageTemplatePickup }} -->
                     </div>
                   </div>
@@ -253,7 +319,8 @@
       </b-col>
       <b-col class="text-center">
         <h4 class="text-black text-[16px]">
-          Notifikasi WhatsApp untuk sementara akan disesuaikan secara otomatis ke nomor WhatsApp Komship
+          Notifikasi WhatsApp untuk sementara akan disesuaikan secara otomatis
+          ke nomor WhatsApp Komship
         </h4>
       </b-col>
       <b-col
@@ -313,11 +380,10 @@
           />
         </div>
         <div>
-          Saldo Kompay kamu <span class="text-primary">Rp{{ saldo_kompay }}</span>
+          Saldo Kompay kamu
+          <span class="text-primary">Rp{{ saldo_kompay }}</span>
         </div>
-        <div
-          class="justify-content-between d-flex mt-2"
-        >
+        <div class="justify-content-between d-flex mt-2">
           <div>
             <b-button
               variant="outline-primary"
@@ -340,7 +406,6 @@
         </div>
       </div>
     </b-modal>
-
   </b-card>
 </template>
 <script>
@@ -365,9 +430,7 @@ export default {
       notificationTooltip: 'Aktifkan Notifikasi',
       messageTemplateCod: '',
       messageTemplatePickup: 'lorem ipsum dolor sit amet, consectetur',
-      listFitur: [
-        { value: 1, name: 'Notifikasi WhatsApp Premium' },
-      ],
+      listFitur: [{ value: 1, name: 'Notifikasi WhatsApp Premium' }],
       listSubscription: [
         { value: 1, name: '1 Bulan - Rp39.000' },
         { value: 2, name: '3 Bula - 117.000' },
@@ -395,7 +458,8 @@ export default {
 
   methods: {
     fetchData() {
-      this.$http_komship.get('/v1/setting/notification-whatsapp-dashboard')
+      this.$http_komship
+        .get('/v1/setting/notification-whatsapp-dashboard')
         .then(response => {
           const { data } = response.data
           this.Notification = data
@@ -404,7 +468,8 @@ export default {
           this.pickupNotification = data.notification_pickup.status
           this.messageTemplateCod = data.notification_cod.message
           this.messageTemplatePickup = data.notification_pickup.message
-        }).catch(err => {
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -417,13 +482,15 @@ export default {
         })
     },
     logout() {
-      this.$http_komship.post('/v1/setting/whatsapp-logout')
+      this.$http_komship
+        .post('/v1/setting/whatsapp-logout')
         .then(response => {
           if (response.data.code === 200) {
             this.$router.push({ name: 'koneksi-wa' })
           }
           console.log(response)
-        }).catch(err => {
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -437,12 +504,14 @@ export default {
     },
     modalRenew() {
       this.$bvModal.show('modal-renew-subcription')
-      this.$http_komship.get('/v1/setting/notification-whatsapp-premium-fee')
+      this.$http_komship
+        .get('/v1/setting/notification-whatsapp-premium-fee')
         .then(response => {
           const { data } = response.data
           this.saldo_kompay = data.kompay_balance
           console.log(response)
-        }).catch(err => {
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -455,7 +524,8 @@ export default {
         })
     },
     subscribe() {
-      this.$http_komship.post('/v1/setting/renew-whatsapp-subscription')
+      this.$http_komship
+        .post('/v1/setting/renew-whatsapp-subscription')
         .then(response => {
           console.log(response)
         })
@@ -475,10 +545,12 @@ export default {
       formData.append('type_notification', 'is_received')
       formData.append('status', status)
 
-      this.$http_komship.post('/v1/setting/on-or-off-template-whatsapp', formData)
+      this.$http_komship
+        .post('/v1/setting/on-or-off-template-whatsapp', formData)
         .then(response => {
           console.log(response)
-        }).catch(err => {
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -505,10 +577,12 @@ export default {
       formData.append('type_notification', 'is_sending')
       formData.append('status', status)
 
-      this.$http_komship.post('/v1/setting/on-or-off-template-whatsapp', formData)
+      this.$http_komship
+        .post('/v1/setting/on-or-off-template-whatsapp', formData)
         .then(response => {
           console.log(response)
-        }).catch(err => {
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -532,7 +606,7 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '@core/scss/vue/libs/vue-select.scss';
+@import '@core/scss/vue/libs/vue-select.scss';
 </style>
 
 <style lang="scss" scoped>
@@ -540,17 +614,17 @@ export default {
   background-color: transparent !important;
   border: 0px;
   cursor: pointer !important;
-  box-shadow: none !important;;
+  box-shadow: none !important;
 }
 .custom-btn {
   border-radius: 8px;
   font-size: 16px !important;
 }
 #template-notification {
-  height: 500px;
+  min-height: 500px;
   background-image: url(https://storage.googleapis.com/komerce/assets/elements/backgroundwa.png);
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position-x: right;
 }
 .custom-template {
@@ -578,6 +652,9 @@ export default {
   border: 22px solid;
   border-color: white transparent transparent transparent;
 }
+.icon-edit {
+  width: 25px;
+}
 
 @media screen and (max-width: 1200px) {
   .custom-template {
@@ -588,14 +665,24 @@ export default {
   .left-top::after {
     left: -10px !important;
   }
+  .icon-edit {
+    width: 30px;
+  }
 }
 @media screen and (max-width: 720px) {
   .card1-mobile {
     padding: 0px !important;
-    // width: 40rem !important;
   }
   .logout-mobile {
     margin-left: 0px !important;
+  }
+}
+@media screen and (max-width: 520px) {
+  .custom-profile {
+    width: 40px;
+  }
+  .icon-edit {
+    width: 60px;
   }
 }
 </style>
