@@ -284,8 +284,7 @@
         placeholder="Masukkan Kelurahan/Kecamatan"
         class="form-control"
         @focus="getDestination"
-        @keyup="getDestination"
-        @input="getShippingList()">
+        @keyup="getDestination">
         <ul v-if="destinationList[0] !== undefined" class="autocomplete-list">
           <li v-for="items in destinationList" class="autocomplete-item" role="button" @click="applyDestination(items)">
             {{`${items.label}`}}
