@@ -471,6 +471,18 @@
               </b-row>
             </b-popover>
           </span>
+          <span v-if="data.item.transaction_type === 'cancel_fulfillment_fee'">
+            Pembatalan Fulfillment
+          </span>
+          <span v-if="data.item.transaction_type === 'payment_fulfillment_fee'">
+            Biaya Fulfillment
+          </span>
+          <span v-if="data.item.transaction_type === 'outbound_fee'">
+            Penarikan Barang
+          </span>
+          <span v-if="data.item.transaction_type === 'outbound_cancel'">
+            Pembatalan Penarikan Barang
+          </span>
         </template>
         <template #cell(amount)="data">
           <span
@@ -524,9 +536,21 @@
         </template>
         <template #cell(action)="data">
           <b-button
-            v-if="data.item.order_id !== 0"
+            v-if="Array.isArray(data.item.order_id) && data.item.outbound_id === 0"
             variant="none"
-            class="button-detail d-flex text-info"
+            class="button-detail d-flex text-info justify-center"
+            :to="{
+              name: 'detail-orderan-pickup',
+              query: { order_id: data.item.order_id.join(',') },
+            }"
+            target="_blank"
+          >
+            Lihat Detail
+          </b-button>
+          <b-button
+            v-if="data.item.order_id !== 0 && !Array.isArray(data.item.order_id)"
+            variant="none"
+            class="button-detail d-flex text-info justify-center"
             :to="{
               name: 'detail-order',
               params: { order_id: data.item.order_id },
@@ -535,7 +559,25 @@
           >
             Lihat Detail
           </b-button>
-          <span v-else>-</span> </template>>
+          <b-button
+            v-if="data.item.outbound_id !== 0 && data.item.order_id === 0"
+            variant="none"
+            class="button-detail d-flex text-info justify-center"
+            :to="{
+              name: 'detail-penarikan-barang',
+              params: { id: data.item.outbound_id },
+            }"
+            target="_blank"
+          >
+            Lihat Detail
+          </b-button>
+          <div
+            v-if="data.item.order_id === 0 && data.item.outbound_id === 0"
+            class="text-center"
+          >
+            -
+          </div>
+        </template>
       </b-table>
       <div class="d-flex justify-between align-middle">
         <div>
@@ -874,7 +916,7 @@ export default {
         valueFilter = this.lengthFilter.join()
       }
       this.items = await this.$http_komship
-        .get('v1/partner/order-transaction-balance', {
+        .get('v2/partner/order-transaction-balance', {
           params: {
             start_date: moment(this.dateRange.startDate).format('YYYY-MM-DD'),
             end_date: moment(this.dateRange.endDate).format('YYYY-MM-DD'),
@@ -903,6 +945,7 @@ export default {
         this.currentPage = 1
       }
     },
+    // eslint-disable-next-line func-names
     handleSearchResi: _.debounce(async function () {
       this.loadTable = true
       this.items = await this.$http_komship
