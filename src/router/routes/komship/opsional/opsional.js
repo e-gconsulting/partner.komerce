@@ -11,10 +11,10 @@ export default [
   },
   {
     path: '/opsional-feature/koneksi-wa',
-    name: 'opsional-feature',
+    name: 'koneksi-wa',
     component: () => import('@/views/pages/komship/opsional/wa-notif/koneksi.vue'),
     meta: {
-      name: 'opsional-feature',
+      name: 'koneksi-wa',
       resource: 'Fitur Pendukung',
       action: 'manage',
     },
@@ -25,6 +25,16 @@ export default [
     component: () => import('@/views/pages/komship/opsional/wa-notif/dashboard/dashboard.vue'),
     meta: {
       name: 'dashboard-whatsapp',
+      resource: 'Fitur Pendukung',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/opsional-feature/template-notification-cod',
+    name: 'template-notification-cod',
+    component: () => import('@/views/pages/komship/opsional/wa-notif/template-notifikasi/templateCOD.vue'),
+    meta: {
+      name: 'template-notification-cod',
       resource: 'Fitur Pendukung',
       action: 'manage',
     },

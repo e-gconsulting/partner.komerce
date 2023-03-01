@@ -23,21 +23,21 @@
         </div>
         <b-button
           variant="primary"
-          class="rounded-16 mt-1"
-          @click="modalSubscribe"
+          class="rounded-2xl mt-[5px]"
+          @click.once="modalRenew"
         >
           Perpanjang
         </b-button>
       </div>
     </div>
-    <row class="d-flex mt-2">
-      <div class="d-flex border-2 p-1 rounded-2xl">
+    <row class="d-sm-flex d-block mt-2">
+      <div class="d-flex border-2 p-1 rounded-2xl card1-mobile">
         <b-img
           class="d-none d-lg-block"
           src="https://storage.googleapis.com/komerce/assets/illustration/profile-illus-wa.svg"
-          style="width: 100%;"
+          style="width: 100%"
         />
-        <div class="ml-1">
+        <div class="p-1">
           <div class="d-flex justify-content-between mb-1">
             <div class="text-black font-[600] align-self-center">
               {{ statusWhatsapp }}
@@ -52,7 +52,9 @@
                 src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/logout.svg"
                 style="width: 20px"
               />
-              <span class="text-primary ml-1 align-self-center">Logout</span>
+              <span
+                class="text-primary ml-1 align-self-center logout-mobile"
+              >Logout</span>
             </b-button>
           </div>
           <div class="text-black">
@@ -61,7 +63,9 @@
           </div>
         </div>
       </div>
-      <div class="border-2 p-1 w-[40%] h-[200px] mx-2 rounded-2xl">
+      <div
+        class="border-2 p-1 w-[40%] h-[200px] mx-2 rounded-2xl d-none d-sm-block"
+      >
         <h4 class="text-black font-[600]">
           Total Notifikasi
         </h4>
@@ -69,10 +73,14 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/notif-blue.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{
+            Notification.total_notification
+          }}</span>
         </div>
       </div>
-      <div class="border-2 p-1 w-[40%] h-[200px] mr-2 rounded-2xl">
+      <div
+        class="border-2 p-1 w-[40%] h-[200px] mr-2 rounded-2xl d-none d-sm-block"
+      >
         <h4 class="text-black font-[600]">
           Notifikasi Terkirim
         </h4>
@@ -80,10 +88,12 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/send-green.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification_success }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{
+            Notification.total_notification_success
+          }}</span>
         </div>
       </div>
-      <div class="border-2 p-1 w-[40%] h-[200px] rounded-2xl">
+      <div class="border-2 p-1 w-[40%] h-[200px] rounded-2xl d-none d-sm-block">
         <h4 class="text-black font-[600]">
           Notifikasi Gagal
         </h4>
@@ -91,7 +101,52 @@
           <b-img
             src="https://storage.googleapis.com/komerce/assets/icons/cross-red.svg"
           />
-          <span class="ml-1 text-[16px] pt-[5px]">{{ Notification.total_notification_failed }}</span>
+          <span class="ml-1 text-[16px] pt-[5px]">{{
+            Notification.total_notification_failed
+          }}</span>
+        </div>
+      </div>
+
+      <!-- card mobile -->
+      <div class="d-block d-sm-none mt-2">
+        <div class="border-2 p-1 w-[100%] h-[100px] mr-2 mt-2 rounded-2xl">
+          <h4 class="text-black font-[600]">
+            Total Notifikasi
+          </h4>
+          <div class="d-flex mt-2">
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/notif-blue.svg"
+            />
+            <span class="ml-1 text-[16px] pt-[5px]">{{
+              Notification.total_notification
+            }}</span>
+          </div>
+        </div>
+        <div class="border-2 p-1 w-[100%] h-[100px] mr-2 mt-2 rounded-2xl">
+          <h4 class="text-black font-[600]">
+            Notifikasi Terkirim
+          </h4>
+          <div class="d-flex mt-2">
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/send-green.svg"
+            />
+            <span class="ml-1 text-[16px] pt-[5px]">{{
+              Notification.total_notification_success
+            }}</span>
+          </div>
+        </div>
+        <div class="border-2 p-1 w-[100%] h-[100px] mt-2 rounded-2xl">
+          <h4 class="text-black font-[600]">
+            Notifikasi Gagal
+          </h4>
+          <div class="d-flex mt-2">
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/icons/cross-red.svg"
+            />
+            <span class="ml-1 text-[16px] pt-[5px]">{{
+              Notification.total_notification_failed
+            }}</span>
+          </div>
         </div>
       </div>
     </row>
@@ -103,7 +158,10 @@
         </h4>
         <div class="text-black">
           <div class="d-flex w-50">
-            <span class="mr-1">Fitur Notifikasi WhatsApp dapat diaktifkan dengan cara klik toggle </span>(<b-check
+            <span
+              class="mr-1"
+            >Fitur Notifikasi WhatsApp dapat diaktifkan dengan cara klik
+              toggle </span>(<b-check
               aria-label="icon"
               size="sm"
               class="ml-[5px] w-1"
@@ -112,7 +170,9 @@
               switch
             />)<span class="ml-1">di bawah.</span>
           </div>
-          <span> Sesuaikan dan buat template notifikasimu sendiri untuk menunjukkan identitas bisnismu.</span>
+          <span>
+            Sesuaikan dan buat template notifikasimu sendiri untuk menunjukkan
+            identitas bisnismu.</span>
         </div>
       </div>
 
@@ -126,18 +186,24 @@
           </h4>
         </b-col>
         <b-col lg="6">
-          <h4 class="text-black font-[600]">
+          <h4 class="text-black font-[600] d-none d-lg-block">
             Preview Notifikasi
           </h4>
         </b-col>
       </b-row>
 
-      <b-row class="my-2">
+      <b-row>
         <b-col lg="6">
-          <div class="d-flex justify-content-between border-b-2">
-            <h4 class="text-black font-[500] align-self-center">
-              Notifikasi COD
-            </h4>
+          <div class="d-flex justify-content-between border-b-2 mt-1">
+            <div
+              type="button"
+              class="w-[80%] align-self-center"
+              @click="hoverTemplate('cod')"
+            >
+              <h4 class="text-black font-[500]">
+                Notifikasi COD
+              </h4>
+            </div>
             <div class="d-flex">
               <b-form-checkbox
                 v-model="codNotification"
@@ -146,15 +212,24 @@
                 class="align-self-center"
                 @change="templateCod"
               />
-              <b-button class="custom-button">
-                <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg" />
+              <b-button class="custom-button" @click="$router.push({ name: 'template-notification-cod' })">
+                <img
+                  class="icon-edit"
+                  src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg"
+                >
               </b-button>
             </div>
           </div>
-          <div class="d-flex justify-content-between border-b-2">
-            <h4 class="text-black font-[500] align-self-center">
-              Notifikasi Pickup
-            </h4>
+          <div class="d-flex justify-content-between border-b-2 mt-1">
+            <div
+              type="button"
+              class="w-[80%] align-self-center"
+              @click="hoverTemplate('pickup')"
+            >
+              <h4 class="text-black font-[500]">
+                Notifikasi Pickup
+              </h4>
+            </div>
             <div class="d-flex">
               <b-form-checkbox
                 v-model="pickupNotification"
@@ -164,23 +239,49 @@
                 @change="templatePickup"
               />
               <b-button class="custom-button">
-                <b-img src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg" />
+                <img
+                  class="icon-edit"
+                  src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg"
+                >
               </b-button>
             </div>
           </div>
+        </b-col>
+        <b-col
+          lg="6"
+          class="mt-2 pb-2 d-block d-lg-none"
+        >
+          <h4 class="text-black font-[600]">
+            Preview Notifikasi
+          </h4>
         </b-col>
         <b-col
           class="text-end"
           lg="6"
         >
           <div id="template-notification">
-            <div class="mx-5 pt-2">
+            <div class="mx-1 mx-md-2 mx-lg-5 pt-2">
               <div class="d-flex">
-                <b-img src="https://storage.googleapis.com/komerce/assets/icons/profile-placehold.svg" />
-                <div class=" custom-template tri-right left-top">
+                <b-img
+                  class="align-self-start mt-2 custom-profile"
+                  src="https://storage.googleapis.com/komerce/assets/icons/profile-placehold.svg"
+                />
+                <div class="custom-template tri-right left-top">
                   <div class="text-left px-2 py-1">
-                    <div>{{ messageTemplateCod }}</div>
-                    <div>{{ messageTemplatePickup }}</div>
+                    <div v-if="isTemplate">
+                      <!-- {{ messageTemplateCod }} -->
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Quos excepturi tempora magnam quam quo eveniet esse saepe,
+                      quaerat illo reprehenderit dignissimos quisquam eos ullam
+                      veniam praesentium accusantium unde iste assumenda, nisi
+                      rerum molestiae officiis! Commodi velit ex odio quis quam?
+                    </div>
+                    <div v-else>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Perferendis tempore, molestiae incidunt libero reiciendis
+                      tempora ea cumque eos dolor eum.
+                      <!-- {{ messageTemplatePickup }} -->
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,7 +319,8 @@
       </b-col>
       <b-col class="text-center">
         <h4 class="text-black text-[16px]">
-          Notifikasi WhatsApp untuk sementara akan disesuaikan secara otomatis ke nomor WhatsApp Komship
+          Notifikasi WhatsApp untuk sementara akan disesuaikan secara otomatis
+          ke nomor WhatsApp Komship
         </h4>
       </b-col>
       <b-col
@@ -241,86 +343,97 @@
       </b-col>
     </b-modal>
 
+    <!-- Modal Renew Subcription -->
+    <b-modal
+      id="modal-renew-subcription"
+      hide-header
+      hide-footer
+      no-close-on-backdrop
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+      <div class="p-2 text-black">
+        <h3 class="text-center font-[600] mb-2">
+          Pusat Berlangganan
+        </h3>
+        <div>
+          <div class="text-[16px] mb-1 font-[600]">
+            Fitur
+          </div>
+          <v-select
+            v-model="fitur"
+            class="mb-1"
+            :options="listFitur"
+            label="name"
+          />
+        </div>
+        <div>
+          <div class="text-[16px] mb-1 font-[600]">
+            Pilih Berlangganan
+          </div>
+          <v-select
+            v-model="subscription"
+            class="mb-1"
+            :options="listSubscription"
+            label="name"
+            @input="subscriptionChange"
+          />
+        </div>
+        <div>
+          Saldo Kompay kamu
+          <span class="text-primary">Rp{{ saldo_kompay }}</span>
+        </div>
+        <div class="justify-content-between d-flex mt-2">
+          <div>
+            <b-button
+              variant="outline-primary"
+              class="mr-1 w-[14rem] custom-btn"
+              @click="$bvModal.hide('modal-renew-subcription')"
+            >
+              Batal
+            </b-button>
+          </div>
+          <div>
+            <b-button
+              :variant="disabledSubcription ? 'secondary' : 'primary'"
+              class="ml-1 w-[14rem] custom-btn"
+              :disabled="disabledSubcription"
+              @click="subscribe"
+            >
+              <b-spinner
+                v-if="loadingSubcription"
+                small
+              />
+              <span v-else>Bayar</span>
+            </b-button>
+          </div>
+        </div>
+      </div>
+    </b-modal>
   </b-card>
 </template>
-<script>
-export default {
-  data() {
-    return {
-      expiredDate: 0,
-      statusWhatsapp: 'Terhubung',
-      Notification: {},
-      iconToggle: true,
-      pickupNotification: false,
-      codNotification: false,
-      codTooltip: 'Aktifkan Notifikasi',
-      notificationTooltip: 'Aktifkan Notifikasi',
-      messageTemplateCod: '',
-      messageTemplatePickup: 'lorem ipsum dolor sit amet, consectetur',
-    }
-  },
+<script src="./dashboard.js" />
+<style lang="scss">
+@import '@core/scss/vue/libs/vue-select.scss';
+</style>
 
-  mounted() {
-    this.fetchData()
-  },
-  methods: {
-    fetchData() {
-      this.$http_komship.get('/v1/setting/notification-whatsapp-dashboard')
-        .then(response => {
-          console.log(response)
-          const { data } = response.data
-          this.Notification = data
-          this.expiredDate = data.whatsapp_expired_at
-          this.codNotification = data.notification_cod.status
-          this.pickupNotification = data.notification_pickup.status
-          // this.messageTemplateCod = data.notification_cod.message
-          // this.messageTemplatePickup = data.notification_pickup.message
-          console.log(data)
-        })
-    },
-    logout() {
-      this.$http_komship.post('/v1/setting/whatsapp-logout')
-        .then(response => {
-          console.log(response)
-        })
-    },
-    modalSubscribe() {
-      this.$http_komship.post('/v1/setting/renew-whatsapp-subscription')
-        .then(response => {
-          console.log(response)
-        })
-    },
-    templateCod() {
-      if (this.codNotification === true) {
-        this.codTooltip = 'Matikan Notifikasi'
-      } else {
-        this.codTooltip = 'Aktifkan Notifikasi'
-      }
-      console.log(this.codNotification)
-    },
-    templatePickup() {
-      if (this.pickupNotification === true) {
-        this.notificationTooltip = 'Matikan Notifikasi'
-      } else {
-        this.notificationTooltip = 'Aktifkan Notifikasi'
-      }
-      console.log(this.pickupNotification)
-    },
-  },
-}
-</script>
 <style lang="scss" scoped>
 .custom-button {
   background-color: transparent !important;
   border: 0px;
   cursor: pointer !important;
-  box-shadow: none !important;;
+  box-shadow: none !important;
+}
+.custom-btn {
+  border-radius: 8px;
+  font-size: 16px !important;
 }
 #template-notification {
-  height: 500px;
+  min-height: 500px;
   background-image: url(https://storage.googleapis.com/komerce/assets/elements/backgroundwa.png);
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position-x: right;
 }
 .custom-template {
@@ -347,5 +460,38 @@ export default {
   bottom: auto;
   border: 22px solid;
   border-color: white transparent transparent transparent;
+}
+.icon-edit {
+  width: 25px;
+}
+
+@media screen and (max-width: 1200px) {
+  .custom-template {
+    margin-left: 1rem;
+    margin-top: 10px;
+    width: 90%;
+  }
+  .left-top::after {
+    left: -10px !important;
+  }
+  .icon-edit {
+    width: 30px;
+  }
+}
+@media screen and (max-width: 720px) {
+  .card1-mobile {
+    padding: 0px !important;
+  }
+  .logout-mobile {
+    margin-left: 0px !important;
+  }
+}
+@media screen and (max-width: 520px) {
+  .custom-profile {
+    width: 40px;
+  }
+  .icon-edit {
+    width: 60px;
+  }
 }
 </style>

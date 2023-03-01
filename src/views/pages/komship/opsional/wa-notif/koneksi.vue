@@ -89,6 +89,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'Koneksi',
   data() {
@@ -98,7 +100,14 @@ export default {
       connected: false,
     }
   },
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
   mounted() {
+    // validates the user subcription wa premium
+    if (this.profile.partner_is_notification_whatsapp !== 2) {
+      this.$router.push({ name: 'opsional-feature' })
+    }
     // call getQRCode() immediately when the component is mounted
     this.getQRCode()
 
