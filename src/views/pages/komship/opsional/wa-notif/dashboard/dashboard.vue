@@ -6,7 +6,7 @@
           variant="primary"
           size="sm"
           class="mr-1 rounded-lg p-0"
-          @click="$router.go(-1)"
+          @click="$router.push('/opsional-feature')"
         >
           <feather-icon
             size="2x"

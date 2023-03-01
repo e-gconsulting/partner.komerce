@@ -44,7 +44,7 @@
           Notifikasi WhatsApp Premium
         </div>
         <div class="text-center">
-          Fitur notifikasi WhatsApp otomatis aktif dengan template notif dari komship. Yuk hubungkan WhatsApp kamu untuk melanjutkan penyeesuaian dan buat template notifikasimu sendiri untuk menunjukkan identitas bisnismu
+          Fitur notifikasi WhatsApp otomatis aktif dengan template notif dari komship. Yuk hubungkan WhatsApp kamu untuk melanjutkan penyesuaian dan buat template notifikasimu sendiri untuk menunjukkan identitas bisnismu
         </div>
       </div>
       <div class="w-[36%] p-6 flex flex-col items-center text-black space-y-8">
@@ -72,7 +72,7 @@
           </li>
           <li class="flex space-x-5">
             <div>2.</div>
-            <div>Klik Menu atau Setelan dan pilih Perangkat Tertaut/Linked Deviice/WhatsApp Web</div>
+            <div>Klik Menu atau Setelan dan pilih Perangkat Tertaut/Linked Device/WhatsApp Web</div>
           </li>
           <li class="flex space-x-5">
             <div>3.</div>
