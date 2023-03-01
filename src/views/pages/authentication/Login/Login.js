@@ -258,12 +258,14 @@ export default {
                 ]
                 // KOMPACK
                 if (userData.is_kompack === 1) {
-                  ability.push({ action: 'manage', subject: 'Gudang Kompack' })
-                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
+                  ability.push({ action: 'manage', subject: 'Gudangku' })
                   ability.push({ action: 'manage', subject: 'Gudang' })
+                  ability.push({ action: 'manage', subject: 'Cari Gudang' })
+                  ability.push({ action: 'manage', subject: 'Ajukan Inbound' })
+                  ability.push({ action: 'manage', subject: 'Riwayat Pengajuan' })
                 }
                 if (userData.is_kompack === 0) {
-                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
+                  ability.push({ action: 'manage', subject: 'Gudangku' })
                   ability.push({ action: 'manage', subject: 'Gudang' })
                 }
               } else {
@@ -319,10 +321,23 @@ export default {
                 if (findAccessView !== undefined) ability.push({ action: 'read', subject: 'Dashboard Komship', path: '/' })
               }
               if (item.menu_name === 'GUDANG') {
-                const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
-                if (findAccessView !== undefined) {
-                  ability.push({ action: 'manage', subject: 'Gudang Komship', path: '/gudangku' })
-                  ability.push({ action: 'manage', subject: 'Gudang', path: '/gudangku' })
+                // const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
+                const findAccessCariGudang = item.access.find(accessItem => accessItem.access_id === 18)
+                const findAccessGudangku = item.access.find(accessItem => accessItem.access_id === 16)
+                const findAccessAjukanInbound = item.access.find(accessItem => accessItem.access_id === 17)
+                const findAccessRiwayatPengajuan = item.access.find(accessItem => accessItem.access_id === 19)
+                ability.push({ action: 'manage', subject: 'Gudang' })
+                if (findAccessGudangku !== undefined) {
+                  ability.push({ action: 'manage', subject: 'Gudangku', path: '/gudangku' })
+                }
+                if (findAccessCariGudang !== undefined) {
+                  ability.push({ action: 'manage', subject: 'Cari Gudang', path: '/cari-gudang' })
+                }
+                if (findAccessAjukanInbound !== undefined) {
+                  ability.push({ action: 'manage', subject: 'Ajukan Inbound', path: '/ajukan-inbound' })
+                }
+                if (findAccessRiwayatPengajuan !== undefined) {
+                  ability.push({ action: 'manage', subject: 'Riwayat Pengajuan', path: '/riwayat-pengajuan' })
                 }
               }
               if (item.menu_name === 'PICKUP') {

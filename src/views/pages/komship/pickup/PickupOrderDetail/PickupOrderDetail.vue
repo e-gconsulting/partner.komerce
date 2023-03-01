@@ -14,7 +14,7 @@
       </span>
     </b-row>
     <b-alert
-      v-if="$route.params.order_data_id === undefined"
+      v-if="$route.params.order_data_id === undefined && $route.query.order_id === undefined"
       variant="primary"
       class="p-1"
       show
@@ -69,7 +69,7 @@
         :items="order"
       >
         <template #head(no)>
-          <div v-if="$route.params.order_data_id === undefined">
+          <div v-if="$route.params.order_data_id === undefined && $route.query.order_id === undefined">
             No
           </div>
           <div v-else>
@@ -80,7 +80,7 @@
           </div>
         </template>
         <template #cell(no)="data">
-          <div v-if="$route.params.order_data_id === undefined">
+          <div v-if="$route.params.order_data_id === undefined && $route.query.order_id === undefined">
             {{ data.index + 1 }}
           </div>
           <div v-else>
@@ -556,7 +556,7 @@ export default {
       }
     },
     goBack() {
-      if (this.$route.params.order_data_id === undefined) {
+      if (this.$route.params.order_data_id === undefined && this.$route.query.order_id === undefined) {
         this.$router.push({
           name: 'ajukan-pickup',
           params: {
@@ -628,7 +628,7 @@ export default {
         try {
           const order = await this.$http_komship.get(`/v3/order/${this.profile.partner_detail.id}`, {
             params: {
-              order_id: this.orderID,
+              order_id: this.orderID ? this.orderID : this.$route.query.order_id,
               limit: this.limit,
               offset: this.offset,
               shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
@@ -691,7 +691,7 @@ export default {
     },
     async downloadPrintLabel() {
       try {
-        const print = await httpKomship.post('/v2/generate/print-label', null, {
+        const print = await httpKomship.post('/v3/generate/print-label', null, {
           params: {
             order_id: this.orderIdPrint,
             page: this.formatPrint,

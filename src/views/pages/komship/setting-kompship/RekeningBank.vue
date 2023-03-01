@@ -1811,7 +1811,6 @@ export default {
     width: 18rem;
   }
 }
-
 [dir] .otp-input {
     width: 40px;
     height: 40px;

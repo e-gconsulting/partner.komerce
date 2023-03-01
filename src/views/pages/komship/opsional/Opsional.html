@@ -162,16 +162,142 @@
                       <b-form-checkbox
                           v-model="notifWA"
                           switch
-                          @input="setNotifWa()"
+                          @input="chooseWa"
                       />
                   </b-card-title>
                   <b-card-text>
                     Notif WA dari Komship yang akan dikirim saat paket berangkat dan mendekati kota customer
                   </b-card-text>
+                  <b-row class="justify-content-center" v-if="defaultWa !== 0">
+                    <b-button
+                        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                        style="background: #F95031!important; border: 0; max-width: 190px; border-radius: 8px;"
+                        class="btn-icon"
+                        @click="koneksiWa"
+                    >
+                        <div v-if="defaultWa === 2">Sesuaikan</div>
+                        <div v-else>
+                            <b-spinner
+                            v-if="cekSaldoLoading"
+                            variant="light"
+                            small
+                            >
+                          </b-spinner>
+                          Jadikan Premium
+                        </div>
+                    </b-button>
+                </b-row>
               </b-card>
           </b-col>
       </b-row>
   </div>
+
+  <!-- Modal Pilihan Wa -->
+  <b-modal
+    ref="modal-choose-wa"
+    hide-header
+    hide-footer
+    centered
+    size="md"
+    @hidden="resetWa"
+  >
+  <div class="p-[10px]">
+    <div class="text-black font-bold text-center text-2xl mb-2">Pilihan Nomor WA Notifikasi</div>
+      <div class="bg-[#F8F8F8] w-[220px] float-left mt-2" style="height: 425px;">
+        <div class="text-2xl text-black font-bold flex justify-center items-end">
+          <div class="mt-2">Gratis</div>
+        </div>
+        <div class="space-y-3 mt-2 px-[12px]">
+          <div v-for="list in waGratis" :key="list.id" class="flex">
+            <div class="w-[7%]">
+              <svg v-if="list.check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311698)">
+                <path d="M6.57994 11.5838C6.37994 11.5838 6.18994 11.5038 6.04994 11.3638L3.21994 8.53376C2.92994 8.24376 2.92994 7.76376 3.21994 7.47376C3.50994 7.18376 3.98994 7.18376 4.27994 7.47376L6.57994 9.77376L11.7199 4.63376C12.0099 4.34376 12.4899 4.34376 12.7799 4.63376C13.0699 4.92376 13.0699 5.40376 12.7799 5.69376L7.10994 11.3638C6.96994 11.5038 6.77994 11.5838 6.57994 11.5838Z" fill="#34A770"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#34A770"/>
+                <defs>
+                <clipPath id="clip0_29694_311698">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+              <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311678)">
+                <path d="M5.16986 11.58C4.97986 11.58 4.78986 11.51 4.63986 11.36C4.34986 11.07 4.34986 10.59 4.63986 10.3L10.2999 4.63999C10.5899 4.34999 11.0699 4.34999 11.3599 4.63999C11.6499 4.92999 11.6499 5.40998 11.3599 5.69998L5.69986 11.36C5.55986 11.51 5.35986 11.58 5.16986 11.58Z" fill="#E31A1A"/>
+                <path d="M10.8299 11.58C10.6399 11.58 10.4499 11.51 10.2999 11.36L4.63986 5.69998C4.34986 5.40998 4.34986 4.92999 4.63986 4.63999C4.92986 4.34999 5.40986 4.34999 5.69986 4.63999L11.3599 10.3C11.6499 10.59 11.6499 11.07 11.3599 11.36C11.2099 11.51 11.0199 11.58 10.8299 11.58Z" fill="#E31A1A"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#E31A1A"/>
+                <defs>
+                <clipPath id="clip0_29694_311678">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+            </div> 
+            <div class="w-[93%] text-black text-sm ml-1">{{ list.text }}</div>
+          </div>
+        </div>
+        <div class="flex items-end justify-center mt-20">
+          <b-button variant="outline-primary" style="width: 196px;" @click="setNotifWa">
+            Aktifkan
+          </b-button>
+        </div>
+      </div>
+      <div class="w-[220px] shadow float-right relative" style="height: 469px;">
+        <div class="text-white text-center shadow">
+          <svg class="absolute" width="220" height="98" viewBox="0 0 220 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H220V71L148.827 96.6609C147.299 97.212 145.659 97.3823 144.05 97.1571L0 77V0Z" fill="#F95031"/>
+          </svg>
+          <div class="absolute left-0 right-0 mt-2">
+            <div class="mb-0.5">Premium</div>
+            <div class="text-2xl font-bold">Rp1.300,-<span class="text-xs font-medium">/hari</span></div>
+          </div>
+        </div>
+        <div class="space-y-3 mt-[114px] px-[12px]">
+          <div v-for="list in waPremium" :key="list.id" class="flex">
+            <div class="w-[7%]">
+              <svg v-if="list.check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311698)">
+                <path d="M6.57994 11.5838C6.37994 11.5838 6.18994 11.5038 6.04994 11.3638L3.21994 8.53376C2.92994 8.24376 2.92994 7.76376 3.21994 7.47376C3.50994 7.18376 3.98994 7.18376 4.27994 7.47376L6.57994 9.77376L11.7199 4.63376C12.0099 4.34376 12.4899 4.34376 12.7799 4.63376C13.0699 4.92376 13.0699 5.40376 12.7799 5.69376L7.10994 11.3638C6.96994 11.5038 6.77994 11.5838 6.57994 11.5838Z" fill="#34A770"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#34A770"/>
+                <defs>
+                <clipPath id="clip0_29694_311698">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+              <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311678)">
+                <path d="M5.16986 11.58C4.97986 11.58 4.78986 11.51 4.63986 11.36C4.34986 11.07 4.34986 10.59 4.63986 10.3L10.2999 4.63999C10.5899 4.34999 11.0699 4.34999 11.3599 4.63999C11.6499 4.92999 11.6499 5.40998 11.3599 5.69998L5.69986 11.36C5.55986 11.51 5.35986 11.58 5.16986 11.58Z" fill="#E31A1A"/>
+                <path d="M10.8299 11.58C10.6399 11.58 10.4499 11.51 10.2999 11.36L4.63986 5.69998C4.34986 5.40998 4.34986 4.92999 4.63986 4.63999C4.92986 4.34999 5.40986 4.34999 5.69986 4.63999L11.3599 10.3C11.6499 10.59 11.6499 11.07 11.3599 11.36C11.2099 11.51 11.0199 11.58 10.8299 11.58Z" fill="#E31A1A"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#E31A1A"/>
+                <defs>
+                <clipPath id="clip0_29694_311678">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+            </div>                       
+            <div class="w-[93%] text-black text-sm ml-1">{{ list.text }}</div>
+          </div>
+        </div>
+        <div class="flex items-end justify-center mt-20">
+          <b-button variant="primary" style="width: 196px;" @click="cekSaldoWaPremium">
+            <b-spinner
+            v-if="cekSaldoLoading"
+            variant="light"
+            small
+            >
+          </b-spinner>
+            <div v-if="!cekSaldoLoading">Aktifkan</div>
+          </b-button>
+        </div>
+      </div>
+  </div>
+    
+  </b-modal>
 
     <!-- Modal Custom Label -->
     <b-modal
