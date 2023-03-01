@@ -1021,7 +1021,7 @@ export default {
       this.isShipping = false
       this.isCalculate = false
       this.isCalculateOnExpedition = false
-      this.loadingOptionExpedition = false
+      this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         this.$http_komship.get('v3/calculate', {
           params: {
@@ -1565,18 +1565,25 @@ export default {
     formatPhoneCustomer: _.debounce(function () {
       if (this.customerPhone.length < 9) {
         this.messageErrorPhone = true
+        this.requireCustomerPhone = true
+        this.isWhatsapp = null
       } else {
         this.messageErrorPhone = false
+        this.requireCustomerPhone = false
+        this.checkWhatsapp()
+        this.getCustomerReputation()
       }
       if (this.customerPhonePasteMode === true) {
         this.customerPhone = this.customerPhonePaste
       }
       this.customerPhonePasteMode = false
-      this.checkWhatsapp()
-      this.getCustomerReputation()
     }, 1000),
     validateInputPhoneCustomer(e) {
+      const charCode = e.which ? e.which : e.keyCode
       if (this.customerPhone.length === 0) {
+        if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 48) {
+          e.preventDefault()
+        }
         if (e.keyCode === 48) {
           e.preventDefault()
         }
@@ -1587,6 +1594,7 @@ export default {
       if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
         e.preventDefault()
       }
+      return true
     },
     refreshPage() {
       window.location.reload()
