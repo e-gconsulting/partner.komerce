@@ -167,7 +167,6 @@ export default {
       coverageCodSap: true,
 
       warehouseID: 0,
-      warehouseType: '',
 
     }
   },
@@ -466,23 +465,7 @@ export default {
         this.shipping = null
         this.isShipping = false
         this.listShipping = []
-      }
-
-      if (address.warehouse_type === 'Mitra Kompack' && this.warehouseId !== address.warehouse_id) {
-        this.warehouseId = address.warehouse_id
-        this.warehouseType = address.warehouse_type
-        this.productList = []
-        this.productSelected = []
         this.getProductList(address)
-      } else if (this.warehouseType !== address.warehouse_type) {
-        this.warehouseType = address.warehouse_type
-        this.productList = []
-        this.productSelected = []
-        this.getProductList(address)
-      } else {
-        (
-          this.getProductList(address)
-        )
       }
     },
     async getProductList(address) {
