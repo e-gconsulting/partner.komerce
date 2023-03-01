@@ -31,6 +31,14 @@
         class="text-right"
       >
         <v-select
+          v-model="isPrint"
+          :options="listPrint"
+          placeholder="Semua"
+          class="d-inline-block mb-1 mr-1"
+          style="width:205px"
+          @input="getOrderDataByPrint"
+        />
+        <v-select
           v-model="shipment"
           :options="listShipment"
           placeholder="Pilih Ekspedisi"
@@ -93,6 +101,58 @@
         <template #cell(order_date)="data">
           <span class="font-bold">{{ data.item.order_date.slice(0, 10) }}</span><br>
           <span>{{ data.item.order_date.slice(11, -3) }}</span>
+        </template>
+        <template #cell(customer_name)="data">
+          <h5 class="text-top">
+            <strong>
+              {{ data.item.customer_name }}
+            </strong>
+          </h5>
+          <b-row
+            v-if="data.item.shipping === 'JNE'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              width="40"
+              class="ml-1"
+            />
+            <span class="ml-50">
+              <strong>
+                Reguler
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'SICEPAT'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo__sicepat.svg"
+              width="60"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ data.item.shipping_type }}
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'IDEXPRESS'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo-idexpress.svg"
+              width="40"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ data.item.shipping_type }}
+              </strong>
+            </span>
+          </b-row>
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
@@ -178,57 +238,23 @@
             </b-button>
           </div>
         </template>
-        <template #cell(customer_name)="data">
-          <h5 class="text-top">
-            <strong>
-              {{ data.item.customer_name }}
-            </strong>
-          </h5>
-          <b-row
-            v-if="data.item.shipping === 'JNE'"
-            class="align-items-center"
+        <template #cell(airway_bill)="data">
+          <div>{{ data.item.airway_bill }}</div>
+          <div
+            v-if="data.item.is_print === 1"
+            :id="`${String(data.item.airway_bill)}`"
+            class="label-after-print"
           >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              width="40"
-              class="ml-1"
-            />
-            <span class="ml-50">
-              <strong>
-                Reguler
-              </strong>
-            </span>
-          </b-row>
-          <b-row
-            v-if="data.item.shipping === 'SICEPAT'"
-            class="align-items-center"
+            Tercetak
+          </div>
+          <b-popover
+            :target="`${String(data.item.airway_bill)}`"
+            triggers="hover focus"
+            placement="topleft"
+            custom-class="custom-popover"
           >
-            <b-img
-              src="@/@core/assets/image/icons/logo__sicepat.svg"
-              width="60"
-              class="ml-1"
-            />
-            <span class="text-black ml-50">
-              <strong>
-                {{ data.item.shipping_type }}
-              </strong>
-            </span>
-          </b-row>
-          <b-row
-            v-if="data.item.shipping === 'IDEXPRESS'"
-            class="align-items-center"
-          >
-            <b-img
-              src="@/@core/assets/image/icons/logo-idexpress.svg"
-              width="40"
-              class="ml-1"
-            />
-            <span class="text-black ml-50">
-              <strong>
-                {{ data.item.shipping_type }}
-              </strong>
-            </span>
-          </b-row>
+            <span class="text-white">Label PDF di orderan resi ini pernah didownload untuk dicetak</span>
+          </b-popover>
         </template>
         <template #cell(warehouse_type)="data">
           <div>{{ data.item.fulfillment_fee }}</div>
@@ -512,6 +538,12 @@ export default {
       percentageDownload: 0,
       isDownloadActive: false,
       warningIcon,
+      listPrint: [
+        { value: null, label: 'Semua' },
+        { value: 1, label: 'Tercetak' },
+        { value: 0, label: 'Belum Tercetak' },
+      ],
+      isPrint: { value: null, label: 'Semua' },
     }
   },
   computed: {
@@ -600,6 +632,7 @@ export default {
                 limit: this.limit,
                 offset: this.offset,
                 shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
+                is_print: this.isPrint.value,
               },
             })
             const { data } = order.data
@@ -657,6 +690,13 @@ export default {
       }
     },
     async getOrderDataByExpedition() {
+      this.limit = 50
+      this.offset = 0
+      this.lastOrderData = false
+      this.order = []
+      this.getOrderData()
+    },
+    async getOrderDataByPrint() {
       this.limit = 50
       this.offset = 0
       this.lastOrderData = false
@@ -912,6 +952,20 @@ export default {
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
+}
+.label-after-print {
+  background-color: #BEFCDE;
+  color: #34A770;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+.custom-popover {
+  background: #222222;
+  color: #ffffff;
+}
+.custom-popover .arrow::after {
+  border-bottom-color: #222222 !important;
+  border-top-color: #222222 !important;
 }
 
 @media (max-width: 576px) {
