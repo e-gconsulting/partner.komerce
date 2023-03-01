@@ -358,7 +358,7 @@
                     name="No Rekening"
                     rules="required"
                   >
-                    <div class="d-flex">
+                    <div class="d-block d-sm-flex">
                       <b-form-input
                         v-model="fieldAddAccountNo"
                         placeholder="Masukkan Nomor Rekening"
@@ -366,11 +366,11 @@
                         maxlength="20"
                         @keypress="isNumber($event)"
                         @paste.prevent="AccountBankNo"
-                        @input="changeFieldAddBank"
+                        @change="changeFieldAddBank"
                       />
                       <b-button
-                        :variant="fieldAddAccountName !== '' || ValidateAccountName ? 'secondary' : 'primary'"
-                        :disabled="fieldAddAccountName !== '' || ValidateAccountName"
+                        variant="primary"
+                        :disabled="ValidateAccountName"
                         class="ml-1 cekRekening"
                         @click="getAccount"
                       >
@@ -410,10 +410,10 @@
                     >
                       <b-img
                         rounded="circle"
-                        class="bg-[#34A770] mr-1"
+                        class="bg-[#34A770] mr-1 icon-validate"
                         src="https://storage.googleapis.com/komerce/assets/komerce-icon/Putih/Checklist.svg"
                       />
-                      <span class="align-self-center text-black">Nomor Rekening berhasil ditemukan</span>
+                      <span class="align-self-center text-black message-account-name">Nomor Rekening berhasil ditemukan</span>
                     </div>
                     <div
                       v-else
@@ -421,10 +421,10 @@
                     >
                       <b-img
                         rounded="circle"
-                        class="bg-[#FFF2E2] mr-1"
+                        class="bg-[#FFF2E2] mr-1 icon-validate"
                         src="https://storage.googleapis.com/komerce/assets/icons/danger-yellow.svg"
                       />
-                      <span class="align-self-center text-black">Nomor Rekening salah/tidak ditemukan</span>
+                      <span class="align-self-center text-black message-account-name">Nomor Rekening salah/tidak ditemukan</span>
                     </div>
                   </div>
                 </b-form-group>
@@ -444,11 +444,10 @@
                       <b-form-input
                         v-model="fieldAddAccountName"
                         placeholder="Nama akan otomatis muncul"
-                        class="mr-3 pr-2"
+                        class="pr-2"
                         :state="errors.length > 0 ? false:null"
                         disabled
                       />
-                      <div class="w-44" />
                     </div>
                     <!-- <small class="text-danger">{{ errors[0] }}</small> -->
                     <small
@@ -1384,8 +1383,6 @@ export default {
       this.isValidateAccountName = false
       this.checkValidBank = true
       this.messageSameNoBank = ''
-      this.validateFieldAddBankName = false
-      this.validateFieldAddAccountNo = false
     },
     changeFieldAddBank() {
       this.fieldAddAccountName = ''
@@ -1758,7 +1755,7 @@ export default {
           this.accountNameDB = true
           this.fieldAddAccountName = response.data.data.account_name
           this.getValidateAccountName = true
-          this.checkValidBank = false
+          this.checkBank()
         } else {
           this.ValidateAccountName = false
           this.checkValidBank = true
@@ -1775,6 +1772,10 @@ export default {
     },
     AccountBankNo(e) {
       this.fieldAddAccountNo = ''
+      this.fieldAddAccountName = ''
+      this.ValidateAccountName = false
+      this.checkValidBank = true
+      this.isValidateAccountName = false
       const dummyAccountBank = e.clipboardData.getData('text').replace(/\D/g, '')
       this.fieldAddAccountNo = dummyAccountBank
     },
@@ -1786,18 +1787,20 @@ export default {
 .validate-green {
   border: 1px solid #DCF3EB;
   background-color: #DCF3EB;
-  width: 78%;
+  width: 100%;
   border-radius: 8px;
 }
 .validate-red {
   border: 1px solid #FFF2E2;
   background-color: #FFF2E2;
-  width: 78%;
+  width: 100%;
   border-radius: 8px;
 }
+
 .cekRekening {
   width: 13rem;
 }
+
 @media screen and (max-width: 1200px) {
   .cekRekening {
     width: 14rem;
