@@ -202,7 +202,7 @@
           v-model="customerPhone"
           type="number"
           :style="requireCustomerPhone ? 'background-color: #FFEDED; border: 1px solid #E31A1A' : 'background-color: white;'"
-          @keypress="validateInputPhoneCustomer"
+          @keypress="validateInputPhoneCustomer($event)"
           @paste="formatterPhone"
           @input="formatPhoneCustomer"
           @keyup="valueFormatPhone"
@@ -1183,7 +1183,7 @@
     <b-col md="6" class="d-flex justify-center mt-1">
       <b-button
         variant="outline-primary"
-        :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
+        :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone.length < 9 || requireCustomerPhone || loadingCalculate"
         @click="submit(true)"
       >
         Submit & Tambah Order Lagi
@@ -1192,7 +1192,7 @@
         v-if="isSubmitOrder === false && messageErrorAddressDetail === false"
         variant="primary"
         class="ml-1"
-        :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone || loadingCalculate"
+        :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone.length < 9 || requireCustomerPhone || loadingCalculate"
         @click="submit(false)"
       >
         Submit
