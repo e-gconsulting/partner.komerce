@@ -466,6 +466,8 @@ export default {
         this.isShipping = false
         this.listShipping = []
         this.getProductList(address)
+      } else {
+        this.getProductList(address)
       }
     },
     async getProductList(address) {
