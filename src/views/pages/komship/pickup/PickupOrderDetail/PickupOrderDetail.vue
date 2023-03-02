@@ -539,11 +539,11 @@ export default {
       isDownloadActive: false,
       warningIcon,
       listPrint: [
-        { value: null, label: 'Semua' },
+        { value: 2, label: 'Semua' },
         { value: 1, label: 'Tercetak' },
         { value: 0, label: 'Belum Tercetak' },
       ],
-      isPrint: { value: null, label: 'Semua' },
+      isPrint: null,
     }
   },
   computed: {
@@ -626,6 +626,9 @@ export default {
       if (this.$route.params.order_data_id !== undefined) {
         if (!this.lastOrderData) {
           this.loading = true
+          if (this.isPrint === null) {
+            this.isPrint = { value: 2, label: 'Semua' }
+          }
           try {
             const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}`, {
               params: {
