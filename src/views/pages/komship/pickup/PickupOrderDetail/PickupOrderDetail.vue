@@ -697,6 +697,7 @@ export default {
       this.offset = 0
       this.lastOrderData = false
       this.order = []
+      this.listOrderPrint = []
       this.getOrderData()
     },
     async getOrderDataByPrint() {
@@ -704,6 +705,7 @@ export default {
       this.offset = 0
       this.lastOrderData = false
       this.order = []
+      this.listOrderPrint = []
       this.getOrderData()
     },
     selectAllOrder() {
@@ -794,6 +796,7 @@ export default {
           alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
         }
         this.loadingButtonPrintLabel = false
+        this.listOrderPrint = []
       }).catch(() => {
         this.loadingButtonPrintLabel = false
         this.$toast({
@@ -965,6 +968,7 @@ export default {
 .custom-popover {
   background: #222222;
   color: #ffffff;
+  top: 2% !important;
 }
 .custom-popover .arrow::after {
   border-bottom-color: #222222 !important;
