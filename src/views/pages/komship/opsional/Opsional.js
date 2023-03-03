@@ -323,7 +323,7 @@ export default {
       this.confirmWa = true
       this.$refs['modal-choose-wa'].hide()
       this.$swal({
-        html: '<span>Notif WA ini menggunakan <b>No. WA Komship</b> dan akan otomatis mengiriman reminder bahwa paket telah berangkat dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><div class="mt-1">Fitur ini GRATIS. Kamu yakin mau aktifin?</div></span>',
+        html: '<span>Notif WA ini menggunakan <b>No. WA Komship</b> dan akan otomatis mengiriman reminder bahwa paket telah <b>berangkat</b> dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><div class="mt-1">Fitur ini GRATIS. Kamu yakin mau aktifin?</div></span>',
         imageUrl: require('@/assets/images/icons/warning.svg'),
         confirmButtonText: 'Ya, Aktifkan',
         confirmButtonClass: 'btn btn-primary',
