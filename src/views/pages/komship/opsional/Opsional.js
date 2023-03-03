@@ -259,7 +259,6 @@ export default {
     chooseWa() {
       if (this.onPremiumWA && this.notifWA && this.defaultWa === 0) {
         this.postNotifWaPremium()
-        // console.log('ahayyy')
       }
       if (this.defaultWa === 0 && this.notifWA && !this.onPremiumWA) {
         this.$refs['modal-choose-wa'].show()
@@ -350,9 +349,6 @@ export default {
     koneksiWa() {
       if (this.defaultWa === 2 && this.onPremiumWA) {
         this.$router.push('/opsional-feature/koneksi-wa')
-      }
-      if (this.defaultWa === 2 && !this.onPremiumWA) {
-        console.log('premium')
       }
       if (this.defaultWa === 1) {
         this.cekSaldoWaPremium()
