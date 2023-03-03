@@ -82,6 +82,7 @@ export default {
 
       defaultWa: null,
       confirmWa: false,
+      onPremiumWA: null,
       cekSaldoLoading: false,
       subscriptionFee: 0,
     }
@@ -108,6 +109,7 @@ export default {
       this.returnInsight = this.profile.partner_is_return_insight
       this.orderNotes = this.profile.partner_is_order_notes
       this.notifWA = notifWa
+      this.onPremiumWA = this.profile.partner_whatsapp_premium
       this.defaultWa = this.profile.partner_is_notification_whatsapp
       this.customerReputation = this.profile.partner_is_customer_reputation
       this.salesTracking = this.profile.partner_is_tracking_sales
@@ -253,10 +255,15 @@ export default {
         }
       }
     },
+
     chooseWa() {
-      if (this.defaultWa === 0 && this.notifWA) {
+      if (this.onPremiumWA && this.notifWA && this.defaultWa === 0) {
+        this.postNotifWaPremium()
+      }
+      if (this.defaultWa === 0 && this.notifWA && !this.onPremiumWA) {
         this.$refs['modal-choose-wa'].show()
-      } else if (!this.notifWA && this.defaultWa !== 0) {
+      }
+      if (!this.notifWA && this.defaultWa !== 0) {
         this.$swal({
           title: 'Nonaktifkan Fitur',
           text: 'Kamu yakin akan menonaktifkan fitur Notif WhatsApp',
@@ -340,7 +347,7 @@ export default {
     },
 
     koneksiWa() {
-      if (this.defaultWa === 2) {
+      if (this.defaultWa === 2 && this.onPremiumWA) {
         this.$router.push('/opsional-feature/koneksi-wa')
       }
       if (this.defaultWa === 1) {

@@ -6,7 +6,7 @@
           variant="primary"
           size="sm"
           class="mr-1 rounded-lg p-0"
-          @click="$router.go(-1)"
+          @click="$router.push('/opsional-feature')"
         >
           <feather-icon
             size="2x"
@@ -23,8 +23,8 @@
         </div>
         <b-button
           variant="primary"
-          class="rounded-16 mt-[5px]"
-          @click="modalRenew"
+          class="rounded-2xl mt-[5px]"
+          @click.once="modalRenew"
         >
           Perpanjang
         </b-button>
@@ -212,7 +212,7 @@
                 class="align-self-center"
                 @change="templateCod"
               />
-              <b-button class="custom-button">
+              <b-button class="custom-button" @click="$router.push({ name: 'template-notification-cod' })">
                 <img
                   class="icon-edit"
                   src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg"
@@ -377,6 +377,7 @@
             class="mb-1"
             :options="listSubscription"
             label="name"
+            @input="subscriptionChange"
           />
         </div>
         <div>
@@ -400,7 +401,11 @@
               :disabled="disabledSubcription"
               @click="subscribe"
             >
-              Bayar
+              <b-spinner
+                v-if="loadingSubcription"
+                small
+              />
+              <span v-else>Bayar</span>
             </b-button>
           </div>
         </div>
@@ -408,203 +413,7 @@
     </b-modal>
   </b-card>
 </template>
-<script>
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import vSelect from 'vue-select'
-import { mapState } from 'vuex'
-
-export default {
-  components: {
-    vSelect,
-  },
-
-  data() {
-    return {
-      expiredDate: 0,
-      statusWhatsapp: 'Terhubung',
-      Notification: {},
-      iconToggle: true,
-      pickupNotification: false,
-      codNotification: false,
-      codTooltip: 'Aktifkan Notifikasi',
-      notificationTooltip: 'Aktifkan Notifikasi',
-      messageTemplateCod: '',
-      messageTemplatePickup: 'lorem ipsum dolor sit amet, consectetur',
-      listFitur: [{ value: 1, name: 'Notifikasi WhatsApp Premium' }],
-      listSubscription: [
-        { value: 1, name: '1 Bulan - Rp39.000' },
-        { value: 2, name: '3 Bula - 117.000' },
-        { value: 3, name: '6 Bulan - 234.000' },
-        { value: 4, name: '1 Tahun - 468.000' },
-      ],
-      subscription: { value: 1, name: '1 Bulan - Rp39.000' },
-      fitur: { value: 1, name: 'Notifikasi WhatsApp Premium' },
-      saldo_kompay: 0,
-      disabledSubcription: true,
-      isTemplate: true,
-    }
-  },
-
-  computed: {
-    ...mapState('dashboard', ['profile']),
-  },
-
-  mounted() {
-    this.fetchData()
-    if (this.profile.partner_is_notification_whatsapp !== 2) {
-      this.$router.push({ name: 'opsional-feature' })
-    }
-  },
-
-  methods: {
-    fetchData() {
-      this.$http_komship
-        .get('/v1/setting/notification-whatsapp-dashboard')
-        .then(response => {
-          const { data } = response.data
-          this.Notification = data
-          this.expiredDate = data.whatsapp_expired_at
-          this.codNotification = data.notification_cod.status
-          this.pickupNotification = data.notification_pickup.status
-          this.messageTemplateCod = data.notification_cod.message
-          this.messageTemplatePickup = data.notification_pickup.message
-        })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err.response.data.message,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    logout() {
-      this.$http_komship
-        .post('/v1/setting/whatsapp-logout')
-        .then(response => {
-          if (response.data.code === 200) {
-            this.$router.push({ name: 'koneksi-wa' })
-          }
-          console.log(response)
-        })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err.response.data.message,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    modalRenew() {
-      this.$bvModal.show('modal-renew-subcription')
-      this.$http_komship
-        .get('/v1/setting/notification-whatsapp-premium-fee')
-        .then(response => {
-          const { data } = response.data
-          this.saldo_kompay = data.kompay_balance
-          console.log(response)
-        })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err.response.data.message,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    subscribe() {
-      this.$http_komship
-        .post('/v1/setting/renew-whatsapp-subscription')
-        .then(response => {
-          console.log(response)
-        })
-    },
-    templateCod() {
-      let status = ''
-      if (this.codNotification === true) {
-        this.codTooltip = 'Matikan Notifikasi'
-        this.isTemplate = true
-        status = 1
-      } else {
-        this.codTooltip = 'Aktifkan Notifikasi'
-        status = 0
-      }
-
-      const formData = new FormData()
-      formData.append('type_notification', 'is_received')
-      formData.append('status', status)
-
-      this.$http_komship
-        .post('/v1/setting/on-or-off-template-whatsapp', formData)
-        .then(response => {
-          console.log(response)
-        })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err.response.data.message,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    templatePickup() {
-      let status = ''
-      if (this.pickupNotification === true) {
-        this.notificationTooltip = 'Matikan Notifikasi'
-        this.isTemplate = false
-        status = 1
-      } else {
-        this.notificationTooltip = 'Aktifkan Notifikasi'
-        status = 0
-      }
-
-      const formData = new FormData()
-      formData.append('type_notification', 'is_sending')
-      formData.append('status', status)
-
-      this.$http_komship
-        .post('/v1/setting/on-or-off-template-whatsapp', formData)
-        .then(response => {
-          console.log(response)
-        })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err.response.data.message,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    hoverTemplate(template) {
-      if (template === 'cod') {
-        this.isTemplate = true
-      } else {
-        this.isTemplate = false
-      }
-    },
-  },
-}
-</script>
-
+<script src="./dashboard.js" />
 <style lang="scss">
 @import '@core/scss/vue/libs/vue-select.scss';
 </style>

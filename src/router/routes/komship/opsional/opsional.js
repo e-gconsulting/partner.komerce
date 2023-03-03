@@ -29,4 +29,14 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/opsional-feature/template-notification-cod',
+    name: 'template-notification-cod',
+    component: () => import('@/views/pages/komship/opsional/wa-notif/template-notifikasi/templateCOD.vue'),
+    meta: {
+      name: 'template-notification-cod',
+      resource: 'Fitur Pendukung',
+      action: 'manage',
+    },
+  },
 ]
