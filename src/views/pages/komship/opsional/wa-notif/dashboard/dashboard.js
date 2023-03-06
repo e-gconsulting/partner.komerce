@@ -144,6 +144,15 @@ export default {
         .then(response => {
           if (response.data.code === 200) {
             this.$bvModal.hide('modal-renew-subcription')
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'AlertCircleIcon',
+                text: 'Berhasil melakukan pembayaran dan perpanjangan',
+                variant: 'success',
+              },
+            })
             this.loadingSubcription = false
             this.fetchData()
           } else {
@@ -156,7 +165,7 @@ export default {
             props: {
               title: 'Failure',
               icon: 'AlertCircleIcon',
-              text: err.response.data.message,
+              text: 'Gagal melakukan pembayaran dan perpanjangan',
               variant: 'danger',
             },
           })
@@ -180,7 +189,15 @@ export default {
       this.$http_komship
         .post('/v1/setting/on-or-off-template-whatsapp', formData)
         .then(response => {
-          console.log(response)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'AlertCircleIcon',
+              text: response.data.message,
+              variant: 'success',
+            },
+          })
         })
         .catch(err => {
           this.$toast({
@@ -212,7 +229,15 @@ export default {
       this.$http_komship
         .post('/v1/setting/on-or-off-template-whatsapp', formData)
         .then(response => {
-          console.log(response)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'AlertCircleIcon',
+              text: response.data.message,
+              variant: 'success',
+            },
+          })
         })
         .catch(err => {
           this.$toast({
