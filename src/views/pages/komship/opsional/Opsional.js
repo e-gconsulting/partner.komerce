@@ -259,7 +259,6 @@ export default {
     chooseWa() {
       if (this.onPremiumWA && this.notifWA && this.defaultWa === 0) {
         this.postNotifWaPremium()
-        // console.log('ahayyy')
       }
       if (this.defaultWa === 0 && this.notifWA && !this.onPremiumWA) {
         this.$refs['modal-choose-wa'].show()
@@ -324,7 +323,7 @@ export default {
       this.confirmWa = true
       this.$refs['modal-choose-wa'].hide()
       this.$swal({
-        html: '<span>Notif WA ini menggunakan <b>No. WA Komship</b> dan akan otomatis mengiriman reminder bahwa paket telah berangkat dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><div class="mt-1">Fitur ini GRATIS. Kamu yakin mau aktifin?</div></span>',
+        html: '<span>Notif WA ini menggunakan <b>No. WA Komship</b> dan akan otomatis mengiriman reminder bahwa paket telah <b>berangkat</b> dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><div class="mt-1">Fitur ini GRATIS. Kamu yakin mau aktifin?</div></span>',
         imageUrl: require('@/assets/images/icons/warning.svg'),
         confirmButtonText: 'Ya, Aktifkan',
         confirmButtonClass: 'btn btn-primary',
@@ -350,9 +349,6 @@ export default {
     koneksiWa() {
       if (this.defaultWa === 2 && this.onPremiumWA) {
         this.$router.push('/opsional-feature/koneksi-wa')
-      }
-      if (this.defaultWa === 2 && !this.onPremiumWA) {
-        console.log('premium')
       }
       if (this.defaultWa === 1) {
         this.cekSaldoWaPremium()
