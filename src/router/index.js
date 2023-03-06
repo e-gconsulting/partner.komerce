@@ -24,6 +24,7 @@ import opsional from './routes/komship/opsional/index'
 import myapps from './routes/komship/myapps/index'
 import ticketing from './routes/komship/ticketing/index'
 import warehouse from './routes/komship/warehouse/index'
+import inbox from './routes/komship/inbox'
 
 // kompack
 import gudang from './routes/kompack/gudang/index'
@@ -43,6 +44,7 @@ const router = new VueRouter({
     ...pages,
 
     ...dashboardKompship,
+    ...inbox,
     ...order,
     ...pickup,
     ...produk,
