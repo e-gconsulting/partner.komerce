@@ -242,19 +242,22 @@
           <div>{{ data.item.airway_bill }}</div>
           <div
             v-if="data.item.is_print === 1"
-            :id="`${String(data.item.airway_bill)}`"
-            class="label-after-print"
           >
-            Tercetak
+            <div
+              :id="`${String(data.item.airway_bill)}`"
+              class="label-after-print"
+            >
+              Tercetak
+            </div>
+            <b-popover
+              :target="`${String(data.item.airway_bill)}`"
+              triggers="hover focus"
+              placement="topleft"
+              custom-class="custom-popover"
+            >
+              <span class="text-white">Label PDF di orderan resi ini pernah didownload untuk dicetak</span>
+            </b-popover>
           </div>
-          <b-popover
-            :target="`${String(data.item.airway_bill)}`"
-            triggers="hover focus"
-            placement="topleft"
-            custom-class="custom-popover"
-          >
-            <span class="text-white">Label PDF di orderan resi ini pernah didownload untuk dicetak</span>
-          </b-popover>
         </template>
         <template #cell(warehouse_type)="data">
           <div>{{ data.item.fulfillment_fee }}</div>
@@ -696,6 +699,7 @@ export default {
       this.limit = 50
       this.offset = 0
       this.lastOrderData = false
+      this.checklistAllOrder = false
       this.order = []
       this.listOrderPrint = []
       this.getOrderData()
@@ -704,6 +708,7 @@ export default {
       this.limit = 50
       this.offset = 0
       this.lastOrderData = false
+      this.checklistAllOrder = false
       this.order = []
       this.listOrderPrint = []
       this.getOrderData()
@@ -968,7 +973,6 @@ export default {
 .custom-popover {
   background: #222222;
   color: #ffffff;
-  top: 2% !important;
 }
 .custom-popover .arrow::after {
   border-bottom-color: #222222 !important;
