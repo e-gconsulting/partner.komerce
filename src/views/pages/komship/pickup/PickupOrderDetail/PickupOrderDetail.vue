@@ -252,7 +252,7 @@
             <b-popover
               :target="`${String(data.item.airway_bill)}`"
               triggers="hover focus"
-              placement="topleft"
+              placement="left"
               custom-class="custom-popover"
             >
               <span class="text-white">Label PDF di orderan resi ini pernah didownload untuk dicetak</span>
@@ -973,8 +973,7 @@ export default {
   color: #ffffff;
 }
 .custom-popover .arrow::after {
-  border-bottom-color: #222222 !important;
-  border-top-color: #222222 !important;
+  border-left-color: #222222 !important;
 }
 @media (max-width: 576px) {
   .card-print-label {
