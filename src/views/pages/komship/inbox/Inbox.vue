@@ -11,9 +11,9 @@
       >
       <b-card>
         <b-row class="m-1">
-          <h2 class="text-black">
+          <h1 class="text-black" style="font-size: 2rem!important;">
             <strong> Inbox </strong>
-          </h2>
+          </h1>
         </b-row>
 
         <div class="container-inbox">
@@ -40,7 +40,7 @@
                     src="https://storage.googleapis.com/komerce/assets/svg/icon-komship.svg"
                   />
                   <b-img
-                    v-if="item.service === 'kompack'"
+                    v-else
                     class="mr-1"
                     src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
                   />
@@ -71,7 +71,7 @@
                   :cols="isOpened ? '12' : ''"
                   :class="isOpened ? '' : 'text-end'"
                 >
-                  <span class="text-black"> {{ moment(item.created_at).format('HH:mm') }} </span>
+                  <span class="text-black"> {{ getFormatterDate(item.created_at) }} </span>
                 </b-col>
               </b-row>
             </b-col>
@@ -107,6 +107,7 @@
                   </b-row>
 
                   <b-row
+                    v-if="!loadingDetail"
                     class="align-items-center justify-content-between mx-2 mb-1"
                   >
                     <div class="d-flex align-items-center">
@@ -116,14 +117,14 @@
                         src="https://storage.googleapis.com/komerce/assets/svg/icon-komship.svg"
                       />
                       <b-img
-                        v-if="inboxDetail.service === 'kompack'"
+                        v-else
                         class="mr-1"
                         src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
                       />
                       <span class="text-black"> Team {{ inboxDetail.service === 'komship' ? 'Komship' : 'Kompack' }} </span>
                     </div>
                     <div>
-                      <span> {{ moment(inboxDetail.created_at).format('HH:mm') }} </span>
+                      <span> {{ getFormatterDate(inboxDetail.created_at) }} </span>
                     </div>
                   </b-row>
 
@@ -232,6 +233,20 @@ export default {
       if (data.is_read === 0) result = 'background: white'
       if (this.clickId === data.id) result = 'background: #FCD4BE'
       return result
+    },
+    getFormatterDate(value) {
+      const pastDate = moment(value)
+      const currentDate = moment(new Date())
+      const asHours = moment.duration(currentDate.diff(pastDate))
+      const hour = Math.round(asHours.asHours())
+      let format = ''
+      if (hour < 24) {
+        format = moment(new Date(value)).format('HH:mm')
+      }
+      if (hour > 24) {
+        format = moment(new Date(value)).format('DD MMM')
+      }
+      return format
     },
   },
 }
