@@ -164,7 +164,7 @@
               toggle </span>(<b-check
               aria-label="icon"
               size="sm"
-              class="ml-[5px] w-1"
+              class="ml-[5px] w-1 mt-[2px]"
               disabled
               checked="true"
               switch
@@ -194,7 +194,7 @@
 
       <b-row>
         <b-col lg="6">
-          <div class="d-flex justify-content-between border-b-2 mt-1">
+          <div class="d-flex justify-content-between border-b-2 mt-1 pl-1 hover-cod">
             <div
               type="button"
               class="w-[80%] align-self-center"
@@ -212,7 +212,10 @@
                 class="align-self-center"
                 @change="templateCod"
               />
-              <b-button class="custom-button" @click="$router.push({ name: 'template-notification-cod' })">
+              <b-button
+                class="custom-button"
+                @click="$router.push({ name: 'template-notification-cod' })"
+              >
                 <img
                   class="icon-edit"
                   src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg"
@@ -220,7 +223,7 @@
               </b-button>
             </div>
           </div>
-          <div class="d-flex justify-content-between border-b-2 mt-1">
+          <div class="d-flex justify-content-between border-b-2 mt-1 pl-1 hover-pickup">
             <div
               type="button"
               class="w-[80%] align-self-center"
@@ -238,7 +241,10 @@
                 class="align-self-center"
                 @change="templatePickup"
               />
-              <b-button class="custom-button">
+              <b-button
+                class="custom-button"
+                @click="$router.push({ name: 'template-notification-pickup' })"
+              >
                 <img
                   class="icon-edit"
                   src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/edit.svg"
@@ -268,19 +274,23 @@
                 />
                 <div class="custom-template tri-right left-top">
                   <div class="text-left px-2 py-1">
-                    <div v-if="isTemplate">
-                      <!-- {{ messageTemplateCod }} -->
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Quos excepturi tempora magnam quam quo eveniet esse saepe,
-                      quaerat illo reprehenderit dignissimos quisquam eos ullam
-                      veniam praesentium accusantium unde iste assumenda, nisi
-                      rerum molestiae officiis! Commodi velit ex odio quis quam?
+                    <div
+                      v-if="isTemplate"
+                    >
+                      <div
+                        class="text-black text-[14px]"
+                        style="line-height: 21px;"
+                        v-html="messageTemplateCod"
+                      />
                     </div>
-                    <div v-else>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Perferendis tempore, molestiae incidunt libero reiciendis
-                      tempora ea cumque eos dolor eum.
-                      <!-- {{ messageTemplatePickup }} -->
+                    <div
+                      v-else
+                    >
+                      <div
+                        class="text-black text-[14px]"
+                        style="line-height: 21px;"
+                        v-html="messageTemplatePickup"
+                      />
                     </div>
                   </div>
                 </div>
@@ -463,6 +473,12 @@
 }
 .icon-edit {
   width: 25px;
+}
+.hover-pickup:hover {
+  background-color: #FCD4BE;
+}
+.hover-cod:hover {
+  background-color: #FCD4BE;
 }
 
 @media screen and (max-width: 1200px) {

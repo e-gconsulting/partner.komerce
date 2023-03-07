@@ -39,4 +39,14 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/opsional-feature/template-notification-pickup',
+    name: 'template-notification-pickup',
+    component: () => import('@/views/pages/komship/opsional/wa-notif/template-notifikasi/templatePickup.vue'),
+    meta: {
+      name: 'template-notification-pickup',
+      resource: 'Fitur Pendukung',
+      action: 'manage',
+    },
+  },
 ]

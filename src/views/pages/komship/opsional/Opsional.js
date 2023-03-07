@@ -83,6 +83,9 @@ export default {
       defaultWa: null,
       confirmWa: false,
       onPremiumWA: null,
+      queueWA: null,
+      serverWAFull: null,
+
       cekSaldoLoading: false,
       subscriptionFee: 0,
     }
@@ -93,24 +96,16 @@ export default {
   mounted() {
     this.getProfile()
     this.myProfile()
+    this.checkWA()
   },
   methods: {
     getProfile() {
-      let notifWa = null
-      if (this.profile.partner_is_notification_whatsapp === 0) {
-        notifWa = false
-      } else {
-        notifWa = true
-      }
       this.quickType = this.profile.partner_is_allowed_edit
       this.mutationBank = this.profile.partner_is_mutation_bank
       this.customLabel = this.profile.partner_is_custom_label
       this.orderMassal = this.profile.partner_is_mass_order
       this.returnInsight = this.profile.partner_is_return_insight
       this.orderNotes = this.profile.partner_is_order_notes
-      this.notifWA = notifWa
-      this.onPremiumWA = this.profile.partner_whatsapp_premium
-      this.defaultWa = this.profile.partner_is_notification_whatsapp
       this.customerReputation = this.profile.partner_is_customer_reputation
       this.salesTracking = this.profile.partner_is_tracking_sales
       this.isGetting = true
@@ -256,6 +251,23 @@ export default {
       }
     },
 
+    checkWA() {
+      const url = '/v1/setting/check-whatsapp'
+      this.$http_komship.get(url)
+        .then(res => {
+          const { data } = res.data
+          this.defaultWa = data.is_notification_whatsapp
+          this.onPremiumWA = data.is_whatsapp_premium
+          if (data.is_notification_whatsapp === 0) {
+            this.notifWA = false
+          } else {
+            this.notifWA = true
+          }
+          this.queueWA = data.is_queue_whatsapp
+          this.serverWAFull = data.is_server_full
+        })
+    },
+
     chooseWa() {
       if (this.onPremiumWA && this.notifWA && this.defaultWa === 0) {
         this.postNotifWaPremium()
@@ -279,7 +291,7 @@ export default {
           if (response.isConfirmed) {
             this.postNotifWa()
           } else {
-            this.getProfile()
+            this.checkWA()
           }
         })
       }
@@ -287,16 +299,15 @@ export default {
 
     resetWa() {
       if (this.defaultWa === 0 && this.notifWA && !this.confirmWa) {
-        this.getProfile()
+        this.checkWA()
       }
     },
 
     postNotifWa() {
       this.$http_komship.post('/v1/setting/isNotificationWhatsapp', {
         is_notification_whatsapp: this.notifWA ? '1' : '0',
-      }).then(async () => {
-        await this.$store.dispatch('dashboard/getProfile')
-        this.getProfile()
+      }).then(() => {
+        this.checkWA()
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -359,9 +370,10 @@ export default {
       this.$http_komship.post('/v1/setting/activate-notification-whatsapp-premium', {
         is_subscribe: 1,
         subscription_fees: this.subscriptionFee,
-      }).then(async () => {
-        await this.$store.dispatch('dashboard/getProfile')
-        this.getProfile()
+      }).then(res => {
+        const { data } = res.data
+        this.serverWAFull = data.is_server_full
+        this.checkWA()
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -386,10 +398,9 @@ export default {
 
     setNotifWaPremium() {
       this.postNotifWaPremium()
-      const i = true
       let text = ''
       let confirm = ''
-      if (i) {
+      if (!this.serverWAFull) {
         text = 'Pembayaran berhasil dilakukan. Lanjutkan untuk menyesuaikan Notifikasi WhatsApp-mu'
         confirm = 'Pengaturan Notif WA'
       } else {
@@ -407,8 +418,7 @@ export default {
         allowEscapeKey: false,
       }).then(response => {
         if (response.isConfirmed) {
-          const full = false
-          if (!full) {
+          if (!this.serverWAFull) {
             this.$router.push('/opsional-feature/koneksi-wa')
           }
         }
@@ -464,9 +474,8 @@ export default {
       this.$http.post(`/user/partner/setting/isCustomLabel/${this.profile.partner_id}`, {
         is_custom_label: 0,
       })
-        .then(async response => {
-          await this.$store.dispatch('dashboard/getProfile')
-          this.getProfile()
+        .then(() => {
+          this.checkWA()
           this.$toast({
             component: ToastificationContent,
             props: {
