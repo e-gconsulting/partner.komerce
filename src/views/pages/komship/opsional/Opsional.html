@@ -160,6 +160,15 @@
                   <b-card-title class="d-flex justify-between">
                       <span class="font-bold text-primary">Notif Whatsapp</span>
                       <b-form-checkbox
+                          v-if="defaultWa === 2 && onPremiumWA === true"
+                          v-model="notifWA"
+                          switch
+                          @input="chooseWa"
+                          disabled
+                          v-b-popover.hover.topleft="'Kamu bisa me-non-aktifkan notifikasi Pickup maupun COD melalui button &quot;Sesuaikan&quot; di bawah ini'"
+                      />
+                      <b-form-checkbox
+                          v-else
                           v-model="notifWA"
                           switch
                           @input="chooseWa"
@@ -168,8 +177,10 @@
                   <b-card-text>
                     Notif WA dari Komship yang akan dikirim saat paket berangkat dan mendekati kota customer
                   </b-card-text>
-                  <b-row class="justify-content-center" v-if="defaultWa !== 0">
+                  <b-row class="justify-content-center mt-2" v-if="defaultWa !== 0">
+                    <div class="small text-muted" v-if="onPremiumWA === true && queueWA === true && serverWAFull === true">Tunggu 1 - 3 Jam untuk menyesuaikan</div>
                     <b-button
+                        v-else
                         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                         style="background: #F95031!important; border: 0; max-width: 190px; border-radius: 8px;"
                         class="btn-icon"
