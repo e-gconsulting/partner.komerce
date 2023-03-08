@@ -167,7 +167,8 @@ export default {
       coverageCodSap: true,
 
       warehouseID: 0,
-
+      limit: 5,
+      isMoreShow: false,
     }
   },
   computed: {
@@ -449,6 +450,7 @@ export default {
       }
     }, 1000),
     getProductSearch: _.debounce(function (search, loading) {
+      this.isMoreShow = false
       this.searchProduct = search
       if (this.searchProduct === undefined || this.searchProduct === '') {
         this.searchProduct = ''
@@ -456,7 +458,7 @@ export default {
       } else if (this.searchProduct.length > 2) {
         this.getProduct(this.address)
       }
-    }, 1000),
+    }),
     getProduct(address) {
       if (this.warehouseId !== address.warehouse_id) {
         this.warehouseId = address.warehouse_id
@@ -471,12 +473,37 @@ export default {
       }
     },
     async getProductList(address) {
+      this.limit = 5
       await this.$http_komship
-        .get(`v3/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}&search=${this.searchProduct}`)
+        .get(`v3/partner-product/${this.profile.partner_id}`, {
+          params: {
+            warehouse_type: address.warehouse_type,
+            warehouse_id: address.warehouse_id,
+            search: this.searchProduct,
+            limit: 100,
+            offset: 0,
+          },
+        })
         .then(response => {
           const { data } = response.data
+          this.productListDB = data
           this.productList = data.slice(0, 5)
+          if (this.productList.length === 0) {
+            this.isMoreShow = false
+          } else {
+            this.isMoreShow = true
+          }
         })
+    },
+    isMore() {
+      this.limit += 5
+      if (this.productList.length !== this.productListDB.length) {
+        this.productList = this.productListDB.slice(0, this.limit)
+        this.isMoreShow = true
+      } else {
+        this.isMoreShow = false
+        this.productList = this.productListDB
+      }
     },
     async addProduct(itemSelected) {
       if (itemSelected) {
