@@ -800,6 +800,7 @@ export default {
         }
         this.loadingButtonPrintLabel = false
         this.listOrderPrint = []
+        this.checklistAllOrder = false
       }).catch(() => {
         this.loadingButtonPrintLabel = false
         this.$toast({
