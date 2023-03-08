@@ -38,11 +38,13 @@
                     v-if="item.service === 'komship'"
                     class="mr-1"
                     src="https://storage.googleapis.com/komerce/assets/svg/icon-komship.svg"
+                    width="25"
                   />
                   <b-img
                     v-else
                     class="mr-1"
                     src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
+                    width="25"
                   />
                   <span class="text-black">
                     <strong> Team {{ item.service === 'komship' ? 'Komship' : 'Kompack' }} </strong>
