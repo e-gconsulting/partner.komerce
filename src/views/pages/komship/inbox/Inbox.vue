@@ -57,7 +57,7 @@
                     </span>
                   </div>
                   <div v-if="!isOpened" class="d-flex flex-column">
-                    <p class="text-black">
+                    <p class="text-black" style="margin-bottom: 1rem!important">
                       <strong>
                         {{ item.title }}
                       </strong>
@@ -101,7 +101,7 @@
                         src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/arrow-left-2.svg"
                       />
                     </b-button>
-                    <h4 class="text-black mb-0">
+                    <h4 class="text-black mb-0" style="font-size: 1.286rem!important">
                       {{ inboxDetail.title }}
                     </h4>
                   </b-row>
