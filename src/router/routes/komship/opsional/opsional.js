@@ -9,4 +9,14 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/opsional-feature/pickup-label',
+    name: 'pickup-label',
+    component: () => import('@/views/pages/komship/opsional/custom-label/customLabel.vue'),
+    meta: {
+      name: 'pickup-label',
+      resource: 'Fitur Pendukung',
+      action: 'manage',
+    },
+  },
 ]
