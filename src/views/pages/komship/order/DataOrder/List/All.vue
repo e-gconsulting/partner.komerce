@@ -424,15 +424,15 @@ export default {
     await this.fetchData()
   },
   created() {
-    window.addEventListener('click', async e => {
-      if (document.getElementById('popoverFilter') !== null) {
-        if (!document.getElementById('popoverFilter').contains(e.target)) {
-          this.$root.$emit('bv::hide::popover')
-        } else {
-          e.stopPropagation()
-        }
-      }
-    })
+    // window.addEventListener('click', async e => {
+    //   if (document.getElementById('popoverFilter') !== null) {
+    //     if (!document.getElementById('popoverFilter').contains(e.target)) {
+    //       this.$root.$emit('bv::hide::popover')
+    //     } else {
+    //       e.stopPropagation()
+    //     }
+    //   }
+    // })
     window.onscroll = () => {
       if ((window.innerHeight + window.scrollY) >= document.getElementById('main').offsetHeight && !this.loadingTable) {
         this.getNextData()

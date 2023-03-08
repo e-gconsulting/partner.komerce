@@ -255,6 +255,7 @@ export default {
                   { action: 'manage', subject: 'Fitur Pendukung' },
                   { action: 'manage', subject: 'MyApps' },
                   { action: 'manage', subject: 'Kendala' },
+                  { action: 'manage', subject: 'Inbox' },
                 ]
                 // KOMPACK
                 if (userData.is_kompack === 1) {
