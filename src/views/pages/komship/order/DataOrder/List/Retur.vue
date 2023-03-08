@@ -536,15 +536,15 @@ export default {
     this.metricRetur('Bulan ini')
   },
   created() {
-    window.addEventListener('click', async e => {
-      if (document.getElementById('popoverFilter') !== null) {
-        if (!document.getElementById('popoverFilter').contains(e.target)) {
-          this.$root.$emit('bv::hide::popover')
-        } else {
-          e.stopPropagation()
-        }
-      }
-    })
+    // window.addEventListener('click', async e => {
+    //   if (document.getElementById('popoverFilter') !== null) {
+    //     if (!document.getElementById('popoverFilter').contains(e.target)) {
+    //       this.$root.$emit('bv::hide::popover')
+    //     } else {
+    //       e.stopPropagation()
+    //     }
+    //   }
+    // })
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
