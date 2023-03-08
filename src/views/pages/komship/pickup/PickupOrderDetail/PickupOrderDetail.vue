@@ -14,7 +14,7 @@
       </span>
     </b-row>
     <b-alert
-      v-if="$route.params.order_data_id === undefined"
+      v-if="$route.params.order_data_id === undefined && $route.query.order_id === undefined"
       variant="primary"
       class="p-1"
       show
@@ -30,6 +30,14 @@
         cols="12"
         class="text-right"
       >
+        <v-select
+          v-model="isPrint"
+          :options="listPrint"
+          placeholder="Semua"
+          class="d-inline-block mb-1 mr-1"
+          style="width:205px"
+          @input="getOrderDataByPrint"
+        />
         <v-select
           v-model="shipment"
           :options="listShipment"
@@ -69,7 +77,7 @@
         :items="order"
       >
         <template #head(no)>
-          <div v-if="$route.params.order_data_id === undefined">
+          <div v-if="$route.params.order_data_id === undefined && $route.query.order_id === undefined">
             No
           </div>
           <div v-else>
@@ -80,7 +88,7 @@
           </div>
         </template>
         <template #cell(no)="data">
-          <div v-if="$route.params.order_data_id === undefined">
+          <div v-if="$route.params.order_data_id === undefined && $route.query.order_id === undefined">
             {{ data.index + 1 }}
           </div>
           <div v-else>
@@ -93,6 +101,58 @@
         <template #cell(order_date)="data">
           <span class="font-bold">{{ data.item.order_date.slice(0, 10) }}</span><br>
           <span>{{ data.item.order_date.slice(11, -3) }}</span>
+        </template>
+        <template #cell(customer_name)="data">
+          <h5 class="text-top">
+            <strong>
+              {{ data.item.customer_name }}
+            </strong>
+          </h5>
+          <b-row
+            v-if="data.item.shipping === 'JNE'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              width="40"
+              class="ml-1"
+            />
+            <span class="ml-50">
+              <strong>
+                Reguler
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'SICEPAT'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo__sicepat.svg"
+              width="60"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ data.item.shipping_type }}
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'IDEXPRESS'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo-idexpress.svg"
+              width="40"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ data.item.shipping_type }}
+              </strong>
+            </span>
+          </b-row>
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
@@ -178,57 +238,26 @@
             </b-button>
           </div>
         </template>
-        <template #cell(customer_name)="data">
-          <h5 class="text-top">
-            <strong>
-              {{ data.item.customer_name }}
-            </strong>
-          </h5>
-          <b-row
-            v-if="data.item.shipping === 'JNE'"
-            class="align-items-center"
+        <template #cell(airway_bill)="data">
+          <div>{{ data.item.airway_bill }}</div>
+          <div
+            v-if="data.item.is_print === 1"
           >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              width="40"
-              class="ml-1"
-            />
-            <span class="ml-50">
-              <strong>
-                Reguler
-              </strong>
-            </span>
-          </b-row>
-          <b-row
-            v-if="data.item.shipping === 'SICEPAT'"
-            class="align-items-center"
-          >
-            <b-img
-              src="@/@core/assets/image/icons/logo__sicepat.svg"
-              width="60"
-              class="ml-1"
-            />
-            <span class="text-black ml-50">
-              <strong>
-                {{ data.item.shipping_type }}
-              </strong>
-            </span>
-          </b-row>
-          <b-row
-            v-if="data.item.shipping === 'IDEXPRESS'"
-            class="align-items-center"
-          >
-            <b-img
-              src="@/@core/assets/image/icons/logo-idexpress.svg"
-              width="40"
-              class="ml-1"
-            />
-            <span class="text-black ml-50">
-              <strong>
-                {{ data.item.shipping_type }}
-              </strong>
-            </span>
-          </b-row>
+            <div
+              :id="`${String(data.item.airway_bill)}`"
+              class="label-after-print"
+            >
+              Tercetak
+            </div>
+            <b-popover
+              :target="`${String(data.item.airway_bill)}`"
+              triggers="hover focus"
+              placement="topleft"
+              custom-class="custom-popover"
+            >
+              <span class="text-white">Label PDF di orderan resi ini pernah didownload untuk dicetak</span>
+            </b-popover>
+          </div>
         </template>
         <template #cell(warehouse_type)="data">
           <div>{{ data.item.fulfillment_fee }}</div>
@@ -512,6 +541,12 @@ export default {
       percentageDownload: 0,
       isDownloadActive: false,
       warningIcon,
+      listPrint: [
+        { value: 2, label: 'Semua' },
+        { value: 1, label: 'Tercetak' },
+        { value: 0, label: 'Belum Tercetak' },
+      ],
+      isPrint: null,
     }
   },
   computed: {
@@ -556,7 +591,7 @@ export default {
       }
     },
     goBack() {
-      if (this.$route.params.order_data_id === undefined) {
+      if (this.$route.params.order_data_id === undefined && this.$route.query.order_id === undefined) {
         this.$router.push({
           name: 'ajukan-pickup',
           params: {
@@ -594,12 +629,16 @@ export default {
       if (this.$route.params.order_data_id !== undefined) {
         if (!this.lastOrderData) {
           this.loading = true
+          if (this.isPrint === null) {
+            this.isPrint = { value: 2, label: 'Semua' }
+          }
           try {
             const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}`, {
               params: {
                 limit: this.limit,
                 offset: this.offset,
                 shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
+                is_print: this.isPrint.value,
               },
             })
             const { data } = order.data
@@ -628,7 +667,7 @@ export default {
         try {
           const order = await this.$http_komship.get(`/v3/order/${this.profile.partner_detail.id}`, {
             params: {
-              order_id: this.orderID,
+              order_id: this.orderID ? this.orderID : this.$route.query.order_id,
               limit: this.limit,
               offset: this.offset,
               shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
@@ -660,7 +699,18 @@ export default {
       this.limit = 50
       this.offset = 0
       this.lastOrderData = false
+      this.checklistAllOrder = false
       this.order = []
+      this.listOrderPrint = []
+      this.getOrderData()
+    },
+    async getOrderDataByPrint() {
+      this.limit = 50
+      this.offset = 0
+      this.lastOrderData = false
+      this.checklistAllOrder = false
+      this.order = []
+      this.listOrderPrint = []
       this.getOrderData()
     },
     selectAllOrder() {
@@ -691,7 +741,7 @@ export default {
     },
     async downloadPrintLabel() {
       try {
-        const print = await httpKomship.post('/v2/generate/print-label', null, {
+        const print = await httpKomship.post('/v3/generate/print-label', null, {
           params: {
             order_id: this.orderIdPrint,
             page: this.formatPrint,
@@ -751,6 +801,7 @@ export default {
           alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
         }
         this.loadingButtonPrintLabel = false
+        this.listOrderPrint = []
       }).catch(() => {
         this.loadingButtonPrintLabel = false
         this.$toast({
@@ -912,6 +963,20 @@ export default {
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
+}
+.label-after-print {
+  background-color: #BEFCDE;
+  color: #34A770;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+.custom-popover {
+  background: #222222;
+  color: #ffffff;
+}
+.custom-popover .arrow::after {
+  border-bottom-color: #222222 !important;
+  border-top-color: #222222 !important;
 }
 
 @media (max-width: 576px) {

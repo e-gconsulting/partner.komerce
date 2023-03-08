@@ -11,6 +11,7 @@ import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import Ripple from 'vue-ripple-directive'
 import { mapState } from 'vuex'
+import { waGratis, waPremium } from './static'
 
 export default {
   components: {
@@ -75,6 +76,18 @@ export default {
       loadingAddAdminSalesTracking: false,
       checkRankingSales: false,
       adminName: '',
+
+      waGratis,
+      waPremium,
+
+      defaultWa: null,
+      confirmWa: false,
+      onPremiumWA: null,
+      queueWA: null,
+      serverWAFull: null,
+
+      cekSaldoLoading: false,
+      subscriptionFee: 0,
     }
   },
   computed: {
@@ -83,6 +96,7 @@ export default {
   mounted() {
     this.getProfile()
     this.myProfile()
+    this.checkWA()
   },
   methods: {
     getProfile() {
@@ -92,7 +106,6 @@ export default {
       this.orderMassal = this.profile.partner_is_mass_order
       this.returnInsight = this.profile.partner_is_return_insight
       this.orderNotes = this.profile.partner_is_order_notes
-      this.notifWA = this.profile.partner_is_notification_whatsapp
       this.customerReputation = this.profile.partner_is_customer_reputation
       this.salesTracking = this.profile.partner_is_tracking_sales
       this.isGetting = true
@@ -237,62 +250,232 @@ export default {
         }
       }
     },
-    setNotifWa() {
-      const post = () => {
-        this.$http_komship.post('/v1/setting/isNotificationWhatsapp', {
-          is_nofitication_whatsapp: this.notifWA ? '1' : '0',
-        }).then(async () => {
-          await this.$store.dispatch('dashboard/getProfile')
-          this.getProfile()
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              icon: 'CheckIcon',
-              text: `Notif Whatsapp Berhasil ${this.notifWA ? 'Diaktifkan' : 'Dinonaktifkan'}`,
-              variant: 'success',
-            },
-          }, 2000)
-        }).catch(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: `Gagal ${this.notifWA ? 'Mengaktifkan' : 'Menonaktikan'} Notif Whatsapp`,
-              variant: 'danger',
-            },
-          }, 2000)
+
+    checkWA() {
+      const url = '/v1/setting/check-whatsapp'
+      this.$http_komship.get(url)
+        .then(res => {
+          const { data } = res.data
+          this.defaultWa = data.is_notification_whatsapp
+          this.onPremiumWA = data.is_whatsapp_premium
+          if (data.is_notification_whatsapp === 0) {
+            this.notifWA = false
+          } else {
+            this.notifWA = true
+          }
+          this.queueWA = data.is_queue_whatsapp
+          this.serverWAFull = data.is_server_full
         })
+    },
+
+    chooseWa() {
+      if (this.onPremiumWA && this.notifWA && this.defaultWa === 0) {
+        this.postNotifWaPremium()
       }
-      if (this.notifWA) {
+      if (this.defaultWa === 0 && this.notifWA && !this.onPremiumWA) {
+        this.$refs['modal-choose-wa'].show()
+      }
+      if (!this.notifWA && this.defaultWa !== 0) {
         this.$swal({
-          html: '<span>Notif WA ini menggunakan <b>No. WA Komship</b> dan akan otomatis mengiriman reminder bahwa paket telah berangkat dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><br><br>Fitur ini GRATIS. Kamu yakin mau aktifin?</span>',
+          title: 'Nonaktifkan Fitur',
+          text: 'Kamu yakin akan menonaktifkan fitur Notif WhatsApp',
           imageUrl: require('@/assets/images/icons/warning.svg'),
-          confirmButtonText: 'Ya, Aktifkan',
+          confirmButtonText: 'Nonaktifkan',
           confirmButtonClass: 'btn btn-primary',
+          reverseButtons: true,
           showCancelButton: true,
           cancelButtonText: 'Batal',
           cancelButtonColor: '#FFFFFF',
           cancelButtonClass: 'btn btn-outline-primary text-primary',
         }).then(response => {
           if (response.isConfirmed) {
-            post()
+            this.postNotifWa()
           } else {
-            this.notifWA = false
+            this.checkWA()
           }
         })
-      } else {
-        post()
       }
     },
+
+    resetWa() {
+      if (this.defaultWa === 0 && this.notifWA && !this.confirmWa) {
+        this.checkWA()
+      }
+    },
+
+    postNotifWa() {
+      this.$http_komship.post('/v1/setting/isNotificationWhatsapp', {
+        is_notification_whatsapp: this.notifWA ? '1' : '0',
+      }).then(() => {
+        this.checkWA()
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Success',
+            icon: 'CheckIcon',
+            text: `Notif Whatsapp Berhasil ${this.notifWA ? 'Diaktifkan' : 'Dinonaktifkan'}`,
+            variant: 'success',
+          },
+        }, 2000)
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: `Gagal ${this.notifWA ? 'Mengaktifkan' : 'Menonaktikan'} Notif Whatsapp`,
+            variant: 'danger',
+          },
+        }, 2000)
+      })
+    },
+
+    setNotifWa() {
+      this.confirmWa = true
+      this.$refs['modal-choose-wa'].hide()
+      this.$swal({
+        html: '<span>Notif WA ini menggunakan <b>No. WA Komship</b> dan akan otomatis mengiriman reminder bahwa paket telah <b>berangkat</b> dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><div class="mt-1">Fitur ini GRATIS. Kamu yakin mau aktifin?</div></span>',
+        imageUrl: require('@/assets/images/icons/warning.svg'),
+        confirmButtonText: 'Ya, Aktifkan',
+        confirmButtonClass: 'btn btn-primary',
+        reverseButtons: true,
+        showCancelButton: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        cancelButtonText: 'Batal',
+        cancelButtonColor: '#FFFFFF',
+        cancelButtonClass: 'btn btn-outline-primary text-primary',
+      }).then(response => {
+        if (response.isConfirmed) {
+          this.notifWA = true
+          this.confirmWa = false
+          this.postNotifWa()
+        } else {
+          this.$refs['modal-choose-wa'].show()
+          this.confirmWa = false
+        }
+      })
+    },
+
+    koneksiWa() {
+      if (this.defaultWa === 2 && this.onPremiumWA) {
+        this.$router.push('/opsional-feature/koneksi-wa')
+      }
+      if (this.defaultWa === 1) {
+        this.cekSaldoWaPremium()
+      }
+    },
+
+    postNotifWaPremium() {
+      this.$http_komship.post('/v1/setting/activate-notification-whatsapp-premium', {
+        is_subscribe: 1,
+        subscription_fees: this.subscriptionFee,
+      }).then(res => {
+        const { data } = res.data
+        this.serverWAFull = data.is_server_full
+        this.checkWA()
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Success',
+            icon: 'CheckIcon',
+            text: `Notif Whatsapp Berhasil ${this.notifWA ? 'Diaktifkan' : 'Dinonaktifkan'}`,
+            variant: 'success',
+          },
+        }, 2000)
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: `Gagal ${this.notifWA ? 'Mengaktifkan' : 'Menonaktikan'} Notif Whatsapp`,
+            variant: 'danger',
+          },
+        }, 2000)
+      })
+    },
+
+    setNotifWaPremium() {
+      this.postNotifWaPremium()
+      let text = ''
+      let confirm = ''
+      if (!this.serverWAFull) {
+        text = 'Pembayaran berhasil dilakukan. Lanjutkan untuk menyesuaikan Notifikasi WhatsApp-mu'
+        confirm = 'Pengaturan Notif WA'
+      } else {
+        text = 'Pembayaran berhasil dilakukan, silahkan tunggu 1-3 jam untuk kami menyiapkan layanan premium ini spesial untuk kamu. Notifikasi akan muncul ketika Notifikasi WhatsApp siap digunakan.'
+        confirm = 'Selesai'
+      }
+      this.$swal({
+        title: 'Berhasil',
+        html: text,
+        imageUrl: require('@/assets/images/icons/success.svg'),
+        confirmButtonText: confirm,
+        confirmButtonClass: 'btn btn-primary',
+        reverseButtons: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      }).then(response => {
+        if (response.isConfirmed) {
+          if (!this.serverWAFull) {
+            this.$router.push('/opsional-feature/koneksi-wa')
+          }
+        }
+      })
+    },
+
+    cekSaldoWaPremium() {
+      this.cekSaldoLoading = true
+      this.confirmWa = true
+      this.$http_komship.get('/v1/setting/notification-whatsapp-premium-fee')
+        .then(res => {
+          this.cekSaldoLoading = false
+          const { data } = res.data
+          this.subscriptionFee = data.subscription_fee
+          this.$refs['modal-choose-wa'].hide()
+          let confirm = ''
+          if (data.kompay_balance < data.subscription_fee) {
+            confirm = 'Top Up Saldo'
+          } else {
+            confirm = 'Bayar Sekarang'
+          }
+          this.$swal({
+            title: 'Konfirmasi Berlangganan',
+            html: `<span>Bayar menggunakan KomPay sebesar <b>${this.$options.filters.rupiah(data.subscription_fee)}</b> untuk mengaktifkan <b>Notifikasi WhatsApp</b> Premium selama <b>30 hari</b>?</span><div class="mt-1">Saldo Kompay : <span class="font-bold text-primary">${this.$options.filters.rupiah(data.kompay_balance)}</span></div>`,
+            imageUrl: require('@/assets/images/icons/warning.svg'),
+            confirmButtonText: confirm,
+            confirmButtonClass: 'btn btn-primary',
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            cancelButtonText: 'Batal',
+            cancelButtonColor: '#FFFFFF',
+            cancelButtonClass: 'btn btn-outline-primary text-primary',
+          }).then(response => {
+            if (response.isConfirmed) {
+              if (data.kompay_balance < data.subscription_fee) {
+                this.$router.push('/keuangan/saldo')
+              } else {
+                this.setNotifWaPremium()
+              }
+            } else {
+              if (this.defaultWa === 0) {
+                this.$refs['modal-choose-wa'].show()
+              }
+              this.confirmWa = false
+            }
+          })
+        })
+    },
+
     handleNotActiveCustomLabel() {
       this.$http.post(`/user/partner/setting/isCustomLabel/${this.profile.partner_id}`, {
         is_custom_label: 0,
       })
-        .then(async response => {
-          await this.$store.dispatch('dashboard/getProfile')
-          this.getProfile()
+        .then(() => {
+          this.checkWA()
           this.$toast({
             component: ToastificationContent,
             props: {

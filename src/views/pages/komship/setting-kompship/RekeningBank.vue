@@ -366,11 +366,11 @@
                         maxlength="20"
                         @keypress="isNumber($event)"
                         @paste.prevent="AccountBankNo"
-                        @input="changeFieldAddBank"
+                        @change="changeFieldAddBank"
                       />
                       <b-button
-                        :variant="fieldAddAccountName !== '' || ValidateAccountName ? 'secondary' : 'primary'"
-                        :disabled="fieldAddAccountName !== '' || ValidateAccountName"
+                        variant="primary"
+                        :disabled="ValidateAccountName"
                         class="ml-1 cekRekening"
                         @click="getAccount"
                       >
@@ -1048,7 +1048,7 @@ export default {
     ...mapState('dashboard', ['profile']),
   },
   mounted() {
-    this.showModal()
+    // this.showModal()
     this.getBank()
     this.loadBanks()
     this.getProfile()
@@ -1383,8 +1383,6 @@ export default {
       this.isValidateAccountName = false
       this.checkValidBank = true
       this.messageSameNoBank = ''
-      this.validateFieldAddBankName = false
-      this.validateFieldAddAccountNo = false
     },
     changeFieldAddBank() {
       this.fieldAddAccountName = ''
@@ -1757,7 +1755,7 @@ export default {
           this.accountNameDB = true
           this.fieldAddAccountName = response.data.data.account_name
           this.getValidateAccountName = true
-          this.checkValidBank = false
+          this.checkBank()
         } else {
           this.ValidateAccountName = false
           this.checkValidBank = true
@@ -1798,12 +1796,11 @@ export default {
   width: 100%;
   border-radius: 8px;
 }
-.message-account-name {
-  font-size: 14px;
-}
+
 .cekRekening {
   width: 13rem;
 }
+
 @media screen and (max-width: 1200px) {
   .cekRekening {
     width: 14rem;
@@ -1812,24 +1809,6 @@ export default {
 @media screen and (max-width: 780px) {
   .cekRekening {
     width: 18rem;
-  }
-  .message-account-name {
-    font-size: 12px;
-  }
-}
-@media screen and (max-width: 520px) {
-  .message-account-name {
-    font-size: 10px;
-  }
-  .cekRekening {
-    width: 100%;
-    margin-top: 1rem;
-    margin-left: 0px !important;
-  }
-  .icon-validate {
-    width: 20px;
-    height: 20px;
-    align-self: center;
   }
 }
 [dir] .otp-input {

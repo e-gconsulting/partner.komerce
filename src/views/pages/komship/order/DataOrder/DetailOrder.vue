@@ -6,7 +6,7 @@
           variant="primary"
           class="rounded-lg"
           size="sm"
-          to="/data-order"
+          @click="$router.go(-1)"
         >
           <b-icon-chevron-left />
         </b-button>

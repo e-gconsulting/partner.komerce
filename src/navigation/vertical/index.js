@@ -46,6 +46,7 @@ import keuangan from './keuangan'
 import opsional from './opsional'
 import myapps from './myapps'
 import ticketingUser from './ticketing-user'
+import inbox from './inbox'
 // import hiring from './hiring'
 
 // Komship Admin
@@ -68,6 +69,7 @@ export default [
   ...kompackpartner,
 
   ...dashboardKompship,
+  ...inbox,
   ...order,
   ...produk,
   // ...gudangkomship,

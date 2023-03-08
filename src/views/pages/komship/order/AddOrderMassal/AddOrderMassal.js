@@ -23,8 +23,6 @@ export default {
       sourceProduct: null,
       sourceVariant: null,
       sourceShipment: null,
-      sourceShipmentReguler: null,
-      sourceShipmentTruck: null,
       sourceCustomLabel: null,
       ProductWeight: null,
       allVariant: null,
@@ -147,7 +145,6 @@ export default {
           this.sourcePayment = data.payment_method
           this.sourceProduct = data.products
           this.ProductWeight = data.product_weight
-          this.sourceShipment = data.shipments.shipment_reguler.concat(data.shipments.shipment_truck)
           this.adminList = data.tracking_sales
           this.allVariant = data.variant
           this.sourceCustomLabel = data.custom_label
@@ -193,19 +190,7 @@ export default {
             }
             return source
           }
-          this.filterShipment = (instance, cell, c, r, source) => {
-            const qty = instance.jexcel.getValueFromCoords(c - 2, r)
-            const columnName = jspreadsheet.getColumnNameFromId([8, r])
-            const weightValue = instance.jexcel.getValue(columnName, r)
-            const weight = this.ProductWeight.find(item => item.product_name === weightValue)
-            this.totalWeight = (qty * weight.product_weight) / 1000
-            if (this.totalWeight < 5.1) {
-              return data.shipments.shipment_reguler
-            } if (this.totalWeight > 5.1) {
-              return this.sourceShipment
-            }
-            return source
-          }
+          this.filterShipment = (instance, cell, c, r, source) => this.sourceShipment
           this.getTable()
         })
         .catch(err => console.log(err))
@@ -218,6 +203,7 @@ export default {
       const getSelectedTable = data => {
         this.selectedTable = data
       }
+      const hitAPI = (isColZipCode, isColAddress, isPaymentMethods, isColProduct, isColQty) => this.hitAPI(isColZipCode, isColAddress, isPaymentMethods, isColProduct, isColQty)
       const popup = message => this.$swal({
         html: `<span style="font-weight:600;font-size:20px">Upss., belum tepat nih..</span><br><span style="font-size:14px">${message}</span>`,
         confirmButtonText: 'Oke',
@@ -445,12 +431,19 @@ export default {
           const isColVariant = instance.jexcel.getValueFromCoords(`${columnNumber.variant}`, row)
           const isColQty = instance.jexcel.getValueFromCoords(`${columnNumber.qty}`, row)
           const isColZipCode = instance.jexcel.getValueFromCoords(`${columnNumber.zip_code}`, row)
+          const isPaymentMethods = instance.jexcel.getValueFromCoords(`${columnNumber.payment_method}`, row)
 
           if (isColAddress !== '' && isColPhoneNumber !== '' && isColZipCode !== '' && isColProduct !== '' && isColVariant !== '' && isColQty !== '') {
             instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), false)
             instance.jexcel.setStyle(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), 'background-color', 'white')
           } else {
             instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), true)
+          }
+
+          if (col === `${columnNumber.payment_method}`) {
+            if (isColZipCode !== '' && isColAddress !== '' && isPaymentMethods !== '' && isColProduct !== '' && isColQty !== '') {
+              hitAPI(isColZipCode, isColAddress, isPaymentMethods, isColProduct, isColQty)
+            }
           }
         },
         onselection(instance, col, row, cell, val) {
@@ -531,6 +524,17 @@ export default {
       if (!profile.partner_is_custom_label) this.table.hideColumn(1)
       if (!profile.partner_is_order_notes) this.table.hideColumn(10)
       this.$refs.loadingPage.hide()
+    },
+    hitAPI(isColZipCode, isColAddress, isPaymentMethods, isColProduct, isColQty) {
+      const weight = this.ProductWeight.find(item => item.product_name === isColProduct)
+      this.totalWeight = (isColQty * weight.product_weight) / 1000
+
+      const params = `?zip_code=${isColZipCode}&address=${isColAddress}&weight=${this.totalWeight}&payment_method=${isPaymentMethods}`
+      this.$http_komship.get(`v1/order/sheet/calculate${params}`)
+        .then(res => {
+          const { data } = JSON.parse(JSON.stringify(res.data))
+          this.sourceShipment = data
+        })
     },
     addRows() {
       const rows = toInteger(this.jumlahBaris)
