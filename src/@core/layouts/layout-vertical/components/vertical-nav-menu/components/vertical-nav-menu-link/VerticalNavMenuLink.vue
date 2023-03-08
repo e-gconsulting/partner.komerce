@@ -9,6 +9,7 @@
     }"
   >
     <b-link
+      v-if="item.title !== 'Inbox'"
       v-bind="linkProps"
       class="d-flex align-items-center"
       :class="{ 'childtitlestyle': Boolean(item.hasParent) }"
@@ -32,6 +33,50 @@
         class="mr-1 ml-auto"
       >
         {{ followUp }}
+      </b-badge>
+      <b-badge
+        v-if="item.tag"
+        pill
+        :variant="item.tagVariant || 'primary'"
+        class="mr-1 ml-auto"
+      >
+        {{ item.tag }}
+      </b-badge>
+    </b-link>
+    <b-link
+      v-if="item.title === 'Inbox' && inboxItems.length > 0"
+      v-bind="linkProps"
+      class="d-flex align-items-center"
+      :class="{ 'childtitlestyle': Boolean(item.hasParent) }"
+    >
+      <div
+        v-if="item.customicon"
+        v-html="item.customicon"
+      />
+      <feather-icon
+        v-else
+        :icon="item.icon || (!Boolean(item.hasParent) ? 'CircleIcon' : '')"
+      />
+      <span
+        class="menu-title text-truncate font-weight-bold"
+        :class="{ 'text-black': !Boolean(item.hasParent) }"
+      >{{ t(item.title) }}</span>
+      <b-badge
+        v-if="item.title === 'Kendala' && followUp!==0"
+        pill
+        :variant="'primary'"
+        class="mr-1 ml-auto"
+      >
+        {{ followUp }}
+      </b-badge>
+      <b-badge
+        v-if="item.title === 'Inbox'"
+        pill
+        :variant="'primary'"
+        class="mr-1 ml-auto"
+        :style="isActive ? 'background: white!important; color: #F95031!important;' : ''"
+      >
+        {{ countInbox.length }}
       </b-badge>
       <b-badge
         v-if="item.tag"
@@ -67,6 +112,8 @@ export default {
   data() {
     return {
       followUp: 0,
+      inboxItems: [],
+      countInbox: 0,
     }
   },
   setup(props) {
@@ -94,6 +141,12 @@ export default {
         if (to?.meta.resource !== from?.meta.resource && this.item.title === 'Kendala') {
           this.$http_komship.get('/v1/ticket-partner/count/need-followup').then(response => {
             this.followUp = response.data.data.need_followup ?? 0
+          })
+        }
+        if (to?.meta.resource !== from?.meta.resource && this.item.title === 'Inbox') {
+          this.$http_komship.get('/v1/partner-inbox/list').then(response => {
+            this.countInbox = response.data.data.filter(item => item.is_read === 0)
+            this.inboxItems = response.data.data
           })
         }
       },
