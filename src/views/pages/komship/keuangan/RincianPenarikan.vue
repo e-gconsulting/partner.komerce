@@ -205,7 +205,7 @@ border-radius: 8px;"
             <span class="d-flex">{{ data.label }}
               <img
                 id="ongkosKirim"
-                src="@/assets/images/icons/info-circle-dark.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle-dark.svg"
                 class="w-5 h-5"
                 style="margin-left:5px;cursor:pointer;"
               >
@@ -221,7 +221,7 @@ border-radius: 8px;"
             <span class="d-flex">{{ data.label }}
               <img
                 id="biayaCOD"
-                src="@/assets/images/icons/info-circle-dark.svg"
+                src="https://storage.googleapis.com/komerce/assets/icons/info-circle-dark.svg"
                 class="w-5 h-5"
                 style="margin-left:5px;cursor:pointer;"
               >
@@ -253,7 +253,7 @@ border-radius: 8px;"
                 >
                 <img
                   :id="`${data.index}-infoSaldo`"
-                  src="@/assets/images/icons/info-circle.svg"
+                  src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
                 >
               </b-row>
               <b-popover
@@ -277,7 +277,7 @@ border-radius: 8px;"
                   >
                     <img
                       id="infoSaldo"
-                      src="@/assets/images/icons/icons-copy.svg"
+                      src="https://storage.googleapis.com/komerce/assets/komerce-icon/Hitam/copy.svg"
                     >
                   </b-button>
                 </b-row>

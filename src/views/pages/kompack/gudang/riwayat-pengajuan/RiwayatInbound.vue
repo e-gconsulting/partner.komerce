@@ -117,7 +117,21 @@
           </div>
         </template>
         <template #cell(jenis_pengiriman)="data">
-          <div class="d-flex flex-column align-items-center">
+          <div
+            v-if="data.item.is_retur === 1"
+            class="d-flex flex-column align-items-center"
+          >
+            <b-img
+              src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/box-remove.svg"
+            />
+            <div class="mt-0.5">
+              Retur
+            </div>
+          </div>
+          <div
+            v-else
+            class="d-flex flex-column align-items-center"
+          >
             <b-img
               :src="shippingMethods('img', data.item.shipping)"
             />
@@ -138,7 +152,16 @@
         </template>
         <template #cell(action)="data">
           <div
-            class=""
+            v-if="data.item.is_retur === 1"
+            style="color: #08A0F7;"
+            @click="detailRetur(data.item.order_id)"
+          >
+            <button class="outline-none">
+              <u>Lihat Detail</u>
+            </button>
+          </div>
+          <div
+            v-else
             style="color: #08A0F7;"
             @click="detail(data.item)"
           >
@@ -279,6 +302,7 @@ export default {
         this.fetchNextRiwayatInbound()
       }
     }
+    this.$router.replace({ query: { tab: 'riwayat-inbound' } })
   },
 
   methods: {
@@ -370,6 +394,13 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+
+    detailRetur(orderId) {
+      this.$router.push({
+        path: `/data-order/detail-order/${orderId}`,
+      })
+      // localStorage.setItem('detailInbound', JSON.stringify(data))
     },
 
     detail(data) {

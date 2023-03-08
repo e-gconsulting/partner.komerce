@@ -155,18 +155,607 @@
                   <b-card-title class="d-flex justify-between">
                       <span class="font-bold text-primary">Notif Whatsapp</span>
                       <b-form-checkbox
+                          v-if="defaultWa === 2 && onPremiumWA === true"
                           v-model="notifWA"
                           switch
-                          @input="setNotifWa()"
+                          @input="chooseWa"
+                          disabled
+                          v-b-popover.hover.topleft="'Kamu bisa me-non-aktifkan notifikasi Pickup maupun COD melalui button &quot;Sesuaikan&quot; di bawah ini'"
+                      />
+                      <b-form-checkbox
+                          v-else
+                          v-model="notifWA"
+                          switch
+                          @input="chooseWa"
                       />
                   </b-card-title>
                   <b-card-text>
                     Notif WA dari Komship yang akan dikirim saat paket berangkat dan mendekati kota customer
                   </b-card-text>
+                  <b-row class="justify-content-center mt-2" v-if="defaultWa !== 0">
+                    <div class="small text-muted" v-if="onPremiumWA === true && queueWA === true && serverWAFull === true">Tunggu 1 - 3 Jam untuk menyesuaikan</div>
+                    <b-button
+                        v-else
+                        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                        style="background: #F95031!important; border: 0; max-width: 190px; border-radius: 8px;"
+                        class="btn-icon"
+                        @click="koneksiWa"
+                    >
+                        <div v-if="defaultWa === 2">Sesuaikan</div>
+                        <div v-else>
+                            <b-spinner
+                            v-if="cekSaldoLoading"
+                            variant="light"
+                            small
+                            >
+                          </b-spinner>
+                          Jadikan Premium
+                        </div>
+                    </b-button>
+                </b-row>
               </b-card>
           </b-col>
       </b-row>
   </div>
+
+  <!-- Modal Pilihan Wa -->
+  <b-modal
+    ref="modal-choose-wa"
+    hide-header
+    hide-footer
+    centered
+    size="md"
+    @hidden="resetWa"
+  >
+  <div class="p-[10px]">
+    <div class="text-black font-bold text-center text-2xl mb-2">Pilihan Nomor WA Notifikasi</div>
+      <div class="bg-[#F8F8F8] w-[220px] float-left mt-2" style="height: 425px;">
+        <div class="text-2xl text-black font-bold flex justify-center items-end">
+          <div class="mt-2">Gratis</div>
+        </div>
+        <div class="space-y-3 mt-2 px-[12px]">
+          <div v-for="list in waGratis" :key="list.id" class="flex">
+            <div class="w-[7%]">
+              <svg v-if="list.check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311698)">
+                <path d="M6.57994 11.5838C6.37994 11.5838 6.18994 11.5038 6.04994 11.3638L3.21994 8.53376C2.92994 8.24376 2.92994 7.76376 3.21994 7.47376C3.50994 7.18376 3.98994 7.18376 4.27994 7.47376L6.57994 9.77376L11.7199 4.63376C12.0099 4.34376 12.4899 4.34376 12.7799 4.63376C13.0699 4.92376 13.0699 5.40376 12.7799 5.69376L7.10994 11.3638C6.96994 11.5038 6.77994 11.5838 6.57994 11.5838Z" fill="#34A770"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#34A770"/>
+                <defs>
+                <clipPath id="clip0_29694_311698">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+              <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311678)">
+                <path d="M5.16986 11.58C4.97986 11.58 4.78986 11.51 4.63986 11.36C4.34986 11.07 4.34986 10.59 4.63986 10.3L10.2999 4.63999C10.5899 4.34999 11.0699 4.34999 11.3599 4.63999C11.6499 4.92999 11.6499 5.40998 11.3599 5.69998L5.69986 11.36C5.55986 11.51 5.35986 11.58 5.16986 11.58Z" fill="#E31A1A"/>
+                <path d="M10.8299 11.58C10.6399 11.58 10.4499 11.51 10.2999 11.36L4.63986 5.69998C4.34986 5.40998 4.34986 4.92999 4.63986 4.63999C4.92986 4.34999 5.40986 4.34999 5.69986 4.63999L11.3599 10.3C11.6499 10.59 11.6499 11.07 11.3599 11.36C11.2099 11.51 11.0199 11.58 10.8299 11.58Z" fill="#E31A1A"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#E31A1A"/>
+                <defs>
+                <clipPath id="clip0_29694_311678">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+            </div> 
+            <div class="w-[93%] text-black text-sm ml-1">{{ list.text }}</div>
+          </div>
+        </div>
+        <div class="flex items-end justify-center mt-20">
+          <b-button variant="outline-primary" style="width: 196px;" @click="setNotifWa">
+            Aktifkan
+          </b-button>
+        </div>
+      </div>
+      <div class="w-[220px] shadow float-right relative" style="height: 469px;">
+        <div class="text-white text-center shadow">
+          <svg class="absolute" width="220" height="98" viewBox="0 0 220 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H220V71L148.827 96.6609C147.299 97.212 145.659 97.3823 144.05 97.1571L0 77V0Z" fill="#F95031"/>
+          </svg>
+          <div class="absolute left-0 right-0 mt-2">
+            <div class="mb-0.5">Premium</div>
+            <div class="text-2xl font-bold">Rp1.300,-<span class="text-xs font-medium">/hari</span></div>
+          </div>
+        </div>
+        <div class="space-y-3 mt-[114px] px-[12px]">
+          <div v-for="list in waPremium" :key="list.id" class="flex">
+            <div class="w-[7%]">
+              <svg v-if="list.check" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311698)">
+                <path d="M6.57994 11.5838C6.37994 11.5838 6.18994 11.5038 6.04994 11.3638L3.21994 8.53376C2.92994 8.24376 2.92994 7.76376 3.21994 7.47376C3.50994 7.18376 3.98994 7.18376 4.27994 7.47376L6.57994 9.77376L11.7199 4.63376C12.0099 4.34376 12.4899 4.34376 12.7799 4.63376C13.0699 4.92376 13.0699 5.40376 12.7799 5.69376L7.10994 11.3638C6.96994 11.5038 6.77994 11.5838 6.57994 11.5838Z" fill="#34A770"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#34A770"/>
+                <defs>
+                <clipPath id="clip0_29694_311698">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+              <svg v-else width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_29694_311678)">
+                <path d="M5.16986 11.58C4.97986 11.58 4.78986 11.51 4.63986 11.36C4.34986 11.07 4.34986 10.59 4.63986 10.3L10.2999 4.63999C10.5899 4.34999 11.0699 4.34999 11.3599 4.63999C11.6499 4.92999 11.6499 5.40998 11.3599 5.69998L5.69986 11.36C5.55986 11.51 5.35986 11.58 5.16986 11.58Z" fill="#E31A1A"/>
+                <path d="M10.8299 11.58C10.6399 11.58 10.4499 11.51 10.2999 11.36L4.63986 5.69998C4.34986 5.40998 4.34986 4.92999 4.63986 4.63999C4.92986 4.34999 5.40986 4.34999 5.69986 4.63999L11.3599 10.3C11.6499 10.59 11.6499 11.07 11.3599 11.36C11.2099 11.51 11.0199 11.58 10.8299 11.58Z" fill="#E31A1A"/>
+                </g>
+                <rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke="#E31A1A"/>
+                <defs>
+                <clipPath id="clip0_29694_311678">
+                <rect width="16" height="16" rx="8" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+            </div>                       
+            <div class="w-[93%] text-black text-sm ml-1">{{ list.text }}</div>
+          </div>
+        </div>
+        <div class="flex items-end justify-center mt-20">
+          <b-button variant="primary" style="width: 196px;" @click="cekSaldoWaPremium">
+            <b-spinner
+            v-if="cekSaldoLoading"
+            variant="light"
+            small
+            >
+          </b-spinner>
+            <div v-if="!cekSaldoLoading">Aktifkan</div>
+          </b-button>
+        </div>
+      </div>
+  </div>
+    
+  </b-modal>
+
+    <!-- Modal Custom Label -->
+    <b-modal
+      id="modal-set-custom-label"
+      hide-footer
+      modal-class="modal-primary"
+      scrollable
+      footer-class="footer-class"
+    >
+      <b-row class="justify-content-center mb-1">
+          <h4 class="text-black">
+              <strong>
+                Daftar Pengirim
+              </strong>
+          </h4>
+      </b-row>
+      <b-row class="justify-content-center mb-2">
+          <span class="text-black text-center px-3">
+            Tambahkan Nama atau Identitas Pengirim untuk dapat ditampilkan di label sesuai kebutuhan kamu.
+          </span>
+      </b-row>
+      <b-overlay
+          variant="light"
+          :show="loadingWrapperCustom"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
+        >
+
+        <b-row
+            class="mx-3 p-2 mb-2"
+            style="
+                border: 1px solid #E2E2E2;
+                border-radius: 8px;
+            "
+          >
+                  <b-row class="mb-1 align-items-center">
+                      <b-col cols="auto">
+                          <span>
+                              <strong>
+                                  Identitas 1
+                              </strong>
+                          </span>
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="Name"
+                        label-for="name"
+                        label-cols-md="3"
+                      >
+                          <b-form-input
+                            placeholder="Nama"
+                            disabled
+                            v-model="senderIdentity1Name"
+                          />
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="No HP"
+                        label-for="no-hp"
+                        label-cols-md="3"
+                      >
+                          <b-form-input
+                            placeholder="No HP"
+                            type="number"
+                            disabled
+                            v-model="senderIdentity1NoHp"
+                          />
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+          </b-row>
+
+        <div
+          v-for="(items, index) in itemsCustomLabel"
+          :key="index+1"
+        >
+          <b-row
+            class="mx-3 p-2 mb-2"
+            style="
+                border: 1px solid #E2E2E2;
+                border-radius: 8px;
+            "
+          >
+            <validation-observer
+              ref="formEditRules"
+              #default="{invalid}"
+            >
+              <b-form>
+                  <b-row class="mb-1 align-items-center">
+                      <b-col cols="auto">
+                          <span>
+                              <strong>
+                                  Identitas {{ indexIdentity + index +1 }}
+                              </strong>
+                          </span>
+                      </b-col>
+                      <b-col
+                        cols="auto"
+                      >
+                          <span>
+                              {{ items.is_default === 1 ? 'Default' : '' }}
+                          </span>
+                      </b-col>
+                      <b-col
+                          class="auto d-flex justify-content-end"
+                      >
+                          <b-button
+                              v-if="customLabelEditMode === true  && idCustomLabelEdit === items.id"
+                              class="btn-icon"
+                              size="sm"
+                              variant="flat-dark"
+                              @click="editSenderNoActive"
+                          >
+                              <feather-icon
+                                  icon="EditIcon"
+                              />
+                          </b-button>
+                          <b-button
+                              v-else
+                              class="btn-icon"
+                              size="sm"
+                              variant="flat-dark"
+                              @click="editSenderActive(items)"
+                          >
+                              <feather-icon
+                                  icon="EditIcon"
+                              />
+                          </b-button>
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="Name"
+                        label-for="name"
+                        label-cols-md="3"
+                      >
+                        <validation-provider
+                          #default="{errors}"
+                          name="Nama"
+                          rules="required"
+                        >
+                          <b-form-input
+                            v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                            placeholder="Nama"
+                            v-model="editNameSender"
+                            :state="errors.length > 0 ? false:null"
+                            :formatter="formatNameSender"
+                            @keypress="validateInputNameSenderEdit"
+                          />
+                          <b-form-input
+                            v-else
+                            placeholder="Nama"
+                            disabled
+                            v-model="items.name_label"
+                          />
+                          <b-row class="justify-content-between">
+                            <small class="text-primary ml-1">{{ errors[0] }}</small>
+                            <small class="mr-1">
+                              {{ editNameSender.length }}/30
+                            </small>
+                          </b-row>
+                          <small
+                                v-if="messageErrorLengthSenderNameEdit"
+                                class="text-primary"
+                              >
+                                *hindari menggunakan simbol (/) (=) (:) (;)
+                              </small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="No HP"
+                        label-for="no-hp"
+                        label-cols-md="3"
+                      >
+                        <validation-provider
+                          #default="{errors}"
+                          name="No HP"
+                          rules="required"
+                        >
+                          <b-form-input
+                            v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                            placeholder="No HP"
+                            type="number"
+                            v-model="editNoHPSender"
+                            :state="errors.length > 0 ? false:null"
+                            @input="checkEditNumber"
+                          />
+                          <b-form-input
+                            v-else
+                            placeholder="No HP"
+                            type="number"
+                            disabled
+                            v-model="items.no_hp"
+                          />
+                          <small class="text-primary">{{ errors[0] }}</small>
+                          <small
+                            v-if="errorNumberEdit && idCustomLabelEdit === items.id"
+                            class="text-primary">{{ messageValidateNumber }}
+                          </small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+                    <b-col
+                      v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                      md="8"
+                      offset-md="3"
+                    >
+                      <b-form-group>
+                        <b-form-checkbox
+                          v-model="editSenderIsDefault"
+                        >
+                          Jadikan Default
+                        </b-form-checkbox>
+                      </b-form-group>
+                    </b-col>
+                
+                    <!-- delete and save -->
+                    <transition name="fade">
+                      <b-col
+                        v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                        class="d-flex justify-content-end"
+                      >
+                        <b-button
+                          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                          variant="outline-primary"
+                          class="mr-1 btin-icon"
+                          @click="deleteSenderLabel(items)"
+                        >
+                          <b-spinner
+                            v-if="loadingDeleteSender"
+                            small
+                          />
+                          Hapus
+                        </b-button>
+                        <b-button
+                          v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                          variant="primary"
+                          class="btn-icon"
+                          :disabled="invalid || errorNumberEdit"
+                          @click.prevent="updateSenderLabel"
+                        >
+                          <b-spinner
+                            v-if="loadingSubmitSender"
+                            small
+                          />
+                          Simpan
+                        </b-button>
+                      </b-col>
+                    </transition>
+                  </b-row>
+              </b-form>
+            </validation-observer>
+          </b-row>
+        </div>
+      </b-overlay>
+
+      <!-- Add sender -->
+      <transition name="fade">
+        <b-row
+          v-if="fieldAddSender"
+          class="mx-3 p-2 mb-2"
+          style="
+              border: 1px solid #E2E2E2;
+              border-radius: 8px;
+          "
+        >
+          <validation-observer
+            ref="formRulesAdd"
+          >
+            <b-form>
+                <b-row class="mb-1 align-items-center">
+                    <b-col cols="auto">
+                        <span>
+                            <strong>
+                                Identitas {{ indexIdentity + itemsCustomLabel.length + 1 }}
+                            </strong>
+                        </span>
+                    </b-col>
+                </b-row>
+                <b-row>
+                  <b-col cols="12">
+                    <b-form-group
+                      label="Name"
+                      label-for="name"
+                      label-cols-md="3"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="Nama"
+                        rules="required"
+                      >
+                        <b-form-input
+                          id="name"
+                          placeholder="Nama"
+                          v-model="nameSender"
+                          :state="errors.length > 0 ? false:null"
+                          :formatter="formatNameSender"
+                          @keypress="validateInputNameSender"
+                        />
+                        <b-row class="justify-content-between">
+                          <small class="text-primary ml-1">{{ errors[0] }}</small>
+                          <small class="mr-1">
+                            {{ nameSender.length }}/30
+                          </small>
+                        </b-row>
+                        <small
+                              v-if="messageErrorLengthSenderName"
+                              class="text-primary"
+                            >
+                              *hindari menggunakan simbol (/) (=) (:) (;)
+                            </small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+                  <b-col cols="12">
+                    <b-form-group
+                      label="No HP"
+                      label-for="no-hp"
+                      label-cols-md="3"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="No HP"
+                        rules="required"
+                      >
+                        <b-form-input
+                          id="no-hp"
+                          placeholder="No HP"
+                          type="number"
+                          v-model="noHPSender"
+                          :state="errors.length > 0 ? false:null"
+                          @input="checkNumber"
+                        />
+                        <b-row>
+                          <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                        </b-row>
+                        <small
+                          v-if="errorNumber"
+                          class="text-primary">{{ messageValidateNumber }}
+                        </small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+                  <b-col
+                    md="8"
+                    offset-md="3"
+                  >
+                    <b-form-group>
+                      <b-form-checkbox
+                        v-model="senderIsDefault"
+                      >
+                        Jadikan Default
+                      </b-form-checkbox>
+                    </b-form-group>
+                  </b-col>
+            
+                  <!-- delete and save -->
+                  <b-col class="d-flex justify-content-end">
+                    <b-button
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      variant="outline-primary"
+                      class="mr-1 btin-icon"
+                      @click="removeFieldAddSender"
+                    >
+                      Hapus
+                    </b-button>
+                    <b-button
+                      v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                      variant="primary"
+                      class="btn-icon"
+                      :disabled="errorNumber"
+                      @click.prevent="submitSender"
+                    >
+                      <b-spinner
+                        v-if="loadingSubmitSender"
+                        small
+                      />
+                      Simpan
+                    </b-button>
+                  </b-col>
+                </b-row>
+            </b-form>
+          </validation-observer>
+        </b-row>
+      </transition>
+      <b-row
+        v-if="itemsCustomLabel.length < 14"
+        class="justify-content-center pb-2"
+      >
+        <b-button
+            variant="primary"
+            class="btn-icon"
+            @click="addSender"
+        >
+            <feather-icon
+                icon="PlusIcon"
+                class="mr-50"
+                style="display: inline-block;"
+            />
+            <span class="align-middle">Tambah Identitas</span>
+        </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- Modal set custom label -->
+    <b-modal
+      ref="modal-set-custom-label"
+      hide-header
+      hide-footer
+      no-close-on-backdrop
+      no-close-on-esc
+      centered
+    >
+      <b-row class="justify-content-center mb-2 pt-2">
+        <img src="@/@core/assets/image/icon-popup-warning.png">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-2">
+          <b-col
+            cols="11"
+            class="px-2"
+          >
+            <span class="text-black">
+                Kamu yakin ingin me non-aktifkan pilihan Custom Label 
+                Nama Pengirim akan menjadi Nama Bisnis seperti di Profil Anda
+            </span>
+          </b-col>
+      </b-row>
+      <b-row class="justify-content-center pb-2">
+        <b-button
+          variant="outline-primary"
+          class="mr-1 btn-icon"
+          @click="alertCustomLabel"
+        >
+          Batal
+        </b-button>
+        <b-button
+          variant="primary"
+          class="btn-icon"
+          @click="handleNotActiveCustomLabel"
+        >
+          Non-Aktifkan
+        </b-button>
+      </b-row>
+    </b-modal>
 
     <!-- Popoup Sales Tracking -->
     <b-modal
