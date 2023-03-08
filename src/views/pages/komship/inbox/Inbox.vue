@@ -239,12 +239,22 @@ export default {
       const currentDate = moment(new Date())
       const asHours = moment.duration(currentDate.diff(pastDate))
       const hour = Math.round(asHours.asHours())
+      const minutes = Math.round(asHours.asMinutes())
       let format = ''
-      if (hour < 24) {
-        format = moment(new Date(value)).format('HH:mm')
+      if (hour === 0) {
+        format = `${minutes} menit yang lalu`
       }
-      if (hour > 24) {
-        format = moment(new Date(value)).format('DD MMM')
+      if (hour === 1 || hour > 1) {
+        format = `${hour} jam yang lalu`
+      }
+      if (hour > 3 && hour < 24) {
+        format = moment(new Date(value)).format('HH.mm')
+      }
+      if (hour >= 20 && hour <= 48) {
+        format = `Kemarin ${moment(new Date(value)).format('HH.mm')}`
+      }
+      if (hour > 48) {
+        format = `${moment(new Date(value)).format('DD MMMM YYYY HH.mm')}`
       }
       return format
     },
