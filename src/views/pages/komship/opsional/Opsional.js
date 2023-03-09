@@ -33,7 +33,6 @@ export default {
       returnInsight: null,
       orderNotes: null,
       mutationBank: null,
-      customLabel: null,
       notifWA: null,
       isGetting: false,
       isNotSetActive: true,
@@ -102,7 +101,6 @@ export default {
     getProfile() {
       this.quickType = this.profile.partner_is_allowed_edit
       this.mutationBank = this.profile.partner_is_mutation_bank
-      this.customLabel = this.profile.partner_is_custom_label
       this.orderMassal = this.profile.partner_is_mass_order
       this.returnInsight = this.profile.partner_is_return_insight
       this.orderNotes = this.profile.partner_is_order_notes

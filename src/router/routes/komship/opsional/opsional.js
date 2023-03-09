@@ -10,6 +10,16 @@ export default [
     },
   },
   {
+    path: '/opsional-feature/pickup-label',
+    name: 'pickup-label',
+    component: () => import('@/views/pages/komship/opsional/custom-label/customLabel.vue'),
+    meta: {
+      name: 'pickup-label',
+      resource: 'Fitur Pendukung',
+      action: 'manage',
+    },
+  },
+  {
     path: '/opsional-feature/koneksi-wa',
     name: 'koneksi-wa',
     component: () => import('@/views/pages/komship/opsional/wa-notif/koneksi.vue'),

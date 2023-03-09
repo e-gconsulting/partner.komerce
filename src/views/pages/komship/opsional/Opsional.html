@@ -128,21 +128,16 @@
               <b-card img-src="@/assets/images/banner/illustration-custom-label.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
                   <b-card-title class="d-flex justify-between">
                       <span class="font-bold text-primary">Custom Label</span>
-                      <b-form-checkbox
-                          v-model="customLabel"
-                          switch
-                          @input="setCustomLabel()"
-                      />
                   </b-card-title>
                   <b-card-text>
-                      Memungkinkan kamu custom data pengirim. Cocok buat dropship atau nama brand lebih dari satu.
+                    Mengaktifkan biaya ongkir dan custom data pengirim (cocok untuk dropship atau nama brand lebih dari satu)
                   </b-card-text>
                   <b-row class="justify-content-center">
                       <b-button
                           v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                           style="background: #F95031!important; border: 0; width: 130px; border-radius: 8px;"
                           class="btn-icon"
-                          @click="adjustCustomLabel"
+                          @click="$router.push({ name: 'pickup-label' })"
                       >
                           Sesuaikan
                       </b-button>
