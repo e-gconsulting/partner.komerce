@@ -332,6 +332,8 @@ export default {
       isLoadingPage: true,
       detailInfo: {},
       countSlide: 0,
+
+      partnerProductTotal: null,
     }
   },
   computed: {
@@ -359,6 +361,7 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.checkProduct()
     // this.$nextTick(() => {
     //   console.log(this.$refs['childOtherbox-0'])
     //   // this.$refs['childOtherbox-0'][0].classList.toggle('borderActive')
@@ -370,19 +373,56 @@ export default {
       const [indexData] = refKey.split('-')
       this.countSlide = parseInt(indexData, 10)
     },
+
+    async checkProduct() {
+      await this.$http_komship.get('/v1/komship/submission/count-product')
+        .then(res => {
+          const { data } = res.data
+          this.partnerProductTotal = data.total
+        }).catch(err => {
+          console.log(err)
+        })
+    },
+
     redirectToSubmission(data) {
-      const { subscribe_status, id } = data
-      // eslint-disable-next-line camelcase
-      if (subscribe_status === 0) {
-        this.$router.push({
-          path: `/search-gudang/detail/submission/${this.$route.params.id}`,
+      if (this.partnerProductTotal === 0) {
+        this.$swal({
+          title: 'Tambahkan Produk',
+          text: 'Kamu belum memiliki data produk, yuk tambahkan produk terlebih dahulu!',
+          icon: 'warning',
+          width: '50%',
+          iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png">',
+          showCancelButton: true,
+          cancelButtonText: 'Tidak',
+          confirmButtonText: 'Tambahkan',
+          reverseButtons: true,
+          customClass: {
+            icon: 'border-0 w-50 my-5',
+            confirmButton: 'btn btn-primary px-4',
+            cancelButton: 'btn btn-outline-primary mr-1 px-5',
+          },
+          buttonsStyling: false,
+        }).then(result => {
+          if (result.value) {
+            this.$router.push({
+              path: '/add-produk',
+            })
+          }
         })
-        localStorage.setItem('warehouse_id', id)
-      // eslint-disable-next-line camelcase
-      } if (subscribe_status === 1) {
-        this.$router.push({
-          path: `/detail-gudang-kompack/${this.$route.params.id}`,
-        })
+      } else {
+        const { subscribe_status, id } = data
+        // eslint-disable-next-line camelcase
+        if (subscribe_status === 0) {
+          this.$router.push({
+            path: `/search-gudang/detail/submission/${this.$route.params.id}`,
+          })
+          localStorage.setItem('warehouse_id', id)
+        // eslint-disable-next-line camelcase
+        } if (subscribe_status === 1) {
+          this.$router.push({
+            path: `/detail-gudang-kompack/${this.$route.params.id}`,
+          })
+        }
       }
     },
     waWeb(e) {

@@ -120,6 +120,9 @@
           empty-text="Tidak ada data yang ditampilkan."
           responsive
           show-empty
+          :select-mode="'multi'"
+          selectable
+          @row-selected="onRowSelected"
         >
           <template #cell(checkbox)="data">
             <BCheckbox
@@ -367,6 +370,9 @@ export default {
   },
 
   methods: {
+    onRowSelected(items) {
+      this.selected = items
+    },
     handlePackingText(pm) {
       const selectedOption = this.packingOptions.filter(option => pm.includes(option.value))
       if (selectedOption.length === 1) return selectedOption[0].text
