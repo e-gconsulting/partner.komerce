@@ -102,7 +102,10 @@
         </div>
       </div>
     </div>
-    <hr class="-mx-6">
+    <hr
+      class="-mx-6"
+      style="margin-top: 16px;"
+    >
     <!-- GUDANG LIST -->
     <div
       id="gudang"

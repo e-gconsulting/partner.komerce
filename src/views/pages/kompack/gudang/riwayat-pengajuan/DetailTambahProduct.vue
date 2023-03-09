@@ -94,17 +94,9 @@
       <div class="w-100 d-flex flex-row-reverse mt-4">
         <div class="w-50 d-flex gap-7">
           <BButton
-            v-if="detail.submission_status !== 'Sedang Diajukan'"
             class="w-100"
             variant="outline-primary"
             @click="handleChat(detail.warehouse_phone)"
-          >
-            Chat
-          </BButton>
-          <BButton
-            v-else
-            class="w-100"
-            disabled
           >
             Chat
           </BButton>
