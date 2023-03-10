@@ -1,10 +1,10 @@
 <template>
   <b-card body>
     <div v-if="!TambahProduct">
-      <b-row class="justify-content-between mt-2 mb-4">
-        <h4 class="text-black font-bold mb-1">
+      <div class="d-flex justify-content-between">
+        <h3 class="text-black font-bold mb-1">
           Ajukan Inbound
-        </h4>
+        </h3>
         <b-button
           :disabled="submitDisabled()"
           :variant="submitDisabled() ? 'secondary' : 'primary'"
@@ -12,39 +12,94 @@
         >
           Ajukan Inbound
         </b-button>
-      </b-row>
-      <div class="border-2 rounded-2xl">
-        <div class="px-2 pt-2">
-          <h5 class="text-black font-bold">
-            Data Inbound
-          </h5>
-          <b-row class="my-2">
+      </div>
+      <div class="border p-2 mt-2">
+        <div
+          class="text-black font-bold"
+          style="font-size: 16px;"
+        >
+          Data Inbound
+        </div>
+        <b-row class="my-2 align-items-center">
+          <b-col
+            md="3"
+            xs="12"
+          >
+            <div class="text-black font-bold">
+              Dikirim dari
+            </div>
+          </b-col>
+          <b-col
+            xs="12"
+            md="6"
+          >
+            <v-select
+              v-model="sendForm"
+              :clearable="false"
+              placeholder="Masukkan alamat pengirim"
+              :loading="loadingDestinations"
+              :options="destinations"
+              @search="searchDestination"
+            />
+          </b-col>
+        </b-row>
+        <b-row class="align-items-center">
+          <b-col
+            xs="12"
+            md="3"
+          >
+            <div class="text-black font-bold">
+              Kirim ke
+            </div>
+          </b-col>
+          <b-col
+            xs="12"
+            md="6"
+          >
+            <v-select
+              key="warehouse_id"
+              v-model="warehouse"
+              placeholder="Pilih Mitra Gudang"
+              :options="listGudang"
+              :clearable="false"
+              label="warehouse_name"
+              aria-placeholder="Pilih Mitra Gudang"
+              @input="AddProductDisabled(warehouse)"
+            />
+          </b-col>
+        </b-row>
+        <b-row class="my-2 justify-content-center">
+          <b-col
+            xs="12"
+            md="6"
+            class="d-sm-flex"
+          >
+            <b-button
+              :variant="KirimEkspedisi ? 'outline-primary' : 'outline-dark'"
+              class="d-flex align-items-center mr-2"
+              @click="Ekspedisi"
+            >
+              <b-img :src="KirimEkspedisi ? `https://storage.googleapis.com/komerce/assets/menggunakan-ekspedisi-orange.svg` : `https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg`" />
+              <span class="ml-1 font-bold">Dikirim Ekspedisi</span>
+            </b-button>
+            <b-button
+              :variant="KirimSendiri ? 'outline-primary' : 'outline-dark'"
+              class="d-flex align-items-center"
+              @click="Sendiri"
+            >
+              <b-img :src="KirimSendiri ? `https://storage.googleapis.com/komerce/assets/dikirim-sendiri-orange.svg` : `https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg`" />
+              <span class="ml-1 font-bold">Dikirim Sendiri</span>
+            </b-button>
+          </b-col>
+        </b-row>
+        <div v-if="KirimEkspedisi">
+          <b-row class="my-2 align-items-center">
             <b-col
-              md="3"
               xs="12"
+              md="3"
             >
               <div class="text-black font-bold">
-                Dikirim dari
-              </div>
-            </b-col>
-            <b-col
-              xs="12"
-              md="6"
-            >
-              <b-form-input
-                v-model="addressSender"
-                placeholder="Masukan alamat pengirim"
-                class="rounded-2xl"
-              />
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col
-              xs="12"
-              md="3"
-            >
-              <div class="text-black font-bold">
-                Kirim ke
+                Ekspedisi
               </div>
             </b-col>
             <b-col
@@ -52,172 +107,151 @@
               md="6"
             >
               <v-select
-                key="warehouse_id"
-                v-model="warehouse"
-                :options="listGudang"
-                label="warehouse_name"
-                aria-placeholder="Pilih Mitra Gudang"
-                @input="AddProductDisabled(warehouse)"
+                key="id"
+                v-model="ekspedisi"
+                :options="listEkspedisi"
+                :clearable="false"
+                label="name"
+                placeholder="Pilih Ekspedisi"
               />
             </b-col>
           </b-row>
-          <b-row class="my-2 justify-content-center">
+          <b-row
+            v-if="ekspedisi.name === 'Lainnya'"
+            class="my-2 align-items-center"
+          >
+            <b-col
+              xs="12"
+              md="3"
+            >
+              <div class="text-black font-bold">
+                Nama Ekspedisi
+              </div>
+            </b-col>
             <b-col
               xs="12"
               md="6"
-              class="d-sm-flex"
             >
-              <b-button
-                :variant="KirimEkspedisi ? 'outline-primary' : 'outline-dark'"
-                class="d-flex align-items-center mr-1"
-                @click="Ekspedisi"
-              >
-                <b-img src="https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg" />
-                <span class="ml-1">Dikirim Ekspedisi</span>
-              </b-button>
-              <br>
-              <b-button
-                :variant="KirimSendiri ? 'outline-primary' : 'outline-dark'"
-                class="d-flex align-items-center"
-                @click="Sendiri"
-              >
-                <b-img src="https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg" />
-                <span class="ml-1">Dikirim Sendiri</span>
-              </b-button>
+              <b-form-input
+                v-model="ekspedisiLainnya"
+                placeholder="Masukkan nama ekspedisi"
+                class="rounded-2xl"
+                maxlength="20"
+              />
             </b-col>
           </b-row>
-          <div v-if="KirimEkspedisi">
-            <b-row class="my-2">
-              <b-col
-                xs="12"
-                md="3"
-              >
-                <div class="text-black font-bold">
-                  Ekspedisi
-                </div>
-              </b-col>
-              <b-col
-                xs="12"
-                md="6"
-              >
-                <v-select
-                  key="id"
-                  v-model="ekspedisi"
-                  :options="listEkspedisi"
-                  label="name"
-                  aria-placeholder="Pilih Ekspedisi"
-                />
-              </b-col>
-            </b-row>
-            <b-row class="my-2">
-              <b-col
-                xs="12"
-                md="3"
-              >
-                <div class="text-black font-bold">
-                  Nomor Resi
-                </div>
-              </b-col>
-              <b-col
-                xs="12"
-                md="6"
-              >
-                <b-form-input
-                  v-model="noResi"
-                  placeholder="Masukan No Resi"
-                  class="rounded-2xl"
-                />
-              </b-col>
-            </b-row>
-          </div>
-          <div v-if="KirimSendiri">
-            <b-row class="my-2">
-              <b-col
-                xs="12"
-                md="3"
-              >
-                <div class="text-black font-bold">
-                  Tanggal Pengiriman
-                </div>
-              </b-col>
-              <b-col cols="6">
-                <b-input-group class="">
-                  <flat-pickr
-                    ref="pickupDate"
-                    v-model="pickupDate"
-                    :config="configDate"
-                    class="form-control"
-                  />
-                  <b-input-group-append
-                    role="button"
-                    is-text
-                  >
-                    <img
-                      src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg"
-                      @click="$refs.pickupDate.fp.toggle()"
-                    >
-                  </b-input-group-append>
-                </b-input-group>
-              </b-col>
-            </b-row>
-            <b-row class="my-2">
-              <b-col
-                xs="12"
-                md="3"
-              >
-                <div class="text-black font-bold">
-                  Estimasi Sampai Gudang
-                </div>
-              </b-col>
-              <b-col
-                xs="12"
-                md="6"
-              >
-                <b-input-group class="">
-                  <flat-pickr
-                    ref="EstimateDate"
-                    v-model="EstimateDate"
-                    class="form-control"
-                    :config="configDate"
-                  />
-                  <b-input-group-append
-                    role="button"
-                    is-text
-                  >
-                    <img
-                      src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg"
-                      @click="$refs.EstimateDate.fp.toggle()"
-                    >
-                  </b-input-group-append>
-                </b-input-group>
-              </b-col>
-            </b-row>
-          </div>
-          <b-row class="justify-content-between border-t py-2 mt-4">
+          <b-row class="my-2 align-items-center">
             <b-col
-              xs="2"
-              md="4"
+              xs="12"
+              md="3"
             >
-              <h5 class="text-black font-bold">
-                Stock Produk
-              </h5>
+              <div class="text-black font-bold">
+                Nomor Resi
+              </div>
             </b-col>
             <b-col
-              xs="2"
-              md="4"
-              class="text-end"
+              xs="12"
+              md="6"
             >
-              <b-button
-                :disabled="disabledAddProduct"
-                :variant="disabledAddProduct ? 'outline-dark': 'outline-primary'"
-                :class="disabledAddProduct ? 'text-second': 'text-primary'"
-                @click="addProduct()"
-              >
-                Tambah Produk
-              </b-button>
+              <b-form-input
+                v-model="noResi"
+                placeholder="Masukan No Resi"
+                class="rounded-2xl"
+              />
             </b-col>
           </b-row>
         </div>
+        <div v-if="KirimSendiri">
+          <b-row class="my-2">
+            <b-col
+              xs="12"
+              md="3"
+            >
+              <div class="text-black font-bold">
+                Tanggal Pengiriman
+              </div>
+            </b-col>
+            <b-col cols="6">
+              <b-input-group class="">
+                <flat-pickr
+                  ref="pickupDate"
+                  v-model="pickupDate"
+                  :config="configDate"
+                  class="form-control"
+                />
+                <b-input-group-append
+                  role="button"
+                  is-text
+                >
+                  <img
+                    src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg"
+                    @click="$refs.pickupDate.fp.toggle()"
+                  >
+                </b-input-group-append>
+              </b-input-group>
+            </b-col>
+          </b-row>
+          <b-row class="my-2">
+            <b-col
+              xs="12"
+              md="3"
+            >
+              <div class="text-black font-bold">
+                Estimasi Sampai Gudang
+              </div>
+            </b-col>
+            <b-col
+              xs="12"
+              md="6"
+            >
+              <b-input-group class="">
+                <flat-pickr
+                  ref="EstimateDate"
+                  v-model="EstimateDate"
+                  class="form-control"
+                  :config="configDate"
+                />
+                <b-input-group-append
+                  role="button"
+                  is-text
+                >
+                  <img
+                    src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg"
+                    @click="$refs.EstimateDate.fp.toggle()"
+                  >
+                </b-input-group-append>
+              </b-input-group>
+            </b-col>
+          </b-row>
+        </div>
+        <hr class="-mx-6 mt-2">
+        <b-row class="justify-content-between align-items-center">
+          <b-col
+            xs="2"
+            md="4"
+          >
+            <div
+              class="text-black font-bold"
+              style="font-size: 16px;"
+            >
+              Stok Produk
+            </div>
+          </b-col>
+          <b-col
+            xs="2"
+            md="4"
+            class="text-end"
+          >
+            <b-button
+              :disabled="disabledAddProduct"
+              :variant="disabledAddProduct ? 'outline-dark': 'outline-primary'"
+              :class="disabledAddProduct ? 'text-second': 'text-primary'"
+              @click="addProduct()"
+            >
+              Tambah Produk
+            </b-button>
+          </b-col>
+        </b-row>
       </div>
     </div>
     <div
@@ -692,7 +726,302 @@
   </b-card>
 </template>
 
-<script src="./ajukaninbound.js" />
+<script>
+import {
+  BCol,
+  BRow,
+  BListGroup,
+  BListGroupItem,
+  BFormSelect,
+  BCard,
+  BOverlay,
+  BModal,
+} from 'bootstrap-vue'
+import vSelect from 'vue-select'
+import flatPickr from 'vue-flatpickr-component'
+import { Indonesian } from 'flatpickr/dist/l10n/id'
+import 'flatpickr/dist/themes/light.css'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+
+export default {
+  components: {
+    BCol,
+    BRow,
+    BCard,
+    vSelect,
+    flatPickr,
+    BModal,
+  },
+  data() {
+    return {
+      addressSender: '',
+      listGudang: [],
+      listEkspedisi: [],
+      listProdukEdit: [],
+      listProdukDB: [],
+      KirimEkspedisi: false,
+      KirimSendiri: false,
+      warehouse: '',
+      shippingType: null,
+      ekspedisi: '',
+      TambahProduct: false,
+      TableProduct: false,
+      pickupDate: '',
+      EstimateDate: '',
+      configDate: {
+        wrap: true,
+        altFormat: 'j F Y',
+        altInput: true,
+        minDate: 'today',
+        altInputClass: 'bg-white form-control',
+        locale: Indonesian,
+      },
+      selectAllOrder: false,
+      selectedOrder: [],
+      selectedDummyOrder: [],
+      noResi: '',
+      DisabledSubmit: true,
+      disabledAddProduct: true,
+      search: '',
+      warehouse_Id: '',
+      StatusSelectOrder: false,
+
+      sendForm: '',
+      destinations: [],
+      loadingDestinations: false,
+      ekspedisiLainnya: '',
+    }
+  },
+  mounted() {
+    this.listWarehouse()
+    this.listKurir()
+  },
+  methods: {
+    async searchDestination(query) {
+      if (query.length >= 2) {
+        this.loadingDestinations = true
+        await this.$http_komship.get('/v2/destination', {
+          params: {
+            search: query,
+          },
+        })
+          .then(res => {
+            const { data } = res.data.data
+            this.destinations = data.map(item => ({
+              label: item.label,
+              value: item.label,
+            }))
+            this.loadingDestinations = false
+          })
+          .catch(err => {
+            this.loadingDestinations = false
+            console.log(err)
+          })
+      }
+    },
+    async listWarehouse() {
+      await this.$http_komship.get('/v1/komship/inbound/warehouses')
+        .then(response => {
+          this.listGudang = response.data.data
+        })
+    },
+    listKurir() {
+      this.$http_komship.get('/v1/komship/inbound/rajaongkir-shippings')
+        .then(response => {
+          this.listEkspedisi.push(...response.data.data)
+          this.listEkspedisi.push(...[{
+            courier_code: '',
+            name: 'Lainnya',
+            id: 1,
+          }])
+        })
+    },
+    listProduct() {
+      this.$http_komship.get(`/v1/komship/inbound/${this.warehouse.warehouse_id}/products`)
+        .then(response => {
+          this.listProdukDB = response.data.data.map(item => ({
+            ...item,
+            isActive: false,
+            stockEdit: 0,
+            variant: item.variant.map(variant => ({
+              ...variant,
+              stockEdit: 0,
+            })),
+          }))
+          this.listProdukEdit = this.listProdukDB
+        })
+    },
+    searchProduct(array, search) {
+      const regex = new RegExp(search, 'i')
+      this.listProdukEdit = array.filter(item => regex.test(item.product_name))
+    },
+    Ekspedisi() {
+      this.KirimEkspedisi = true
+      this.KirimSendiri = false
+      if (this.KirimSendiri) {
+        this.shippingType = 1
+      } if (this.KirimEkspedisi) {
+        this.shippingType = 2
+      }
+    },
+    Sendiri() {
+      this.KirimSendiri = true
+      this.KirimEkspedisi = false
+      if (this.KirimSendiri) {
+        this.shippingType = 1
+      } if (this.KirimEkspedisi) {
+        this.shippingType = 2
+      }
+    },
+    back() {
+      this.TambahProduct = !this.TambahProduct
+      if (this.selectedOrder.length > 0 && this.StatusSelectOrder === true) {
+        this.TableProduct = !this.TambahProduct
+      } else {
+        this.TableProduct = false
+      }
+    },
+    addProduct() {
+      this.TambahProduct = !this.TambahProduct
+      this.TableProduct = !this.TambahProduct
+    },
+    inputStock(stock, product, index, item) {
+      if (stock < 0) {
+        this.listProdukEdit[product].variant[index].stockEdit = 0
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = false
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = true
+      }
+    },
+    inputStockNoVariant(stock, product, item) {
+      if (stock < 0) {
+        this.listProdukEdit[product].stockEdit = 0
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = false
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        item.isActive = true
+      }
+    },
+    setQuantity(status, product, index, item) {
+      if (status === 'plus') {
+        // eslint-disable-next-line no-plusplus
+        this.listProdukEdit[product].variant[index].stockEdit++
+        if (this.listProdukEdit[product].variant[index].stockEdit > 0) {
+          // eslint-disable-next-line no-param-reassign
+          item.isActive = true
+        }
+      } else if (status === 'minus') {
+        this.listProdukEdit[product].variant[index].stockEdit -= 1
+        if (this.listProdukEdit[product].variant[index].stockEdit <= 0) {
+          this.listProdukEdit[product].variant[index].stockEdit = 0
+          // eslint-disable-next-line no-param-reassign
+          item.isActive = false
+        }
+      }
+    },
+    setQuantityNoVariant(status, product, item) {
+      if (status === 'plus') {
+        // eslint-disable-next-line no-plusplus
+        this.listProdukEdit[product].stockEdit++
+        if (this.listProdukEdit[product].stockEdit > 0) {
+          // eslint-disable-next-line no-param-reassign
+          item.isActive = true
+        }
+      } else if (status === 'minus') {
+        this.listProdukEdit[product].stockEdit -= 1
+        if (this.listProdukEdit[product].stockEdit <= 0) {
+          this.listProdukEdit[product].stockEdit = 0
+          // eslint-disable-next-line no-param-reassign
+          item.isActive = false
+        }
+      }
+    },
+    async submitInbound() {
+      this.DisabledSubmit = true
+      const product = await this.selectedOrder.map(object => ({
+        product_id: object.id,
+        is_variant: object.is_variant,
+        total_inbound: object.stockEdit,
+        variant: object.variant.map(variant => ({
+          option_id: variant.option_id,
+          total_inbound: variant.stockEdit,
+        })),
+      }))
+
+      let ekspedisi = ''
+      if (this.ekspedisi.name === 'Lainnya') {
+        ekspedisi = `lainnya-${this.ekspedisiLainnya}`
+      } else {
+        ekspedisi = this.ekspedisi.courier_code
+      }
+
+      const formdata = {
+        send_from: null,
+        send_to: this.warehouse.warehouse_id,
+        address_sender: this.sendForm.value,
+        shipping_type: this.shippingType,
+        shipping_date: this.pickupDate,
+        estimate_date: this.EstimateDate,
+        shipping: ekspedisi,
+        no_resi: this.noResi,
+        product,
+      }
+
+      await this.$http_komship
+        .post('/v1/komship/inbound/store', formdata)
+        .then(response => {
+          if (response.status === 200) {
+            this.$bvModal.show('success-inbound')
+          }
+        })
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+    },
+    submitDisabled() {
+      let result = true
+      if (this.DisabledSubmit === false && (this.sendForm.value !== '' && this.warehouse !== '' && ((this.ekspedisi !== '' && this.noResi !== '') || (this.pickupDate !== '' && this.estimateDate !== '')))) {
+        result = false
+      } else {
+        result = true
+      }
+      return result
+    },
+    AddProductDisabled(e) {
+      this.listProduct()
+      if (e !== '') {
+        this.disabledAddProduct = false
+      }
+    },
+    addStockNow() {
+      this.TambahProduct = !this.TambahProduct
+      this.selectedOrder = this.selectedDummyOrder
+      if (this.selectedOrder.length > 0) {
+        this.TableProduct = !this.TambahProduct
+        this.StatusSelectOrder = true
+        this.DisabledSubmit = false
+      } else {
+        this.DisabledSubmit = true
+      }
+    },
+    setData(data) {
+      this.selectedDummyOrder = data.filter(item => item.isActive === true)
+    },
+  },
+}
+
+</script>
 
 <style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
