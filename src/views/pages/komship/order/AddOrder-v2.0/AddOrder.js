@@ -168,6 +168,7 @@ export default {
 
       warehouseID: 0,
       limit: 5,
+      offset: 0,
       isMoreShow: false,
     }
   },
@@ -452,13 +453,17 @@ export default {
     getProductSearch: _.debounce(function (search, loading) {
       this.isMoreShow = false
       this.searchProduct = search
+      this.limit = 5
+      this.offset = 0
+      this.productListDB = []
+      this.productList = []
       if (this.searchProduct === undefined || this.searchProduct === '') {
         this.searchProduct = ''
         this.getProduct(this.address)
       } else if (this.searchProduct.length > 2) {
         this.getProduct(this.address)
       }
-    }),
+    }, 1000),
     getProduct(address) {
       if (this.warehouseId !== address.warehouse_id) {
         this.warehouseId = address.warehouse_id
@@ -473,37 +478,27 @@ export default {
       }
     },
     async getProductList(address) {
-      this.limit = 5
       await this.$http_komship
         .get(`v3/partner-product/${this.profile.partner_id}`, {
           params: {
             warehouse_type: address.warehouse_type,
             warehouse_id: address.warehouse_id,
             search: this.searchProduct,
-            limit: 100,
-            offset: 0,
+            limit: this.limit,
+            offset: this.offset,
           },
         })
         .then(response => {
           const { data } = response.data
+          this.offset += this.limit
           this.productListDB = data
-          this.productList = data.slice(0, 5)
-          if (this.productList.length === 0) {
+          this.productList.push(...this.productListDB)
+          if (this.productList.length < this.offset) {
             this.isMoreShow = false
           } else {
             this.isMoreShow = true
           }
         })
-    },
-    isMore() {
-      this.limit += 5
-      if (this.productList.length !== this.productListDB.length) {
-        this.productList = this.productListDB.slice(0, this.limit)
-        this.isMoreShow = true
-      } else {
-        this.isMoreShow = false
-        this.productList = this.productListDB
-      }
     },
     async addProduct(itemSelected) {
       if (itemSelected) {
