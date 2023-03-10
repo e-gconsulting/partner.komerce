@@ -445,20 +445,35 @@
         md="3"
         class="my-auto"
       >
-        <span class="text-lg">Pilih Produk</span>
+        <span class="text-lg d-flex">
+          Pilih Produk
+          <img
+            id="popoverProduct"
+            src="https://storage.googleapis.com/komerce/assets/icons/info-circle.svg"
+            class="icon-info ml-[5px] mr-1"
+          >
+        </span>
+        <b-popover
+          triggers="hover"
+          target="popoverProduct"
+          placement="topright"
+        >
+        Apabila produkmu tidak muncul pada list, kamu dapat menemukannya lewat pencarian dengan mengetik nama produkmu
+        </b-popover>
       </b-col>
       <b-col md="4">
         <v-select
           v-model="product"
           label="product_name"
-          placeholder="Ketik Nama Produk"
+          placeholder="Ketik untuk pilih produk"
           :options="productList"
+          @search:focus="getProductSearch"
           @search="getProductSearch"
           @input="addProduct"
         >
         <template v-if="isMoreShow" #list-footer>
           <li class="text-left ml-2 mb-[5px]">
-            <div type="button" class="text-bold text-primary" @click="isMore">
+            <div type="button" class="text-bold text-primary" @click="getProductList(address)">
               Lihat Lainnya
             </div>
           </li>
