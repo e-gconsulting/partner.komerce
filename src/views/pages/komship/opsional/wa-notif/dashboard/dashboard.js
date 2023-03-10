@@ -11,6 +11,7 @@ export default {
     return {
       expiredDate: 0,
       statusWhatsapp: 'Terhubung',
+      NoWhatsapp: '',
       Notification: {},
       iconToggle: true,
       pickupNotification: false,
@@ -48,6 +49,7 @@ export default {
         .then(response => {
           const { data } = response.data
           this.Notification = data
+          this.NoWhatsapp = data.whatsapp_number
           this.expiredDate = data.whatsapp_expired_at
           this.codNotification = data.notification_cod.status
           this.pickupNotification = data.notification_pickup.status
@@ -73,7 +75,6 @@ export default {
           if (response.data.code === 200) {
             this.$router.push({ name: 'koneksi-wa' })
           }
-          console.log(response)
         })
         .catch(err => {
           this.$toast({
