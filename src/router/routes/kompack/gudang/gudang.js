@@ -4,7 +4,7 @@ export default [
     name: 'search-gudang',
     component: () => import('@/views/pages/kompack/gudang/SearchGudangku.vue'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Cari Gudang',
       action: 'manage',
     },
   },
@@ -13,7 +13,7 @@ export default [
     name: 'detail-gudang-search',
     component: () => import('@/views/pages/kompack/gudang/DetailSearchGudang.vue'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Cari Gudang',
       action: 'manage',
     },
   },
@@ -22,25 +22,7 @@ export default [
     name: 'detail-gudang-search',
     component: () => import('@/views/pages/kompack/gudang/AjukanBerlanggananGudang.vue'),
     meta: {
-      resource: 'Gudang',
-      action: 'manage',
-    },
-  },
-  {
-    path: '/gudangku-kompack',
-    name: 'gudangku-kompack',
-    component: () => import('@/views/pages/kompack/gudang/gudangku/PrivateWarehouse.vue'),
-    meta: {
-      resource: 'Gudang',
-      action: 'manage',
-    },
-  },
-  {
-    path: '/gudangku-kompack',
-    name: 'gudangku-kompack',
-    component: () => import('@/views/pages/kompack/gudang/gudangku//MitraWarehouse.vue'),
-    meta: {
-      resource: 'Gudang',
+      resource: 'Cari Gudang',
       action: 'manage',
     },
   },
@@ -49,7 +31,7 @@ export default [
     name: 'ajukan-inbound',
     component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/AjukanInbound.vue'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Ajukan Inbound',
       action: 'manage',
     },
   },
@@ -58,7 +40,7 @@ export default [
     name: 'riwayat-pengajuan',
     component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/RiwayatPengajuan'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Riwayat Pengajuan',
       action: 'manage',
     },
   },
@@ -67,7 +49,7 @@ export default [
     name: 'detail-riwayat-inbound',
     component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailInbound'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Riwayat Pengajuan',
       action: 'manage',
     },
   },
@@ -76,7 +58,7 @@ export default [
     name: 'detail-riwayat-tambah-product',
     component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailTambahProduct'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Riwayat Pengajuan',
       action: 'manage',
     },
   },
@@ -85,7 +67,7 @@ export default [
     name: 'detail-riwayat-berlangganan',
     component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailBerlangganan'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Riwayat Pengajuan',
       action: 'manage',
     },
   },

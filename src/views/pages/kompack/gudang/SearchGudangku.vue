@@ -1,11 +1,14 @@
 <template>
-  <div class="card">
-    <div class="pl-3 pr-3 pt-3">
-      <h3>Cari Gudang</h3>
-      <p>Temukan mitra gudangmu</p>
+  <BCard body>
+    <div class="d-flex flex-column">
+      <h3 class="font-bold text-black mb-0">
+        Cari Gudang
+      </h3>
+      <div class="text-muted">
+        Temukan mitra gudangmu
+      </div>
     </div>
-
-    <div class="d-flex justify-content-end pl-3 pr-3 pt-2 pb-2">
+    <div class="d-flex justify-content-end">
       <div class="d-flex flex-row">
         <div>
           <b-input-group class="input-group-merge">
@@ -14,12 +17,11 @@
             </b-input-group-prepend>
             <b-form-input
               id="search"
-              v-model="formFilter.search"
+              v-model="searchGudang"
               type="search"
               class="form-search"
               placeholder="Cari nama gudang atau pemilik"
-              @input="getProduct"
-              @change="onChangeSearchProduct()"
+              @change="getGudangList()"
             />
           </b-input-group>
         </div>
@@ -29,164 +31,55 @@
             right
             no-caret
             variant="primary"
+            toggle-class="p-0"
           >
             <template
               #button-content
             >
-              <feather-icon icon="SlidersIcon" />
+              <img
+                style="margin: 7px;"
+                src="https://storage.googleapis.com/komerce/assets/komerce-icon/Putih/candle.svg"
+              >
             </template>
             <b-dropdown-form
-              style="width: 417px;"
+              style="width: 340px;"
             >
-              <h5>Filter</h5>
+              <h5 class="font-bold text-black">
+                Filter
+              </h5>
               <b-form>
-                <div class="d-flex flex-column">
-                  <div class="mt-1">
-                    <label for="">Tanggal Bergabung</label>
-                    <date-range-picker
-                      ref="picker"
-                      v-model="dateRange"
-                      :locale-data="locale"
-                      :ranges="ranges"
-                      :opens="'left'"
+                <div class="d-flex flex-column gap-3">
+                  <div class="">
+                    <label class="font-bold">Urut berdasarkan</label>
+                    <v-select
+                      v-model="sortTanggal"
                       class="w-100"
-                      @select="removeCustomDate"
-                    >
-                      <template
-                        v-slot:input="picker"
-                        style="min-width: 350px"
-                      >
-                        <div
-                          class="d-flex justify-content-between align-items-center"
-                        >
-                          <span
-                            class="mr-2"
-                          >{{ formatDate(picker.startDate) }} -
-                            {{ formatDate(picker.endDate) }}</span>
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M8 2V5"
-                              stroke="#222222"
-                              stroke-width="1.5"
-                              stroke-miterlimit="10"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M16 2V5"
-                              stroke="#222222"
-                              stroke-width="1.5"
-                              stroke-miterlimit="10"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M3.5 9.08984H20.5"
-                              stroke="#222222"
-                              stroke-width="1.5"
-                              stroke-miterlimit="10"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z"
-                              stroke="#222222"
-                              stroke-width="1.5"
-                              stroke-miterlimit="10"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M15.6947 13.7002H15.7037"
-                              stroke="#222222"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M15.6947 16.7002H15.7037"
-                              stroke="#222222"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M11.9955 13.7002H12.0045"
-                              stroke="#222222"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M11.9955 16.7002H12.0045"
-                              stroke="#222222"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M8.29431 13.7002H8.30329"
-                              stroke="#222222"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M8.29431 16.7002H8.30329"
-                              stroke="#222222"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-                        </div>
-                      </template>
-                    </date-range-picker>
+                      :clearable="false"
+                      :options="sortList"
+                      :reduce="sort => sort.value"
+                    />
                   </div>
-                  <b-form-group
-                    id="city_name"
-                    class="mt-1"
-                    label="Kota"
-                    label-for="city_name"
-                  >
-                    <b-form-input
-                      v-model="formFilter.city_name"
-                      type="search"
-                      placeholder="Masukan Kota"
-                      list="my-list-id"
-                      @input="getCityList(e)"
+                  <div class="">
+                    <label class="font-bold">Kota</label>
+                    <v-select
+                      v-model="cityGudang"
+                      class="w-100"
+                      :clearable="false"
+                      :options="cityList"
+                      :reduce="city => city.value"
                     />
-                    <datalist id="my-list-id">
-                      <option
-                        v-for="city in cityAll"
-                        :key="city.id"
-                      >
-                        {{ city.city_name }}
-                      </option>
-                    </datalist>
-                  </b-form-group>
-                  <b-form-group
-                    id="input-group-3"
-                    class=""
-                    label="Status"
-                    label-for="input-3"
-                  >
-                    <b-form-select
-                      id="input-3"
-                      v-model="status"
+                  </div>
+                  <div class="">
+                    <label class="font-bold">Status</label>
+                    <v-select
+                      v-model="statusGudang"
+                      class="w-100"
+                      :clearable="false"
                       :options="statusList"
-                      label-field="text"
-                      text-field="text"
-                      @change="onchangeStatus"
+                      :reduce="status => status.value"
                     />
-                  </b-form-group>
-                  <div class="d-flex flex-row justify-content-start">
+                  </div>
+                  <div class="d-flex flex-row justify-content-start mt-1">
                     <b-button
                       type="reset"
                       variant="outline-primary"
@@ -197,7 +90,7 @@
                     <b-button
                       class="ml-1"
                       variant="primary"
-                      @click="onSubmitFilter()"
+                      @click="getGudangList()"
                     >
                       Terapkan
                     </b-button>
@@ -209,10 +102,15 @@
         </div>
       </div>
     </div>
-    <hr>
+    <hr
+      class="-mx-6"
+      style="margin-top: 16px;"
+    >
     <!-- GUDANG LIST -->
-    <div class="container-gudang pr-3 pl-3">
-
+    <div
+      id="gudang"
+      class="container-gudang"
+    >
       <b-overlay
         variant="light"
         :show="loading"
@@ -326,25 +224,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="d-flex flex-column w-100 justify-content-center align-content-center">
-          <div>
-            <svg
-              width="270"
-              height="263"
-              viewBox="0 0 270 263"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                width="269.635"
-                height="262.982"
-                fill="black"
-                style="mix-blend-mode:saturation"
-              />
-            </svg>
-
-          </div>
-        </div> -->
       </b-overlay>
     </div>
 
@@ -380,115 +259,80 @@
         </b-btn>
       </b-col>
     </b-modal>
-  </div>
+  </BCard>
 </template>
 
 <script>
-import DateRangePicker from 'vue2-daterange-picker'
-import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-
-import {
-  BFormInput, BInputGroup, BFormGroup, BForm, BFormDatepicker,
-} from 'bootstrap-vue'
-import useJwt from '@/auth/jwt/useJwt'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css'
 import moment from 'moment'
-import {
-  today,
-  last7,
-  last30,
-  firstDateOfMonth,
-  lastDateOfMonth,
-  kompackDate,
-} from '@/store/helpers'
 
 export default {
   components: {
-    BFormInput,
-    BInputGroup,
-    // BFormGroup,
-    BForm,
-    DateRangePicker,
+    vSelect,
   },
   data() {
     return {
       noHPBisnis: null,
       partnerBisnis: null,
 
-      status: '',
-      formFilter: {
-        search: '',
-        start_date: '',
-        end_date: '',
-        city_name: '',
-        limits: 50,
-        offset: 0,
-      },
+      searchGudang: '',
+      sortTanggal: 'DESC',
+      cityGudang: null,
+      statusGudang: null,
+      limits: 10,
+      offset: 0,
+      lastData: false,
+
       searchProduct: '',
       loading: false,
       listGudang: [],
-      statusList:
-      [{
-        value: null,
-        text: '',
-      },
-      {
-        value: 0,
-        text: 'Penuh',
-      }, {
-        value: 1,
-        text: 'Tersedia',
-      }],
-      kompackDate,
-      today,
-      last7,
-      last30,
-      firstDateOfMonth,
-      lastDateOfMonth,
-      valueDate: '',
-      formattedDate: '',
-      selectedDate: '',
-      locale: {
-        format: 'dd/mm/yyyy',
-        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-      },
-      ranges: {
-        '7 Hari Terakhir': [last7, today],
-        '30 Hari Terakhir': [last30, today],
-        'Bulan Ini': [firstDateOfMonth, today],
-        'Semua ': [kompackDate, today],
-      },
 
-      dateRange: {
-        startDate: kompackDate,
-        endDate: today,
-      },
-      cityAll: [],
+      sortList: [
+        {
+          label: 'Tanggal Bergabung : Terbaru',
+          value: 'DESC',
+        },
+        {
+          label: 'Tanggal Bergabung : Terlama',
+          value: 'ASC',
+        },
+      ],
+      cityList: [
+        {
+          label: 'Semua Kota',
+          value: null,
+        },
+      ],
+      statusList: [
+        {
+          label: 'Semua',
+          value: null,
+        },
+        {
+          label: 'Penuh',
+          value: 0,
+        },
+        {
+          label: 'Tersedia',
+          value: 1,
+        },
+      ],
     }
   },
 
-  watch: {
-    dateRange: {
-      handler() {
-        this.fetchData()
-      },
-    },
-  },
   created() {
     this.fetchMyProfile()
   },
   mounted() {
-    const params = {
-      search: this.formFilter.search,
-      start_date: this.formFilter.start_date,
-      end_date: this.formFilter.end_date,
-      city_name: this.formFilter.city_name,
-      status: this.status,
-      limits: 50,
-      offset: 0,
+    this.getGudangList()
+    this.getCityList()
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('gudang').offsetHeight && !this.loading) {
+        this.getNextGudangList()
+      }
     }
-    this.getGudangList(params)
   },
   methods: {
     async fetchMyProfile() {
@@ -514,66 +358,88 @@ export default {
           )
         })
     },
-
     goToProfile() {
       this.$router.push({
         path: '/setting-kompship/profile',
       })
     },
-    getGudangList(params) {
+
+    async getGudangList() {
+      this.offset = 0
       this.loading = true
-      this.$http_komship.get('/v1/komship/warehouse/search', {
-        params,
+      await this.$http_komship.get('/v1/komship/warehouse/search', {
+        params: {
+          search: this.searchGudang,
+          sort: this.sortTanggal,
+          city_name: this.cityGudang,
+          status: this.statusGudang,
+          limits: this.limits,
+          offset: this.offset,
+        },
       }).then(response => {
         this.loading = false
-        this.listGudang = response.data.data
+        const { data } = response.data
+        this.listGudang = data
+        if (data.length < this.limits) {
+          this.lastData = true
+        } else {
+          this.lastData = false
+        }
+        this.offset = data.length
       }).catch(err => {
         this.loading = false
         console.log(err)
       })
     },
-    getCityList() {
-      this.loading = true
-      this.$http_komship.get('/v1/komship/warehouse/option/destination')
-        .then(response => {
+
+    async getNextGudangList() {
+      if (!this.lastData) {
+        this.loading = true
+        await this.$http_komship.get('/v1/komship/warehouse/search', {
+          params: {
+            search: this.searchGudang,
+            sort: this.sortTanggal,
+            city_name: this.cityGudang,
+            status: this.statusGudang,
+            limits: this.limits,
+            offset: this.offset,
+          },
+        }).then(response => {
           this.loading = false
-          this.cityAll = response.data.data
+          const { data } = response.data
+          this.listGudang.push(...data)
+          this.offset += data.length
+          if (data.length < this.limits) {
+            this.lastData = true
+          }
         }).catch(err => {
           this.loading = false
+          console.log(err)
+        })
+      }
+    },
+
+    getCityList() {
+      this.$http_komship.get('/v1/komship/warehouse/option/destination')
+        .then(res => {
+          const { data } = res.data
+          this.cityList.push(...data.map(obj => ({
+            label: obj.city_name,
+            value: obj.city_name,
+          })))
+        }).catch(err => {
           console.log(err)
         })
     },
     detailClick(item) {
       this.$router.push({ path: `/search-gudang/detail/${item.mitra_id}` })
     },
-    onSubmitFilter() {
-      const params = {
-        start_date: this.dateRange.startDate,
-        end_date: this.dateRange.endDate,
-        city_name: this.formFilter.city_name,
-        status: this.status,
-        limits: 50,
-        offset: 0,
-      }
-      this.getGudangList(params)
-    },
     onReset() {
-      const params = {
-        search: '',
-        start_date: '',
-        end_date: '',
-        city_name: '',
-        status: '',
-        limits: 50,
-        offset: 0,
-      }
-      this.getGudangList(params)
-    },
-    onChangeSearchProduct() {
-      const params = {
-        search: this.formFilter.search,
-      }
-      this.getGudangList(params)
+      this.searchGudang = ''
+      this.sortTanggal = 'DESC'
+      this.cityGudang = null
+      this.statusGudang = null
+      this.getGudangList()
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
@@ -600,19 +466,14 @@ export default {
       return ''
     },
   },
-  debounceDestination(search) {
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout)
-    }
-    this.debounceTimeout = setTimeout(() => {
-      this.getDestination(search)
-    }, 1000)
-  },
-  getProduct($event) {
-
-  },
 }
 </script>
+<style lang="scss">
+@import '@core/scss/vue/libs/vue-select.scss';
+.vs__dropdown-menu {
+  max-height: 137px;
+}
+</style>
 <style lang="scss" scoped>
 .input-group{
   height: 40px;
@@ -629,7 +490,8 @@ input{
 .img-gudang{
   border-radius: 12px;
   width: 195px;
-  height: 144px
+  height: 144px;
+  object-fit: cover;
 }
 .title{
   font-weight: 500;

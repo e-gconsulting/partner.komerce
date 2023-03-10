@@ -34,6 +34,7 @@ export default {
       destinationList: [],
       product: [],
       productList: [],
+      productListDB: [],
       productSelected: [],
       productLength: null,
       productStock: null,
@@ -166,7 +167,9 @@ export default {
       coverageCodSap: true,
 
       warehouseID: 0,
-      warehouseType: '',
+      limit: 5,
+      offset: 0,
+      isMoreShow: false,
     }
   },
   computed: {
@@ -434,12 +437,6 @@ export default {
       that.getDestination(search)
     }, 1000),
     getDestination: _.debounce(function () {
-      this.destinationList = []
-      this.isCalculateOnExpedition = false
-      this.paymentMethod = null
-      this.shipping = null
-      this.isShipping = false
-      this.listShipping = []
       if (this.destinationLabel.length > 2) {
         this.$http_komship
           .get(`/v2/destination?search=${this.destinationLabel}`)
@@ -454,7 +451,12 @@ export default {
       }
     }, 1000),
     getProductSearch: _.debounce(function (search, loading) {
+      this.isMoreShow = false
       this.searchProduct = search
+      this.limit = 5
+      this.offset = 0
+      this.productListDB = []
+      this.productList = []
       if (this.searchProduct === undefined || this.searchProduct === '') {
         this.searchProduct = ''
         this.getProduct(this.address)
@@ -470,31 +472,32 @@ export default {
         this.shipping = null
         this.isShipping = false
         this.listShipping = []
-      }
-
-      if (address.warehouse_type === 'Mitra Kompack' && this.warehouseId !== address.warehouse_id) {
-        this.warehouseId = address.warehouse_id
-        this.warehouseType = address.warehouse_type
-        this.productList = []
-        this.productSelected = []
-        this.getProductList(address)
-      } else if (this.warehouseType !== address.warehouse_type) {
-        this.warehouseType = address.warehouse_type
-        this.productList = []
-        this.productSelected = []
         this.getProductList(address)
       } else {
-        (
-          this.getProductList(address)
-        )
+        this.getProductList(address)
       }
     },
     async getProductList(address) {
       await this.$http_komship
-        .get(`v3/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}&search=${this.searchProduct}`)
+        .get(`v3/partner-product/${this.profile.partner_id}`, {
+          params: {
+            warehouse_type: address.warehouse_type,
+            warehouse_id: address.warehouse_id,
+            search: this.searchProduct,
+            limit: this.limit,
+            offset: this.offset,
+          },
+        })
         .then(response => {
           const { data } = response.data
-          this.productList = data.slice(0, 5)
+          this.offset += this.limit
+          this.productListDB = data
+          this.productList.push(...this.productListDB)
+          if (this.productList.length < this.offset) {
+            this.isMoreShow = false
+          } else {
+            this.isMoreShow = true
+          }
         })
     },
     async addProduct(itemSelected) {
@@ -839,6 +842,12 @@ export default {
       await this.getShippingList()
     }, 1000),
     async removeProduct(data, index) {
+      this.destinationList = []
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
       this.idCartDelete = this.cartProductId
       const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       const findIndexCartProduct = this.idCartDelete.findIndex(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
@@ -1014,9 +1023,11 @@ export default {
         })
     },
     getShippingList() {
-      this.isCalculateOnExpedition = false
       this.shipping = null
       this.listShipping = []
+      this.isShipping = false
+      this.isCalculate = false
+      this.isCalculateOnExpedition = false
       this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         this.$http_komship.get('v3/calculate', {
@@ -1561,18 +1572,25 @@ export default {
     formatPhoneCustomer: _.debounce(function () {
       if (this.customerPhone.length < 9) {
         this.messageErrorPhone = true
+        this.requireCustomerPhone = true
+        this.isWhatsapp = null
       } else {
         this.messageErrorPhone = false
+        this.requireCustomerPhone = false
+        this.checkWhatsapp()
+        this.getCustomerReputation()
       }
       if (this.customerPhonePasteMode === true) {
         this.customerPhone = this.customerPhonePaste
       }
       this.customerPhonePasteMode = false
-      this.checkWhatsapp()
-      this.getCustomerReputation()
     }, 1000),
     validateInputPhoneCustomer(e) {
+      const charCode = e.which ? e.which : e.keyCode
       if (this.customerPhone.length === 0) {
+        if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 48) {
+          e.preventDefault()
+        }
         if (e.keyCode === 48) {
           e.preventDefault()
         }
@@ -1583,6 +1601,7 @@ export default {
       if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
         e.preventDefault()
       }
+      return true
     },
     refreshPage() {
       window.location.reload()
@@ -1683,6 +1702,12 @@ export default {
         })
     },
     applyDestination(items) {
+      this.destinationList = []
+      this.isCalculateOnExpedition = false
+      this.paymentMethod = null
+      this.shipping = null
+      this.isShipping = false
+      this.listShipping = []
       this.destination = items
       this.destinationLabel = items.label
       this.coverageCodSap = false

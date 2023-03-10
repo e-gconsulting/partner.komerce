@@ -460,7 +460,6 @@
                   <b-col cols="1">
                     <b-form-checkbox
                       v-model="item.isActive"
-                      @input="setData(listProdukEdit)"
                     />
                   </b-col>
                   <b-col cols="3">
@@ -1027,7 +1026,6 @@ export default {
   @import '@core/scss/vue/libs/vue-select.scss';
 </style>
 <style lang="scss" scoped>
-
 .minus-button, .plus-button {
     justify-content: center;
     font-size: 20px;
@@ -1060,7 +1058,6 @@ export default {
   [dir] .when-opened {
     display: inline-block;
   }
-
   @media screen and (max-width: 767px) {
   .table-container {
   overflow-x: scroll;
