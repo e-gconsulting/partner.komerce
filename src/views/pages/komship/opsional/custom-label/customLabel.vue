@@ -100,13 +100,6 @@
       </b-col>
       <b-col class="text-center px-5 py-2">
         <b-btn
-          class="mr-2 w-40"
-          variant="outline-primary"
-          @click="$bvModal.hide('modal-blocker-profile')"
-        >
-          Batal
-        </b-btn>
-        <b-btn
           variant="primary"
           @click="$router.push({ name: 'kompship-profile' })"
         >
