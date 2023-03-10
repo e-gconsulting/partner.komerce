@@ -90,6 +90,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   name: 'Koneksi',
@@ -131,10 +132,27 @@ export default {
             if (code === 201) {
               this.connected = true
               this.$router.push({ name: 'dashboard-whatsapp' })
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Sukses',
+                  icon: 'CheckIcon',
+                  text: 'Selamat, nomor kamu berhasil terhubung. kamu bisa mengaktifkan notifikasi COD dan Pickup',
+                  variant: 'success',
+                },
+              })
             }
             this.qrCode = data
-          }).catch(() => {
-            console.log('error')
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.response.data.message,
+                variant: 'danger',
+              },
+            })
           })
       }
     },

@@ -38,9 +38,9 @@
           style="width: 100%"
         />
         <div class="p-1">
-          <div class="d-flex justify-content-between mb-1">
-            <div class="text-black font-[600] align-self-center">
-              {{ statusWhatsapp }}
+          <div class="d-flex justify-content-between">
+            <div class="text-black text-[20px] font-[600] align-self-center">
+              {{ NoWhatsapp }}
             </div>
             <b-button
               variant="outline-primary"
@@ -56,6 +56,9 @@
                 class="text-primary ml-1 align-self-center logout-mobile"
               >Logout</span>
             </b-button>
+          </div>
+          <div class="status-whatsapp px-1 py-[5px] my-[5px] font-[600] align-self-center">
+            {{ statusWhatsapp }}
           </div>
           <div class="text-black">
             WhatsApp-mu terhubung dan tidak harus online, tapi jika tidak ada
@@ -479,6 +482,13 @@
 }
 .hover-cod:hover {
   background-color: #FCD4BE;
+}
+.status-whatsapp {
+  background-color: #DCF3EB;
+  color: #34A770;
+  font-size: 12px;
+  width:fit-content;
+  border-radius: 4px;
 }
 
 @media screen and (max-width: 1200px) {
