@@ -73,7 +73,6 @@ export default {
           if (response.data.code === 200) {
             this.$router.push({ name: 'koneksi-wa' })
           }
-          console.log(response)
         })
         .catch(err => {
           this.$toast({

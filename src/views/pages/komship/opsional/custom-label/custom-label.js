@@ -60,7 +60,6 @@ export default {
   },
   mounted() {
     this.getCustomLabel()
-    console.log(this.profile)
   },
   methods: {
     getCustomLabel() {
@@ -101,20 +100,23 @@ export default {
       let shipping = ''
       if (this.customShippingCost === true) {
         shipping = 1
+        this.getCustomShippingCost(shipping)
       } else {
         shipping = 0
+        this.$refs['modal-set-biaya-ongkir'].show()
       }
+    },
+    getCustomShippingCost(shipping) {
       this.$http_komship.post(`v1/setting/feature/shipping-cost?is_shipping_cost=${shipping}`)
         .then(async response => {
-          console.log(response.data.code)
           if (response.data.code === 200) {
             await this.$store.dispatch('dashboard/getProfile')
             this.customShippingCost = this.profile.partner_is_shipping_cost
             let message = ''
             if (shipping === 1) {
-              message = 'Biaya Ongkir berhasil diaktifkan'
+              message = 'Berhasil mengaktifkan Biaya Ongkir'
             } else {
-              message = 'Biaya Ongkir berhasil dinonaktifkan'
+              message = 'Berhasil menon-aktifkan Biaya Ongkir'
             }
             this.$toast({
               component: ToastificationContent,
@@ -125,17 +127,30 @@ export default {
                 variant: 'success',
               },
             }, 2000)
+            this.$refs['modal-set-biaya-ongkir'].hide()
           }
         }).catch(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal update Biaya Ongkir',
-              variant: 'danger',
-            },
-          }, 2000)
+          if (shipping === 1) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal mengaktifkan fitur, terjadi kesalahan pada program',
+                variant: 'danger',
+              },
+            }, 2000)
+          } else {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal menon-aktifkan fitur, terjadi kesalahan pada program',
+                variant: 'danger',
+              },
+            }, 2000)
+          }
         })
     },
     setCustomLabel() {
@@ -160,7 +175,7 @@ export default {
                 props: {
                   title: 'Success',
                   icon: 'CheckIcon',
-                  text: 'Custom Label berhasil diaktifkan',
+                  text: 'Berhasil mengaktifkan Identitas Pengirim',
                   variant: 'success',
                 },
               }, 2000)
@@ -170,7 +185,7 @@ export default {
                 props: {
                   title: 'Gagal',
                   icon: 'AlertCircleIcon',
-                  text: 'Gagal update custom label',
+                  text: 'Gagal mengaktifkan fitur, terjadi kesalahan pada program',
                   variant: 'danger',
                 },
               }, 2000)
@@ -179,7 +194,6 @@ export default {
       }
     },
     setIdentitySender() {
-      console.log(this.itemsCustomLabel)
       if (this.profile.partner_business_name === null
         || this.profile.partner_no_hp_business === null
         || this.address_partner_business === null) {
@@ -362,7 +376,6 @@ export default {
         is_custom_label: 0,
       })
         .then(async response => {
-          console.log(response)
           await this.$store.dispatch('dashboard/getProfile')
           this.customLabel = this.profile.partner_is_custom_label
           this.$toast({
@@ -370,7 +383,7 @@ export default {
             props: {
               title: 'Success',
               icon: 'CheckIcon',
-              text: 'Custom Label berhasil dinonaktifkan',
+              text: 'Berhasil menon-aktifkan Identitas Pengirim',
               variant: 'success',
             },
           }, 2000)
@@ -382,7 +395,7 @@ export default {
             props: {
               title: 'Gagal',
               icon: 'AlertCircleIcon',
-              text: 'Gagal update custom label',
+              text: 'Gagal menon-aktifkan fitur, terjadi kesalahan pada program',
               variant: 'danger',
             },
           }, 2000)
@@ -392,6 +405,11 @@ export default {
       this.isNotSetActive = false
       this.customLabel = true
       this.$refs['modal-set-custom-label'].hide()
+    },
+    alertBiayaOngkir() {
+      this.isNotSetActive = false
+      this.customShippingCost = true
+      this.$refs['modal-set-biaya-ongkir'].hide()
     },
     removeFieldAddSender() {
       this.fieldAddSender = false
