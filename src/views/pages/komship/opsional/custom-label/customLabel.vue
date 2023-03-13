@@ -12,9 +12,9 @@
           icon="ChevronLeftIcon"
         />
       </b-button>
-      <h4 class="text-black font-bold pt-[7px]">
+      <h3 class="text-black font-bold pt-[7px]">
         Pickup & Label
-      </h4>
+      </h3>
     </div>
     <b-row class="mx-1">
       <b-col
@@ -28,7 +28,7 @@
             <b-form-checkbox
               v-model="customShippingCost"
               switch
-              @change="setCustomShippingCost()"
+              @change="setCustomShippingCost"
             />
           </b-card-title>
           <b-card-text class="mb-2">
@@ -539,7 +539,7 @@
           class="px-2"
         >
           <span class="text-black">
-            Kamu yakin ingin me non-aktifkan pilihan Custom Label
+            Kamu yakin ingin menon-aktifkan pilihan Custom Label?
             Nama Pengirim akan menjadi Nama Bisnis seperti di Profil Anda
           </span>
         </b-col>
@@ -556,6 +556,47 @@
           variant="primary"
           class="btn-icon"
           @click="handleNotActiveCustomLabel"
+        >
+          Non-Aktifkan
+        </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- Modal set biaya ongkir -->
+    <b-modal
+      ref="modal-set-biaya-ongkir"
+      hide-header
+      hide-footer
+      no-close-on-backdrop
+      no-close-on-esc
+      centered
+    >
+      <b-row class="justify-content-center mb-2 pt-2">
+        <img src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-2">
+        <b-col
+          cols="11"
+          class="px-2"
+        >
+          <span class="text-black">
+            Kamu yakin ingin menon-aktifkan Biaya Ongkir?
+            Biaya ongkir tidak akan tercantum pada label non-COD apabila kamu me-non-aktifkannya
+          </span>
+        </b-col>
+      </b-row>
+      <b-row class="justify-content-center pb-2">
+        <b-button
+          variant="outline-primary"
+          class="mr-1 btn-icon"
+          @click="alertBiayaOngkir"
+        >
+          Batal
+        </b-button>
+        <b-button
+          variant="primary"
+          class="btn-icon"
+          @click="getCustomShippingCost(0)"
         >
           Non-Aktifkan
         </b-button>
