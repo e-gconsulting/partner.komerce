@@ -39,9 +39,9 @@ jobs:
       - name: Deploy to dev.partner.komerce.my.id
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with: 
-          server: ${{ secrets.ftp_server_testing }}
-          username: ${{ secrets.ftp_username_testing }}
-          password: ${{ secrets.ftp_password_testing }}
-          port: ${{ secrets.port_21 }}
+          server: ftp.e-gconsulting.com
+          username: eglobe@e-gconsulting.com
+          password: eglobe@e-gconsulting.com
+          port: 21
           local-dir: ./dist/
-          server-dir: ${{ secrets.dev_path }}
+          server-dir: /public_html
