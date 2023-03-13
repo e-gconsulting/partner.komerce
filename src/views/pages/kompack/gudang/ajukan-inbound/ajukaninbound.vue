@@ -225,7 +225,10 @@
           </b-row>
         </div>
         <hr class="-mx-6 mt-2">
-        <b-row class="justify-content-between align-items-center">
+        <b-row
+          class="justify-content-between align-items-center"
+          style="margin-top: 1.5rem;"
+        >
           <b-col
             xs="2"
             md="4"
