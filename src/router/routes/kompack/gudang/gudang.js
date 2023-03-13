@@ -29,7 +29,7 @@ export default [
   {
     path: '/ajukan-inbound',
     name: 'ajukan-inbound',
-    component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/AjukanInbound.vue'),
+    component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/ajukaninbound.vue'),
     meta: {
       resource: 'Ajukan Inbound',
       action: 'manage',
