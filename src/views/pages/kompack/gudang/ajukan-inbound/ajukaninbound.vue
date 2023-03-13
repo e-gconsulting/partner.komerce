@@ -225,7 +225,10 @@
           </b-row>
         </div>
         <hr class="-mx-6 mt-2">
-        <b-row class="justify-content-between align-items-center">
+        <b-row
+          class="justify-content-between align-items-center"
+          style="margin-top: 1.5rem;"
+        >
           <b-col
             xs="2"
             md="4"
@@ -1022,53 +1025,53 @@ export default {
 
 </script>
 
-<style lang="scss">
-  @import '@core/scss/vue/libs/vue-select.scss';
-</style>
-<style lang="scss" scoped>
-.minus-button, .plus-button {
-    justify-content: center;
-    font-size: 20px;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: 2px solid #F95031;
-    border-radius: 100%;
-    line-height: unset;
-  }
-  .btn-collapse {
-    background-color: transparent !important;
-    color: #000000 !important;
-    border: none;
-    font-size: 14px;
-  }
-  .bg-transparent{
-    background-color: transparent !important;
-    border: none !important;
-  }
-  .input-stock {
-    border-bottom: solid 2px #e2e2e2 !important;
-    border: none;
-    border-radius: 0px;
-    padding: 0px;
-  }
-  [dir] .when-closed {
-    display: inline-block;
-  }
-  [dir] .when-opened {
-    display: inline-block;
-  }
-  @media screen and (max-width: 767px) {
-  .table-container {
-  overflow-x: scroll;
-  }
-  .table {
-    width: 700px;
-    table-layout: fixed;
-  }
-}
-  .collapsed > .when-opened,
-      :not(.collapsed) > .when-closed {
-          display: none;
-      }
-</style>
+ <style lang="scss">
+   @import '@core/scss/vue/libs/vue-select.scss';
+ </style>
+ <style lang="scss" scoped>
+ .minus-button, .plus-button {
+     justify-content: center;
+     font-size: 20px;
+     width: 32px;
+     height: 32px;
+     padding: 0;
+     border: 2px solid #F95031;
+     border-radius: 100%;
+     line-height: unset;
+   }
+   .btn-collapse {
+     background-color: transparent !important;
+     color: #000000 !important;
+     border: none;
+     font-size: 14px;
+   }
+   .bg-transparent{
+     background-color: transparent !important;
+     border: none !important;
+   }
+   .input-stock {
+     border-bottom: solid 2px #e2e2e2 !important;
+     border: none;
+     border-radius: 0px;
+     padding: 0px;
+   }
+   [dir] .when-closed {
+     display: inline-block;
+   }
+   [dir] .when-opened {
+     display: inline-block;
+   }
+   @media screen and (max-width: 767px) {
+   .table-container {
+   overflow-x: scroll;
+   }
+   .table {
+     width: 700px;
+     table-layout: fixed;
+   }
+ }
+   .collapsed > .when-opened,
+       :not(.collapsed) > .when-closed {
+           display: none;
+       }
+ </style>
